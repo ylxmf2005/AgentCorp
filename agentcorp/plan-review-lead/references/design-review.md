@@ -1,92 +1,25 @@
-# Local Plan And Design Review Reference
+# 计划与设计产物评审参考
 
-Use this when reviewing architecture, impact analysis, diagnosis, or extracted contracts before implementation.
+在实现之前评审 architecture、impact analysis、diagnosis 或 API contract 时用这份参考。核心问题始终一致：这份产物有没有给 Implementation Engineer 足够的上下文，让他不必自行发明架构就能开工。下面按产物类型说明各自要让你信任什么。
 
-## Architecture Artifact
+## Architecture
 
-Required for greenfield or major subsystem work:
+用于 greenfield 或重要子系统。它要让你看清：要解决的问题、组件的拆分与归属、数据如何流动、技术选型及其理由，以及这套结构带来多少复杂度、又如何把复杂度压住——尤其是在变更放大、认知负担、未知的未知这三个方向上。它该把关键模块、接口和隐藏决策讲明白，把哪些接口/契约必须保持稳定、相关时数据/状态如何流动、兼容性行为、风险、约束以及对验证有影响的点都交代清楚。它应当读起来像一份真正的工程设计文档，细节密的地方该有就有，而不是一张干巴巴的清单。
 
-- Problem statement.
-- Component breakdown and ownership.
-- Data flow.
-- Technology choices and rationale.
-- Complexity estimate.
-- Complexity analysis: change amplification, cognitive load, unknown unknowns.
-- Test strategy.
-- Design intent: 3-5 bullets naming key modules, interfaces, and hiding decisions.
-- Mermaid coverage:
-  - Change-bearing architecture (enhancement/delta, bugfix/fix, redesign, interface/data-flow/behavior change): at least two complete Mermaid diagrams, including one explicit before/after diagram.
-  - No-change architecture record: at least one complete Mermaid diagram.
-- Mermaid counts are lower bounds, not exact targets; large or multi-view designs should add diagrams or split oversized diagrams for readability.
-- Mermaid validation evidence, either tool-based or manual, covering block count, before/after presence when required, diagram declaration, task-specific labels, placeholder replacement, edge syntax, and human readability within the size budget.
-- Diagram fit: architecture uses the Mermaid view that best explains the design question, such as flowchart, sequence diagram, class/UML-style diagram, or state diagram; direct vertical flow is acceptable when clearest.
-- Diagram completeness: diagrams identify real affected modules/components, boundaries, interfaces, data/state flow, decision points, preserved paths, and success/failure outcomes where relevant. Each architecture step says what happens, what is produced/validated/handed off, or what boundary is protected; function/class names alone fail review. Rough placeholder diagrams such as `User --> System --> DB` fail review.
+值得信任的 architecture：模块职责清晰，接口隐藏实现细节，复杂度被正视而非甩给调用方，对验证有影响的风险可见。凡是某个视图能比文字更清楚地表达结构、流程、状态、归属或前后变化的地方，就该有图或等价的流程说明，让结构可被检视；图要用真实的模块和边界、说清每一步「做了什么、保护了什么」，占位式的 `User --> System --> DB` 不合格。有图时校验其语法和可读性。
 
-Quality gate: modules have clear responsibilities, interfaces hide implementation detail, Mermaid diagrams meet or exceed the work-type count and before/after requirements, diagrams make structure/flow inspectable in Markdown with recorded validation evidence and step-level meaning, verification-relevant risks are visible, complexity is acknowledged rather than pushed to callers, and the architecture remains concrete without repeating itself.
+## Impact Analysis
 
-## Impact Analysis Artifact
+用于对既有代码的增强。它要让你看清：改动摘要、受影响的模块/文件、接口改动（没有就显式写 `none`）、集成点、必须保留的既有行为、新引入的行为、风险评估和复杂度估计。值得信任的 impact analysis：所有受影响模块都被点到，接口改动显式，风险具体，当前/目标行为和集成点可理解，复杂度落在 S/M。复杂度到 L 及以上的工作应升级为 architecture。前后对比的视图在能直接讲清改动时值得画。
 
-Required for enhancements to an existing codebase:
+## Diagnosis
 
-- Change summary.
-- Affected modules/files.
-- Interface changes, or explicit `none`.
-- Integration points.
-- Existing behavior that must be preserved.
-- New behavior introduced.
-- Risk assessment.
-- Complexity estimate.
-- At least two complete Mermaid diagrams, including one explicit before/after diagram; more or split diagrams when needed for readability.
-- Mermaid validation evidence covering block count, before/after presence, declaration, task-specific labels, placeholder replacement, edge syntax, and human readability within the size budget.
+用于缺陷修复。它要让你看清：报告的症状与期望行为、复现（或无法复现的原因）、验证过的假设及各自证据、带因果链的确认根因、提议的最小修复、受影响的文件/模块，以及回归测试或验证判据。除非协调方明确接受残留的不确定性，否则没有证据支撑的根因就不该往下走。失败路径、根因、修正后的行为必须能被理解——用精确的流程说明或图都行；图要标出触发者、入口、失败组件、根因状态或决策点、修正路径、被保留的行为，以及相关时的成功/失败结果。
 
-Quality gate: all affected modules are identified, interface changes are explicit, risk is concrete, Mermaid diagrams meet or exceed the lower bound and make the delta inspectable with one before/after view, and complexity is S/M. Escalate L+ work to architecture.
+## API Contract
 
-## Diagnosis Artifact
+用于并行实现，或涉及公共/共享接口时。每个公共端点、共享 schema、协议、SDK/CLI 接口或跨模块边界各自一份契约，共享类型/schema 收在一处共享契约里，不要重复。契约写清签名、请求/响应形态、协议规则、兼容性行为、auth/权限假设和错误语义，但不写实现体。值得信任的 API contract：每个公共/共享/跨模块接口都有契约，契约只暴露调用方需要知道的，API Contract Reviewer 或 Tester 不必猜就能验证其行为。
 
-Required for bugfixes:
+## 下判断
 
-- Reported symptom and expected behavior.
-- Reproduction or reason reproduction is unavailable.
-- Hypotheses tested and evidence for each.
-- Confirmed root cause with causal chain.
-- Proposed minimal fix.
-- Affected files/modules.
-- Regression tests or verification criteria.
-- At least two complete Mermaid diagrams, including one explicit before/after diagram showing the failing path before and the corrected path after; more or split diagrams when needed for readability.
-- Mermaid validation evidence covering block count, before/after presence, declaration, task-specific labels, placeholder replacement, edge syntax, and human readability within the size budget.
-- Diagram completeness: diagrams identify the actor/trigger, entry point, failing component, root-cause state or decision, corrected path, preserved behavior, and success/failure outcomes where relevant. Rough placeholder diagrams such as `User --> System --> DB` fail review.
-
-Quality gate: no fix proceeds without an evidence-backed root cause unless the coordinator explicitly accepts residual uncertainty; bugfix Mermaid diagrams must make the before/after behavior change inspectable and include recorded validation evidence.
-
-## Lightweight Design Note
-
-Required for small additions when target modules or constraints are not obvious:
-
-- Target modules are named.
-- Interface changes are explicit, or `none`.
-- Existing behavior to preserve is clear.
-- Implementation constraints are enough to prevent architecture guessing.
-- Risk is low enough that full impact analysis is unnecessary.
-- Mermaid coverage:
-  - If the note describes behavior, interface, data-flow, or workflow change: at least two complete Mermaid diagrams, including one explicit before/after diagram.
-  - If the note records context without a system behavior change: at least one complete Mermaid diagram.
-- Mermaid counts are lower bounds; add or split diagrams when needed for readability.
-- Mermaid validation evidence covering block count, before/after presence when required, declaration, task-specific labels, placeholder replacement, edge syntax, and human readability within the size budget.
-- Diagram completeness: diagrams identify real target modules/components, boundaries, current/target flow, preserved behavior, and success/failure outcomes where relevant. Rough placeholder diagrams such as `User --> System --> DB` fail review.
-
-Quality gate: the note is small enough to stay lightweight, but its Mermaid diagrams still meet the change/no-change count rule and are complete enough for Implementation Planner to proceed without inventing structure.
-
-## Extracted Contracts
-
-Required when parallel implementation or public/shared interfaces are involved:
-
-- One contract per submodule/interface.
-- Shared types/schemas in one shared contract.
-- Signatures, types, schemas, or protocol shapes only.
-- No implementation bodies.
-
-Quality gate: every planned submodule has a contract, contracts expose only what callers need, and shared types are not duplicated.
-
-## Review Decision
-
-Approve only when the selected artifact gives Implementation Engineer enough context to build without inventing architecture. Request changes for concrete defects. Use `needs_more_evidence` when the artifact may be right but lacks proof or source context.
+只有当所选产物给了 Implementation Engineer 足够上下文、让他不必发明架构就能开工时，才 `approve`。存在具体缺陷时 `request_changes`。当产物也许是对的、但缺证据或源上下文时，用 `needs_more_evidence`。

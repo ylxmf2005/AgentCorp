@@ -8,44 +8,44 @@ source_artifacts:
   - review/plan-review.md
 ---
 
-# Implementation Result
+# 实现结果
 
-## Story Spec
+## 来源 Story Spec
 
 implementation/implementation-story.md
 
-## Completed Tasks
+## 已完成任务
 
-- Task and evidence.
+- 任务和证据。
 
-## Incomplete Tasks
+## 未完成任务
 
-- Empty when none.
+- 没有时写“无”。
 
-## Changed Files
+## 改动文件
 
 - path/to/file
 
-## Tests Added Or Updated
+## 新增或更新的测试
 
-- Test file or scenario.
+- 测试文件或场景。
 
-## Commands Run
+## 运行过的命令
 
-- Command and result.
+- 命令和结果。
 
-## Implementation Notes
+## 实现说明
 
-- Only notes needed by review.
+- 只写 review 需要知道的说明。
 
-## Deviations From Plan
+## 相对计划的偏差
 
-- Empty when none.
+- 没有时写“无”。
 
-## Blockers
+## 阻塞项
 
-- Empty when none.
+- 没有时写“无”。
 
-## Handoff To Code Review
+## 交给代码评审的交接
 
-- Changed behavior and risk focus.
+- 改动行为和需要重点关注的风险。

@@ -8,29 +8,29 @@ source_artifacts:
 confidence: HIGH
 ---
 
-# Validated Requirements: Example Title
+# 已验证需求：Example Title
 
-## Sponsor Intent
+## 发起人意图
 
-- Product-level intent, preserving important sponsor wording.
+- 产品层面的意图，保留重要的 sponsor wording。
 
-## Problem
+## 问题
 
-- Current user or system problem without prescribing implementation.
+- 当前用户或系统问题，不预设实现。
 
-## Target Users
+## 目标用户
 
-- Primary user or system actor and job to be done.
+- 主要用户或系统 actor，以及要完成的 job。
 
-## User Journeys
+## 用户旅程
 
 ### UJ-1: Example journey
 
-- Persona and context:
-- Entry state:
-- Path:
-- Success condition:
-- Edge case:
+- Persona 与上下文:
+- 进入状态:
+- 路径:
+- 成功条件:
+- 边界情况:
 
 ```mermaid
 flowchart LR
@@ -56,65 +56,65 @@ flowchart TD
   Criteria --> Handoff["Test and architecture handoffs"]
 ```
 
-## Glossary
+## 术语表
 
-- **Term** - Definition used consistently downstream.
+- **术语** - 下游一致使用的定义。
 
-## Functional Requirements
+## 功能需求
 
-### FR-1: Capability name
+### FR-1：能力名称
 
-The system must provide an observable capability.
+系统必须提供可观察的能力。
 
-Acceptance criteria:
+验收标准:
 
-- AC-1: Observable condition.
+- AC-1：可观察条件。
 
-Source: sponsor request or source artifact.
+来源：sponsor request 或 source artifact。
 
-## Non-Goals
+## 非目标
 
-- Explicit excluded behavior or scope.
+- 明确排除的行为或范围。
 
-## MVP Scope
+## MVP 范围
 
-- In scope:
-- Out of scope:
+- 范围内:
+- 范围外:
 
-## Constraints
+## 约束
 
-- Sponsor-provided constraint.
+- Sponsor 提供的约束。
 
-## Success Criteria
+## 成功标准
 
-- What proves the requirements are satisfied.
+- 证明需求已满足的条件。
 
-## Assumptions
+## 假设
 
-- Assumption requiring confirmation or downstream validation.
+- 需要确认或下游验证的假设。
 
-## Open Questions
+## 开放问题
 
-- Q-1: Empty when none.
+- Q-1：没有时写“无”。
 
-## Handoff To Test Planner
+## 交给 Test Planner 的交接
 
-- Must-have behaviors to prove:
-- User journeys requiring E2E coverage:
-- Risk areas needing explicit tests:
+- 必须证明的行为:
+- 需要 E2E 覆盖的用户旅程:
+- 需要显式测试的风险区域:
 
-## Handoff To Solution Architect
+## 交给 Solution Architect 的交接
 
-- Product constraints to preserve:
-- Terms and boundaries that architecture must use:
-- Technical questions raised by the requirements:
+- 必须保留的产品约束:
+- 架构必须沿用的术语和边界:
+- 需求提出的技术问题:
 
-## Mermaid Validation
+## Mermaid 校验
 
-- Block count:
-- Before/after required:
-- Declarations checked:
-- Task-specific labels checked:
-- Example placeholders replaced:
-- Edge syntax checked:
-- Rendered diagram assets:
+- 已包含哪些图以及原因:
+- 声明已检查:
+- 任务特定标签已检查:
+- 示例占位已替换:
+- journey/scope/state 标签说明了可观察行为:
+- Edge 语法已检查:
+- 人类可读性已检查:

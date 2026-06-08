@@ -7,12 +7,12 @@ status: completed
 artifact_path: review/example-output.md
 ---
 
-# Receipt: example-phase
+# 回执：example-phase
 
-## Notes
+## 说明
 
-- One-line completion note.
+- 一句话完成说明。
 
-## Blockers
+## 阻塞项
 
-- None.
+- 无。

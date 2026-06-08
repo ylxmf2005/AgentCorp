@@ -1,43 +1,27 @@
-# Local Implementation Story Spec Reference
+# Implementation Story Spec
 
-Use this reference when creating an implementation handoff for Implementation Engineer.
+把已批准的需求和设计，变成 Implementation Engineer 能照着建的可执行计划。它有意地坐落在设计与编码之间：需求说要什么结果，TestPlan/Test Strategy 说要证明什么，architecture/impact/diagnosis/contract 说系统该长成什么样，而这份 Story Spec 说工程师到底该实现什么。
 
-## Purpose
+## 你要做的
 
-An Implementation Story Spec is the authoritative developer handoff. It converts validated requirements and solution design into an executable story with acceptance criteria, ordered tasks/subtasks, target modules, and technical guardrails.
+仔细读源产物，把切分建立在「系统实际长什么样」之上，而不是你以为的样子。把工作切成连贯、有序、可独立验证的 story/任务：让每个切片都有明确的边界和落点，任务的先后顺序反映真实的 dependency，规模合到工程师能逐个完成、逐个验证。引用源产物来承载细节，再把这一次实现专属的判断写清楚，而不是把设计原样抄一遍。
 
-It should be a compact bridge from decision to code. Cross-reference source artifacts for detail, then state the implementation-specific criteria, tasks, constraints, and checks clearly.
+## 这份产物要达到什么
 
-It intentionally sits between design and coding:
+工程师读完，应当不必再去倒推范围、也不必现场重做设计判断就能动手。所以它必须讲清楚（用最能服务于实现的结构来组织即可）：
 
-- Requirements say what outcome is needed.
-- TestPlan/Test Strategy says what must be proven.
-- Architecture/impact/diagnosis/contracts say how the system should be shaped.
-- Implementation Story Spec says exactly what the developer should implement.
+- 这次实现的 story——谁/什么角色、要的能力或改动、带来的结果；
+- 起步所需的源上下文：源产物的精简指引，外加工程师立刻就要知道的那几条关键事实；
+- 可观察的 acceptance criteria，每条都能追溯到某个需求；
+- 有序的任务/子任务清单，已知时标明落点的模块/文件，并把每个任务关联到它服务的 acceptance criteria 或技术护栏；
+- 设计约束：模块边界、要遵循的模式、必须稳定的接口/契约，以及数据/安全/可靠性上的护栏；
+- 对增强或缺陷修复，列出必须继续正常工作的现有行为；公开或跨模块接口有变动时，把契约写明确；
+- 禁区与 non-goals，免得工程师越界或扩张范围；
+- 验证预期：引用 TestPlan 或 diagnosis 里的判定标准（给出路径和章节），只点名工程师在实现时该添加或运行的那些聚焦检查——最终验证证据由 Test Leader 负责；
+- 供 Plan Review Lead 重点查看的地方。
 
-## Required Shape
+需要多少细节，就给多少能让工程师无歧义起步的细节；细节密的地方用表格或要点列举。如果还有任何会改变实现走向的悬而未决问题，就别把它藏起来——要么写明，要么连同缺失的设计一起返回 `blocked`。
 
-Follow `references/templates/implementation-story-spec.demo.md` when a durable artifact is requested or useful.
+## 形态
 
-## Quality Gate
-
-A Story Spec is ready for Plan Review only when:
-
-- Every acceptance criterion is observable.
-- Every task maps to one or more acceptance criteria or explicit technical guardrails.
-- The first implementation step is unambiguous.
-- Target repository and likely target paths/modules are named.
-- Design constraints are specific enough to prevent Implementation Engineer from inventing architecture.
-- Existing behavior to preserve is listed for enhancement/bugfix work.
-- Interfaces/contracts are explicit when public or cross-module surfaces change.
-- Engineer-owned verification expectations are executable or blockers are stated.
-- Forbidden zones and non-goals are present.
-- Open questions that would change implementation are empty.
-
-## Developer Execution Contract
-
-The planner initializes status as `ready-for-plan-review`. Implementation Engineer may update status during execution only after Plan Review Lead has approved the Story Spec for development.
-
-Implementation progress, changed files, commands, deviations, and notes belong in `implementation/implementation-result.md`, not in the Story Spec.
-
-If the engineer discovers a contradiction, missing dependency approval, ambiguous task, architecture mismatch, or impossible test requirement, they must stop and return a blocker instead of silently rewriting scope.
+需要或有用时，遵循 `references/templates/implementation-story-spec.demo.md`。Status 初始化为 `ready-for-plan-review`；不要把自己写的 Story Spec 标成可开发——那要等 Plan Review Lead 批准。

@@ -1,28 +1,11 @@
-# Local TestPlan Review Reference
+# TestPlan 评审参考
 
-Use this to review a TestPlan before implementation starts.
+评审 TestPlan 时常见的红旗信号——看到这些，多半说明计划照着执行也建立不起信心。
 
-## Review Focus
-
-- Requirements alignment: every goal has one or more Must Haves.
-- Observability: each Must Have says what input/action proves what output/outcome.
-- Boundary clarity: submodules, public surfaces, and non-goals do not overlap.
-- Forbidden zones: redlines are concrete enough to stop implementation drift.
-- Risk coverage: edge cases, failures, auth, data, contract, and performance risks appear where relevant.
-- Execution: the named tester can actually run each check with the stated environment.
-- E2E coverage: every user-facing capability appears in at least one E2E goal, or the omission is justified.
-- Evidence quality: screenshots, logs, requests, responses, commands, and artifacts are called out where needed.
-
-## Red Flags
-
-- "Test the feature works" without a verifiable assertion.
-- Unit-only coverage for user-facing workflow changes.
-- API surface changes without request/response checks.
-- Migration or persistence changes without before/after data checks.
-- Browser/UI work without real interaction or visual evidence.
-- Environment assumptions left implicit.
-- Coverage summary entries with no E2E goal and no reason.
-
-## Output Shape
-
-Follow `references/templates/review-decision.demo.md`; add coverage gaps, weak assertions, missing risk areas, and execution blockers when relevant.
+- 「测一下功能能用」——没有可验证的断言，无法证伪。
+- 面向用户的工作流改动，却只有 unit 覆盖，缺端到端验证。
+- public surface（API）变更，却没有 request/response 检查。
+- 迁移或持久化改动，却没有 before/after 的数据核对。
+- browser/UI 工作，却没有真实交互或视觉证据。
+- 环境假设被默认掉，没写明 tester 实际怎么跑。
+- coverage 汇总里有条目既没有 E2E 目标、也没给出省略的理由。

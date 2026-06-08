@@ -1,32 +1,26 @@
-# Local Contract Testing Reference
+# 契约测试参考
 
-Use this when executing API, JSON-RPC, A2A, CLI, SDK, or exported interface contract checks.
+执行 API、JSON-RPC、A2A、CLI、SDK 或其它对外接口面的契约验证时使用。
 
-## Contract Surfaces
+## 各类接口面要核对的契约要素
 
-- HTTP routes: method, path, status code, headers, request body, response body, auth.
-- JSON-RPC/A2A: method name, params, result/error shape, streaming behavior, extensions.
-- CLI: flags, arguments, exit code, stdout/stderr shape, machine-readable output.
-- SDK/exported types: function signatures, schemas, backward-compatible optional fields.
-- Error contracts: status/code, body shape, retryability, user-visible message.
+- **HTTP 路由**：method、path、status code、headers、请求体、响应体、auth。
+- **JSON-RPC / A2A**：method 名、params、result/error 形态、streaming 行为、协议扩展。
+- **CLI**：flag、参数、exit code、stdout/stderr 形态、机器可读输出。
+- **SDK / 导出类型**：函数签名、schema、向后兼容的可选字段。
+- **错误契约**：status/code、body 形态、可重试性、用户可见消息。
 
-## Execution Rules
+## 执行要点
 
-- Run real requests or commands when an environment is available.
-- Exercise happy paths and contract-relevant error paths.
-- Compare actual responses with TestPlan, docs, schemas, or previous contract expectations.
-- Preserve durable data unless the TestPlan authorizes mutation or the environment is disposable.
-- Record untested surfaces explicitly with reason.
+有可用环境时，跑真实的请求或命令，而不是靠看代码推断契约是否被兑现。happy path 与契约相关的错误路径都要走到。把实际响应与 TestPlan、文档、schema 或既往契约预期逐一对照。除非 TestPlan 明确授权改动、或环境本身一次性可丢弃，否则保持持久数据不变。无法执行的接口面，显式记录它没测以及原因。
 
-## Output Evidence
+## 每条检查要留下的证据
 
-For each check, record:
+- 接口面，以及版本（若有）。
+- 用的请求或命令。
+- 预期的 status / 形态 / 输出。
+- 实际的 status / 形态 / 输出。
+- pass / fail。
+- 有用时附上产物路径，或内联一段脱敏样本。
 
-- Surface and version, if any.
-- Request or command.
-- Expected status/shape/output.
-- Actual status/shape/output.
-- Pass/fail.
-- Artifact path or inline redacted sample when useful.
-
-Do not expose secrets in payloads, logs, screenshots, or reports.
+报告、日志、截图、payload 里都不要泄露任何密钥。

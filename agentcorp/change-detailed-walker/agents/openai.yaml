@@ -1,0 +1,4 @@
+interface:
+  display_name: "Change Detailed Walker"
+  short_description: "Write readable full-change walkthroughs"
+  default_prompt: "Use $change-detailed-walker to write a complete implementation walkthrough from the final diff."

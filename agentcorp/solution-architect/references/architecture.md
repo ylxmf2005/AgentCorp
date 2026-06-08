@@ -2,143 +2,43 @@
 id: architecture
 name: Architecture Design
 inputs: [validated requirements, TestPlan document]
-outputs: [architecture doc with component breakdown, data flow, complexity analysis]
+outputs: [architecture design artifact]
 optional: false
 ---
 
-# Phase: Architecture Design
+# 架构设计（Architecture Design）
 
-## Purpose
-Design the system structure before any implementation. Architecture docs prevent expensive rework by making structural decisions explicit before code is written.
+在任何实现之前先把系统结构设计好。目的是趁结构决策还便宜的时候就把它定清楚，免得后续工作在一个早期的错误上越垒越高。
 
-## Design Framing
+## 你在对抗的是什么
 
-Complexity is the enemy of maintainable software. Every design decision should minimize:
+复杂度是头号敌人。好的结构能从三个方向把它压住：
 
-- **Change amplification** — A simple change requires edits in many places. Good design localizes change: one decision, one place.
-- **Cognitive load** — A developer must hold too much context to work safely. Deep modules hide complexity behind simple interfaces so callers need to know as little as possible.
-- **Unknown unknowns** — It is not obvious what must change or what a developer needs to know. This is the worst symptom. Good design makes dependencies visible and contracts explicit.
+- **变更放大**——一个简单的改动不该牵动很多处。要让变更局部化：一个决策，只落在一个地方。
+- **认知负担**——开发者不该为了安全地改一处而把整个系统都装进脑子。深模块把复杂度藏在简单接口背后。
+- **未知的未知**——应该一眼看得出哪里需要改、需要知道什么。把依赖暴露出来，把契约写明确。
 
-**Design mindset:** Pull complexity down into modules — don't push it to callers. The right interface is the simplest one that lets callers accomplish their goals without knowing how. Make the right structural decisions before writing implementation details.
+心法：把复杂度往模块内部收，别甩给调用方。最好的接口是「让调用方不必知道内部怎么实现、就能完成目标」的那个最简单的接口。趁早把结构定对，因为每多一个写在有漏洞的接口之上的调用方，将来就多一处要返工。当某个具体判断（深度、隐藏、分层、命名）拿不准时，去翻 `principles/` 里对应的那篇。
 
-"Design it right the first time" — not because redesign is impossible, but because structural mistakes compound. Every new caller written against a leaky interface is one more place to fix later.
+## 这份产物要达到什么
 
-## Process
+这是继需求之后、最主要面向人阅读的产物。发起人要能据此信任这套设计，规划者要能在它之上往下做、而不必去倒推代码。所以它必须讲清楚（用最能服务于设计的结构来组织即可）：
 
-### Step 1 — Design Skeleton
+- 要解决的问题，以及这套设计背后的意图；
+- 关键决策，以及为什么这样定；
+- 每个组件各自拥有什么、又隐藏了什么；
+- 哪些接口和契约必须保持稳定；
+- 在影响边界的地方，数据或状态是怎么流动的；
+- 相关时，存储/表结构/API 契约及其兼容性行为；数据 table 与数据模型用 DDL、ORM、Pydantic/TypeScript schema 或贴近项目栈的伪代码块承载主体；
+- 它带来多少复杂度，以及这套结构如何把复杂度压住；
+- 还有风险、约束，以及任何对验证有影响的点。
 
-1. **Identify modules and responsibilities** — What are the key components? What does each own? What is each module's one job?
-2. **Define interfaces** — What is the minimal interface each module exposes? What does it hide? Apply the principle: interfaces should be simple, implementations can be complex.
-3. **Use relevant principle files** — Load only the principle files needed for the current design risk, then validate the skeleton against those dimensions: Are modules deep? Is information hidden? Are layers clean? Is coupling minimized?
-4. **Document the skeleton** — Describe modules, interfaces, type signatures, and module structure in the design artifact. Explain key design choices: what is hidden, why it is hidden, and what each interface encodes.
+需要多少细节，就给多少能让人信任这套设计的细节；细节密的地方用代码块、表格或要点列举。图按 SKILL.md 里的指引来用：凡是某个视图能比文字更清楚地表达结构、流程、状态、归属或前后变化的地方，就画一张。
 
-### Step 2 — Architecture Document
+如果需求或现有代码模糊到无法有把握地设计，就返回 `blocked`，并指明具体缺什么证据，而不是把它编出来。
 
-Write the architecture document to the assignment's `output_path`, normally `design/architecture.md`.
+## 输出
 
-This is a design decision artifact. Keep it focused on the structural choices Implementation Planner must rely on.
+把产物写到 assignment 的 `output_path`（通常是 `design/architecture.md`），遵循 `design-artifact` demo 模板。输出与语言无关；做重构时跟随被改对象的语言。文中的契约示例只是用于说明设计的内容，不要去写实现文件。
 
-**Required sections:**
-1. Problem statement (one paragraph)
-2. Design intent and key decisions
-3. Component breakdown: what each piece owns and hides
-4. Interfaces/contracts that must stay stable
-5. Data flow or state flow when it affects boundaries
-6. Technology choices + rationale when not obvious
-7. Complexity estimate: S (hours) / M (day) / L (days) / XL (week+)
-8. Architecture diagrams:
-   - Change-bearing work (enhancement/delta, bugfix/fix, redesign, interface/data-flow/behavior change): at least two complete Mermaid diagrams, with at least one explicit before/after diagram.
-   - No-change architecture records: at least one complete Mermaid diagram.
-   - These counts are lower bounds. Add more diagrams only when multiple views are useful. Mermaid must be readable in Markdown without relying on generated HTML, SVG, PNG, or screenshots: keep each diagram focused on one question, target at most 8 nodes for flowcharts or 6 participants and 12 messages for sequence diagrams, and split any diagram that exceeds that budget.
-   - Every diagram must be inspectable, not decorative: include real affected components/modules, boundaries, interfaces, data/state flow, decision points, preserved paths, and success/failure outcomes where relevant. Each step should say what happens there, what is produced/validated/handed off, or what boundary is protected; function or class names alone are not enough. Do not use rough placeholder diagrams such as `User --> System --> DB`.
-9. Complexity analysis:
-   - Identify potential sources of complexity (dependencies, obscurity)
-   - How the design minimizes change amplification
-   - How the design reduces cognitive load
-   - How the design avoids unknown unknowns
-10. Risks and implementation constraints
-
-Architecture is the primary user-facing design artifact after requirements. It may be more concrete than other artifacts, but it should stay proportionate: explain the architecture once, then let diagrams and short notes carry the detail without repeating paragraphs. Mermaid diagrams are mandatory, not optional. Choose the diagram type that best explains the design: `flowchart` for control/data flow and decision branches, `sequenceDiagram` for caller/service interactions over time, class/UML-style Mermaid diagrams for object/type relationships, and state diagrams for stateful behavior. Direct vertical flow is fine when it is the clearest view, but node labels must describe each step's role rather than only naming functions.
-
-Before completing the document, validate the fenced Mermaid blocks by parsing or rendering them with `mmdc`/Mermaid tooling when available; otherwise record manual validation evidence in the artifact or handoff. Do not generate separate rendered files unless the sponsor explicitly asks for them. Manual validation must at least confirm the block count, before/after presence when required, supported diagram declarations such as `flowchart TD`, `flowchart LR`, `sequenceDiagram`, `classDiagram`, or `stateDiagram-v2`, simple node IDs, quoted labels that contain punctuation, task-specific labels instead of generic examples, replacement of template placeholders, edges that reference existing or intentionally introduced nodes, and human readability within the size budget. Use examples when they resolve ambiguity. Cite the TestPlan for verification detail.
-
-Example component view:
-
-```mermaid
-flowchart LR
-  User["User or caller submits request"] --> Entry["Public entry point validates contract"]
-  Entry --> Service["Domain service applies business rule"]
-  Service --> Store["Persistence or external dependency stores/retrieves state"]
-```
-
-Example request or data flow:
-
-```mermaid
-sequenceDiagram
-  participant Caller
-  participant Entry
-  participant Service
-  participant Store
-  Caller->>Entry: Submit request with required fields
-  Entry->>Service: Validate contract and delegate domain operation
-  Service->>Store: Read or write state needed for the decision
-  Store-->>Service: Return persisted result or dependency response
-  Service-->>Entry: Return domain response with preserved invariants
-  Entry-->>Caller: Send stable response shape
-```
-
-### Step 3 — Validate Design
-
-For each module, check against the principle checklist:
-- Does it leak internal details?
-- Does it push complexity to callers?
-- Are names precise and consistent?
-- Are layers providing distinct abstractions?
-
-## Output Format
-
-Start with a **Design Intent** block: 3-5 bullets covering the key modules, their interfaces, and major hiding decisions. Then output the architecture document.
-
-**Design Intent format:**
-```
-## Design Intent
-
-- [Module/component]: [what it owns and what its interface hides]
-- [Key interface decision]: [why this shape, what caller is spared knowing]
-- [Major hiding decision]: [what implementation detail is buried and why]
-```
-
-For **redesigns**: after the Design Intent block, include a brief **What Changed** note listing the specific design issues found in the original and how the redesign addresses each one.
-
-**Key rules:**
-- Language-agnostic output — match the language of the input file if redesigning, or use the most natural language for the description
-- Do not write implementation files. Contract examples in this document are illustrative design content only.
-- If the description or existing code is too vague to design confidently, return `blocked` with the specific question or missing evidence.
-
-## Principles
-
-All principle files inform architecture decisions:
-
-- `principles/module-depth.md` — Deep vs shallow modules, interface simplicity, over-decomposition
-- `principles/information-hiding.md` — Encapsulation, information leakage, temporal decomposition
-- `principles/abstraction-layers.md` — Layer separation, pass-through methods, complexity placement
-- `principles/cohesion-separation.md` — Together-or-apart decisions, code repetition, general-special mixing
-- `principles/error-handling.md` — Exception proliferation, defining errors out of existence
-- `principles/naming-obviousness.md` — Name precision, code clarity, consistency
-- `principles/documentation.md` — Comment quality, abstraction documentation
-- `principles/strategic-design.md` — Tactical vs strategic thinking, modification quality
-
-## Outputs
-- Markdown architecture document at the assigned `output_path`.
-
-## Quality Gate
-- Architecture doc contains all required sections
-- Design Intent block is present with 3-5 bullets
-- Mermaid coverage matches the work type: change-bearing work has at least two complete diagrams including one before/after view; no-change architecture records have at least one complete diagram; additional or split diagrams are used when they improve readability
-- Mermaid diagram types fit the design question, and each step explains what happens or what is handed off instead of relying on function/class names alone
-- Mermaid validation evidence is recorded, either tool-based or manual, including the human-readability check
-- Complexity analysis addresses change amplification, cognitive load, and unknown unknowns
-- Modules pass principle checklist validation
-
-## Skip Conditions
-Runs for greenfield systems (`dev/architecture-first`), major redesigns, or enhancement work where structural decisions dominate. Pair with `impact-analysis` only when the assignment explicitly asks for both. Bugfixes use `diagnose`; small additions use `lightweight-design-note`.
+如果是重构，简要说清原方案哪里有问题、本方案如何解决。

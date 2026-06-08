@@ -7,32 +7,32 @@ source_artifacts:
   - verification/assignments/example-tester.md
 ---
 
-# Test Result
+# 测试结果
 
-## Status
+## 状态
 
 passed | failed | blocked | partial
 
-## Checks Run
+## 运行过的检查
 
-- Scenario and result.
+- 场景和结果。
 
-## Commands Run
+## 运行过的命令
 
-- Command, environment, and result.
+- 命令、环境和结果。
 
-## Evidence
+## 证据
 
-- Logs, screenshots, request/response excerpts, or artifact paths.
+- 日志、截图、request/response 摘录，或产物路径。
 
-## Failures
+## 失败项
 
-- Empty when none.
+- 没有时写“无”。
 
-## Blocked Checks
+## 被阻塞的检查
 
-- Empty when none.
+- 没有时写“无”。
 
-## Residual Risks
+## 残余风险
 
-- Empty when none.
+- 没有时写“无”。

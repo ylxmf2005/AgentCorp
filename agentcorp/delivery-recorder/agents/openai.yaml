@@ -1,0 +1,4 @@
+interface:
+  display_name: "Delivery Recorder"
+  short_description: "Record accepted delivery facts"
+  default_prompt: "Use $delivery-recorder to perform the AgentCorp Delivery Recorder role."

@@ -7,36 +7,36 @@ current_phase: validate-requirements
 workflow_mode: single-agent
 ---
 
-# Task: Example Task
+# 任务：Example Task
 
-## Sponsor Request
+## 发起人请求
 
-- Original request or issue link.
+- 原始请求或 issue link。
 
-## Success Criteria
+## 成功标准
 
-- Observable done condition.
+- 可观察的完成条件。
 
-## Out Of Scope
+## 范围外
 
-- Explicit non-goal.
+- 明确的非目标。
 
-## Selected Paradigm
+## 选定范式
 
 - enhancement/delta-design
 
-## Workflow Mode
+## 工作流模式
 
 - single-agent
 
-## Phase Sequence
+## Phase 序列
 
 - validate-requirements -> test-plan -> review -> implement -> verify -> acceptance-review -> deliver
 
-## Gate History
+## Gate 历史
 
-- Requirements: approved | skipped | revised | blocked
+- Requirements gate: approved | skipped | revised | blocked
 
-## Decision Log
+## 决策记录
 
-- Key orchestration decision and reason.
+- 关键编排决策和理由。

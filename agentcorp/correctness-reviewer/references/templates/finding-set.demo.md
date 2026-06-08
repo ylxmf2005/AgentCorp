@@ -7,22 +7,22 @@ source_artifacts:
   - path/to/reviewed-artifact.md
 ---
 
-# Specialist Findings
+# 专项评审发现
 
-## Findings
+## 发现
 
-### Finding 1: <title>
+### 发现 1：<title>
 
-- Severity:
-- Confidence:
-- Evidence:
-- Impact:
-- Recommendation:
+- 严重程度:
+- 置信度:
+- 证据:
+- 影响:
+- 建议:
 
-## Evidence Gaps
+## 证据缺口
 
-- Empty when none.
+- 没有时写“无”。
 
-## Residual Risks
+## 残余风险
 
-- Empty when none.
+- 没有时写“无”。

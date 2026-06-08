@@ -7,82 +7,43 @@ source_artifacts:
   - requirements/validated-requirements.md
 ---
 
-# Design Artifact
+# 设计产物
 
-## Design Intent
+<!--
+上面的 frontmatter 是产物契约。下面的章节是起步骨架，不是固定表单：
+保留服务于设计的部分，删掉无用部分，补上缺失部分。
+当图比文字更清楚地说明结构、流程、状态或前后变化时使用 Mermaid；
+图必须诚实，使用真实组件，并让标签说明每一步做什么。
+-->
 
-## Source References
+## 设计意图
 
-## Current Context
+## 来源引用
 
-## Components Or Affected Modules
+## 当前上下文
 
-- Component ownership, boundary, and hidden internal detail.
+## 组件或受影响模块
 
-```mermaid
-flowchart LR
-  subgraph Before["Before: current structure or behavior"]
-    BActor["Caller submits current request"] --> BEntry["Existing entry point accepts request"]
-    BEntry --> BService["Existing service applies current rule"]
-    BService --> BDependency["Current dependency provides state"]
-    BService --> BGap["Gap or coupling creates failing/limited outcome"]
-  end
-  subgraph After["After: target structure or behavior"]
-    AActor["Caller submits same or new request"] --> AEntry["Stable public entry point validates contract"]
-    AEntry --> ABoundary["Target boundary normalizes handoff"]
-    ABoundary --> AService["Owning service applies target rule"]
-    AService --> ADependency["Persistence or external dependency reads/writes state"]
-    AService --> AOutcome["Success outcome with preserved behavior"]
-  end
-  BGap -. "delta addressed by design" .-> ABoundary
-```
+## 接口与契约
 
-## Interfaces And Contracts
+## 数据表与数据模型
 
-## Data Or State Flow
+## 数据或状态流
 
-```mermaid
-sequenceDiagram
-  participant Caller
-  participant Entry
-  participant Boundary as TargetBoundary
-  participant Service as OwningService
-  participant Store as PersistenceOrDependency
-  Caller->>Entry: Submit request with required fields
-  Entry->>Boundary: Validate contract and normalize input
-  Boundary->>Service: Delegate domain operation with hidden internals
-  Service->>Store: Read or write state needed for decision
-  Store-->>Service: Return persisted result or dependency response
-  Service-->>Boundary: Return domain response with preserved invariants
-  Boundary-->>Entry: Map to stable response shape
-  Entry-->>Caller: Send result or explicit failure outcome
-```
+## 必须保留的既有行为
 
-## Mermaid Validation
+## 技术方案
 
-- Block count:
-- Before/after required:
-- Declarations checked:
-- Task-specific labels checked:
-- Example placeholders replaced:
-- Step labels explain action/output/boundary:
-- Edge syntax checked:
-- Rendered diagram assets:
+## 复杂度
 
-## Existing Behavior To Preserve
+## 风险
 
-## Technical Approach
+## 与验证相关的说明
 
-## Complexity
+## 实现约束
 
-## Risks
+## 建议的专项评审
 
-## Verification-Relevant Notes
+## 开放问题
 
-## Implementation Constraints
-
-## Specialist Reviews Recommended
-
-## Open Questions
-
-## Handoff To Implementation Planner
+## 交给 Implementation Planner 的交接

@@ -1,50 +1,21 @@
-# Local Code Review Reference
+# 本地代码评审参考
 
-Use this to coordinate implementation review and produce one accountable decision.
+用于协调实现评审，并收敛成一个可被追责的决策。这里讲的是「怎么判断」——选谁来评、发现怎么分级、结论怎么定——而不是排版格式。
 
-## Review Layers
+## 评审层面与选取
 
-Always consider:
+总要考虑正确性（逻辑、状态、边界条件、错误传播）、标准（明确的仓库指令与本地约定）、简洁性（不必要的抽象、范围蔓延、可避免的复杂度）这三层。其余层面按改动的实际风险追加，而不是一律全开：security 用于 auth、权限、对外端点、不可信输入、密钥；可靠性用于重试、超时、I/O、异步任务、健康检查与恢复；性能用于热点路径、查询、循环、内存、规模；API 契约用于路由、JSON-RPC/A2A、CLI、schema、对外接口；对抗性用于高风险、改动大、多角色、对时序敏感或易被滥用的变更；当实现改动了风险或覆盖假设时，引入 Test Planner 或测试评审。
 
-- Correctness: logic, state, edge cases, error propagation.
-- Standards: explicit repository instructions and local conventions.
-- Simplicity: unnecessary abstraction, scope creep, avoidable complexity.
+## 发现分级
 
-Conditionally add:
+分级的依据是「有没有可操作的失败路径」，而不是发现来自几个 reviewer。
 
-- Security for auth, permissions, public endpoints, untrusted input, secrets.
-- Reliability for retries, timeouts, I/O, async jobs, health, recovery.
-- Performance for hot paths, queries, loops, memory, scale.
-- API Contract for routes, JSON-RPC/A2A, CLI, schemas, exported interfaces.
-- Adversarial for high-risk, large, multi-actor, timing-sensitive, or abuse-prone changes.
-- Test Planner or Test Plan Reviewer when implementation changes risk or coverage assumptions.
+必须修的，是可复现的行为 bug、security 或数据丢失风险、破坏契约的改动、对明确需求的违反，以及任何会阻断有意义 verification 的评审拦路问题。建议修的，是有合理失败模式的可维护性、可靠性、性能或覆盖风险。可选的，是不阻断交付的有用清理。该驳回的，是风格意见、重复项、与本次无关的既有问题，以及没有可操作路径的臆测。
 
-## Findings Triage
+合并重复发现时，归到证据最强、文件/行号最精确的那一条之下。
 
-Must-fix:
+## 决策
 
-- Reproducible behavior bug.
-- Security or data-loss risk.
-- Contract-breaking change.
-- Explicit requirement violation.
-- Review blocker that prevents meaningful verification.
+`approve`：已无必须修的发现，verification 可以继续。`request_changes`：仍有一个或多个必须修的发现。`needs_more_evidence`：因为 diff、需求、测试或设计上下文缺失，评审无法完成。
 
-Should-fix:
-
-- Clear maintainability, reliability, performance, or coverage risk with a plausible failure mode.
-
-Optional:
-
-- Useful cleanup that does not block delivery.
-
-Dismiss:
-
-- Style opinion, duplicate, pre-existing unrelated issue, or speculation without an actionable path.
-
-## Decision Gate
-
-- `approve`: no must-fix findings remain and verification can proceed.
-- `request_changes`: one or more must-fix findings remain.
-- `needs_more_evidence`: review cannot be completed because diff, requirements, tests, or design context is missing.
-
-Never claim a reviewer, command, or test ran unless there is evidence.
+绝不要声称某个 reviewer、命令或 test 跑过，除非有证据。

@@ -8,68 +8,68 @@ source_artifacts:
 confidence: HIGH
 ---
 
-# TestPlan: Example Title
+# 测试计划：Example Title
 
-## Requirements Covered
+## 覆盖的需求
 
-- FR-1 / AC-1: covered by checks below.
+- FR-1 / AC-1：由下列检查覆盖。
 
-## Must-Have Checks
+## Must-Have 检查
 
-- MH-1: behavior to prove, layer, and evidence.
+- MH-1：要证明的行为、验证层级和证据。
 
-## Forbidden Zones
+## 禁区
 
-- Area that must not change.
+- 绝对不能改变的区域。
 
-## Capability Checks
+## Capability 检查
 
-- Capability scenario and expected result.
+- Capability 场景和预期结果。
 
-## Integration/API Checks
+## Integration/API 检查
 
-- Contract or cross-module flow, success path, and error path.
+- Contract 或跨模块流程、成功路径和错误路径。
 
-## E2E User Flows
+## E2E 用户流程
 
-- Full user goal with happy and error paths.
+- 完整用户目标，覆盖 happy path 和 error path。
 
-## Regression Checks
+## 回归检查
 
-- Bugfix or preserved behavior check.
+- Bugfix 或必须保留的既有行为检查。
 
-## Data And Migration Checks
+## 数据与迁移检查
 
-- Persistence, migration, rollback, privacy, or retention check.
+- 持久化、迁移、回滚、隐私或留存检查。
 
-## Failure And Edge Cases
+## 失败与边界情况
 
-- Failure mode and expected behavior.
+- Failure mode 和预期行为。
 
-## Audit And Logs
+## 审计与日志
 
-- Required log/audit signal and prohibited sensitive output.
+- 必需的日志/审计信号，以及禁止输出的敏感信息。
 
-## Security And Token Constraints
+## 安全与 Token 约束
 
-- Auth, permission, sandbox, token, or rate-limit check.
+- Auth、permission、sandbox、token 或 rate-limit 检查。
 
-## Coverage Summary
+## 覆盖度汇总
 
-- requirement/capability: check ids and layers.
+- requirement/capability：check id 和验证层级。
 
-## Environment Spec
+## 环境说明
 
-- Environment kind, workdir, commands, URLs, ports, credentials references, and blockers.
+- 环境类型、workdir、命令、URL、端口、凭据引用和 blockers。
 
-## Recommended Tester Roles
+## 推荐 Tester 角色
 
 - API Contract Tester, E2E Tester, Regression Tester, or specialist role.
 
-## Residual Risks
+## 残余风险
 
-- Empty when none.
+- 没有时写“无”。
 
-## Open Questions
+## 开放问题
 
-- Empty when none.
+- 没有时写“无”。

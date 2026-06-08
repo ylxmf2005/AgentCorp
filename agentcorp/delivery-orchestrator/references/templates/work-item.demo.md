@@ -3,44 +3,44 @@ artifact_type: WorkItem
 status: ready_for_triage
 ---
 
-# Work Item: Example Title
+# 工作项：Example Title
 
-## Type
+## 类型
 
 bugfix | enhancement | addition | greenfield
 
 ## Paradigm
 
-bugfix/hypothesis-driven | enhancement/delta-design | addition/lightweight | dev/architecture-first
+bugfix/hypothesis-driven | enhancement/delta-design | addition/simple | dev/architecture-first
 
-## Priority
+## 优先级
 
 P0 | P1 | P2 | P3
 
-## Priority Rationale
+## 优先级理由
 
-- One sentence.
+- 一句话理由。
 
-## Source Issue IDs
+## 来源 Issue ID
 
 - issue-id-or-link
 
-## Description
+## 描述
 
-- Reporter observation and user impact.
+- Reporter 观察和用户影响。
 
-## Acceptance Criteria
+## 验收标准
 
-- Observable done condition.
+- 可观察的完成条件。
 
-## Likely Files Or Surfaces
+## 可能相关文件或 Surface
 
 - path/or/surface
 
-## Dependencies
+## 依赖
 
-- None.
+- 无。
 
-## Escalation Notes
+## 升级说明
 
-- None.
+- 无。

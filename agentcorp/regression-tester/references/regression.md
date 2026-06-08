@@ -1,24 +1,19 @@
-# Local Regression Testing Reference
+# 回归测试参考
 
-Use this when proving a bug remains fixed or a risky behavior stayed compatible.
+证明一个 bug 仍然修着、或一个有风险的行为仍然兼容时，用这份参考。
 
-## Regression Process
+## 怎样算把回归证清楚
 
-1. Restate the bug or risky behavior.
-2. Reproduce it on the current baseline when possible, or explain why reproduction is unavailable.
-3. Run the focused check that should catch the issue.
-4. Run adjacent tests when blast radius is non-trivial.
-5. Verify the fixed or preserved behavior with direct evidence.
-6. Record unreproduced, flaky, blocked, or environment-dependent results.
+先把要验的 bug 或有风险的行为讲清楚，然后在当前 baseline 上尽量复现它——复现不了就说明为什么。接着跑那条本该抓住问题的针对性检查；blast radius 不小时，把受影响模块或契约里相邻的测试也带上。最后用直接证据确认修好的或被保留的行为确实成立，并把没能复现、flaky、被 block 或依赖环境的结果如实记下来。
 
-## Good Regression Evidence
+## 什么是好的回归证据
 
-- Original reproduction steps and current observed result.
-- Failing-before/passing-after test when available.
-- Commands, requests, screenshots, logs, or artifacts.
-- Adjacent checks selected from the affected module or contract.
-- Clear pass/fail status.
+- 原始复现步骤，以及当前观测到的结果。
+- 有条件时，一个「改前失败、改后通过」的测试。
+- 命令、请求、截图、日志或产物。
+- 从受影响模块或契约里挑出的相邻检查。
+- 明确的 pass/fail 状态。
 
-## Boundaries
+## 边界
 
-Do not expand into broad exploratory testing unless assigned. Do not review implementation code as the primary evidence. Do not hide flaky or environment-dependent failures.
+除非被指派，不要扩张成宽泛的探索式测试。不要把评判实现代码当作主要证据。flaky 或依赖环境的失败不要藏。

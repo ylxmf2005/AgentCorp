@@ -2,71 +2,33 @@
 id: impact-analysis
 name: Impact Analysis (Delta Design)
 inputs: [validated requirements, existing codebase]
-outputs: [impact doc with change summary, affected modules, interface changes, integration points, risk]
+outputs: [impact analysis design artifact]
 optional: false
 ---
 
-# Phase: Impact Analysis (Delta Design)
+# 影响分析（增量设计 / Delta Design）
 
-## Purpose
+对现有代码改动的精确记录。它不是把架构重写一遍——只讲增量：现状是什么、要改什么、什么绝对不能破坏、还剩哪些风险。
 
-The precise delta record for a change to an existing codebase: map what exists, design the delta, and document the impact — affected modules, interface changes, integration points, preserved behavior, and risk. No full architecture rewrite.
+## 你要做的
 
-## Process
+先读受影响的模块、接口和数据流，让增量是针对代码「实际怎么跑」来设计的，而不是针对你「以为它怎么跑」。然后用和架构设计一样的目标来设计这次改动：让变更局部化、不要把接口撑得比改动所需更宽、新代码放进它本就该在的模块。某个边界或隐藏决策拿不准时，去翻 `principles/`。
 
-### Step 1 — Map Existing Structure
+## 这份产物要达到什么
 
-Read relevant modules, interfaces, and data flows. Understand:
-- What modules exist and what they own
-- Current interfaces and contracts
-- Data flow through the affected area
-- Test coverage of the affected area
+读者读完，应当明白：现状行为是什么、目标行为是什么、改动具体落在哪里、什么必须保住、哪里可能会坏。要讲清楚：
 
-### Step 2 — Design the Delta
+- 改什么、为什么改，用一段诚实的概述说明；
+- 受影响的模块和文件（用真实路径；只有在能消除歧义时才标行号）；
+- 接口和数据上的改动，逐条写明——`none`（无）是一个有效且有用的答案；
+- 新代码与现有代码相接的集成点；
+- 必须继续正常工作的现有行为；
+- 风险：什么可能会坏、暴露程度有多大。
 
-For each change:
-- What module does it affect?
-- What interface changes are needed (if any)?
-- What existing behavior must be preserved?
-- What new behavior is introduced?
+只在某个视图能比文字更便于推敲「现状路径、目标路径或被保住的行为」时，才画图。图要诚实、具体——真实的模块和结果，别用占位方框。
 
-### Step 3 — Write Impact Doc
+如果这次改动其实很大——牵动很多模块，或带来结构性的接口改动——那它就已经超出「增量」的范畴了。这时升级为以架构为先的设计，而不是硬把这份产物撑大去覆盖它。
 
-Write the impact analysis to the assignment's `output_path`, normally `design/impact-analysis.md`.
+## 输出
 
-Keep it precise and scannable. It should answer what changes, where, what must not break, and what risk remains.
-
-**Required sections:**
-1. Change summary (one paragraph).
-2. Affected modules/files (cite real paths; line numbers only where they prevent ambiguity).
-3. Interface/data changes (list each change; `none` is valid).
-4. Integration points (where new code touches existing code).
-5. Existing behavior to preserve.
-6. Risk assessment (what could break).
-7. Complexity estimate (S / M).
-8. Delta diagrams: at least two complete Mermaid fenced code blocks with the `mermaid` info string, with at least one explicit before/after diagram. This is a lower bound; add or split diagrams when multiple views are clearer.
-
-If complexity is L or above → escalate to `dev/architecture-first` paradigm.
-
-Mermaid diagrams are mandatory for delta design. Make them complete enough to inspect the change: show real affected modules/files or services, current path, target path, interface/data/state changes, preserved behavior, and relevant failure/success outcomes. Keep each diagram human-readable in Markdown: target at most 8 nodes for flowcharts or 6 participants and 12 messages for sequence diagrams, split larger views, and move long call-chain detail to adjacent bullets. Do not use rough placeholder diagrams such as `User --> System --> DB`, and do not leave generic example labels in the final artifact. Validate the fenced Mermaid blocks with `mmdc`/Mermaid tooling when available; otherwise record manual validation evidence covering block count, before/after presence, diagram declaration, task-specific labels, placeholder replacement, edge syntax, and readability budget. Do not generate separate rendered files unless the sponsor explicitly asks for them.
-
-## Principles
-
-- `principles/information-hiding.md` — Don't break existing encapsulation
-- `principles/cohesion-separation.md` — New code goes in the right module
-- `principles/module-depth.md` — Don't make interfaces wider than necessary
-
-## Outputs
-- Markdown impact analysis at the assigned `output_path`.
-
-## Quality Gate
-- All affected modules identified
-- Interface changes are explicit (or explicitly "none")
-- Integration points documented
-- Risk assessment present
-- At least two complete Mermaid diagrams are present, including one before/after diagram; more are present when needed for readability
-- Mermaid validation evidence is recorded
-- Complexity is S or M (otherwise escalate)
-
-## Skip Conditions
-Used for enhancement work. Greenfield and major redesigns use `architecture`; bugfixes use `diagnose`; small additions use `lightweight-design-note`.
+把产物写到 assignment 的 `output_path`（通常是 `design/impact-analysis.md`），遵循 `design-artifact` demo 模板。
