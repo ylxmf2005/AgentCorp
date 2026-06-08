@@ -56,6 +56,56 @@ then judged against the phase's *quality gate* — the two are kept separate.
 | `single-agent` | yes | Orchestrator runs non-review phases itself; reviews are still delegated | regular / small–medium tasks — and the only mode on Codex |
 | `subagents` | no | Every phase is delegated to its owner via assignment/receipt | large or parallel work, or when independent authorship is needed (Claude Code only) |
 
+## Artifacts a run produces
+
+Every phase writes a Markdown artifact (with YAML frontmatter) to a known path, so a
+finished task is a **self-documenting evidence trail**, not a chat log. Delegated
+phases move over an **assignment → receipt** pair; each receipt is checked
+*mechanically* (`validate-handoff.py` — does the artifact exist, do paths / author /
+phase match) before its quality gate, and a `manifest.md` ledger records every phase,
+owner, gate result, and artifact path.
+
+Everything lives under `teamspace/` in the work directory — **local coordination state
+that is never committed** (it goes into `.git/info/exclude` if it shows up). Only the
+subdirectories a task actually needs are created.
+
+```text
+teamspace/tasks/<task_id>/
+├── task.md                       # goal, classification, gate history
+├── manifest.md                   # ledger: phase · owner · gate · artifact path
+├── handoffs/                     # assignment + receipt pairs (delegated phases)
+│   ├── 001-validate-requirements.md
+│   └── 001-validate-requirements-receipt.md
+├── requirements/
+│   └── validated-requirements.md
+├── test/
+│   ├── test-plan.md
+│   └── test-plan-review.md
+├── design/                       # one per paradigm
+│   └── architecture.md | impact-analysis.md | diagnosis.md | api-contract.md
+├── implementation/
+│   ├── implementation-story.md
+│   └── implementation-result.md
+├── review/
+│   ├── plan-review.md
+│   ├── code-review.md
+│   ├── specialist-findings/
+│   ├── research/                 # review-researcher: one file per finding + index
+│   │   ├── 00-index.md
+│   │   └── <NN>-<slug>.md
+│   ├── fix-result.md
+│   └── fix-records/              # one per parallel review-fixer group
+├── verification/
+│   ├── assignments/
+│   ├── test-results/
+│   └── verification-report.md
+├── acceptance/
+│   ├── acceptance-package.md
+│   └── acceptance-decision.md
+└── delivery/
+    └── delivery-report.md
+```
+
 ## Install — Claude Code
 
 ```

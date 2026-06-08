@@ -51,6 +51,54 @@ AgentCorp 的招牌:code-review 的 findings 绝不盲目修。一个独立的 `
 | `single-agent` | 是 | 编排者亲自跑非 review phase;review 仍委派 | 常规 / 中小任务——也是 Codex 上唯一的 mode |
 | `subagents` | 否 | 每个 phase 都经 assignment/receipt 委派给 owner | 大型或可并行的工作,或需要独立 authorship 时(仅 Claude Code) |
 
+## 一次运行会产出什么
+
+每个 phase 都会把一份带 YAML frontmatter 的 Markdown 产物写到固定路径,所以一个跑完的
+任务本身就是一条**自带文档的证据链**,而不是一段聊天记录。被委派的 phase 以
+**assignment → receipt** 成对流转;每份 receipt 先过*机械校验*(`validate-handoff.py`
+——产物是否存在、路径 / author / phase 是否对得上)再过质量 gate,一份 `manifest.md`
+账本记录每个 phase、owner、gate 结果和产物路径。
+
+所有产物都在工作目录的 `teamspace/` 下——这是**本地协调状态,绝不提交**(若出现在 git
+status 就加进 `.git/info/exclude`)。只创建任务真正需要的子目录。
+
+```text
+teamspace/tasks/<task_id>/
+├── task.md                       # 目标、任务分类、gate 历史
+├── manifest.md                   # 账本:phase · owner · gate · 产物路径
+├── handoffs/                     # assignment + receipt 成对(委派的 phase)
+│   ├── 001-validate-requirements.md
+│   └── 001-validate-requirements-receipt.md
+├── requirements/
+│   └── validated-requirements.md
+├── test/
+│   ├── test-plan.md
+│   └── test-plan-review.md
+├── design/                       # 按范式四选一
+│   └── architecture.md | impact-analysis.md | diagnosis.md | api-contract.md
+├── implementation/
+│   ├── implementation-story.md
+│   └── implementation-result.md
+├── review/
+│   ├── plan-review.md
+│   ├── code-review.md
+│   ├── specialist-findings/
+│   ├── research/                 # review-researcher:逐条 finding 一文件 + 索引
+│   │   ├── 00-index.md
+│   │   └── <编号>-<slug>.md
+│   ├── fix-result.md
+│   └── fix-records/              # 每个并行 review-fixer 组一份
+├── verification/
+│   ├── assignments/
+│   ├── test-results/
+│   └── verification-report.md
+├── acceptance/
+│   ├── acceptance-package.md
+│   └── acceptance-decision.md
+└── delivery/
+    └── delivery-report.md
+```
+
 ## 安装 — Claude Code
 
 ```
