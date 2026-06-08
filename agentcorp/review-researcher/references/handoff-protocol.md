@@ -1,6 +1,6 @@
 # 本地 Handoff 协议
 
-本协议属于 `review-research-agent` skill 自己的 reference。assignment、receipt 的形态从本目录的 `templates/` demo 取用；研究文件夹的骨架在 `research-doc-template.md`。
+本协议属于 `review-researcher` skill 自己的 reference。assignment、receipt 的形态从本目录的 `templates/` demo 取用；研究文件夹的骨架在 `research-doc-template.md`。
 
 协议字段、`artifact_type`、`status` 枚举、`verdict` 枚举、路径、代码标识符保持原值；面向人阅读的说明正文使用 zh-CN。
 

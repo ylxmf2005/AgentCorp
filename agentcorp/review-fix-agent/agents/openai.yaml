@@ -1,4 +1,0 @@
-interface:
-  display_name: "Review Fix Agent"
-  short_description: "Apply one group of verified fixes"
-  default_prompt: "Use $review-fix-agent to perform the AgentCorp Review Fix Agent role."

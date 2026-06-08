@@ -1,7 +1,7 @@
 ---
 artifact_type: FixRecordSet
 task_id: example-task-20260603-120000
-author_agent: review-fix-agent
+author_agent: review-fixer
 status: completed
 group_slug: <本组的简短英文 slug，通常取自占用文件集>
 source_artifacts:
@@ -30,4 +30,4 @@ source_artifacts:
 - verdict: needs-research
 - files_changed: 无
 - regression_check: 不适用
-- escalation: research 建议对不上当前代码——<对不上在哪：代码已变 / 落不下去 / 与现有代码冲突>。未自行改方案硬上，退回 review-research-agent 复核。
+- escalation: research 建议对不上当前代码——<对不上在哪：代码已变 / 落不下去 / 与现有代码冲突>。未自行改方案硬上，退回 review-researcher 复核。

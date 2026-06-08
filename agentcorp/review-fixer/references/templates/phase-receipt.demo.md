@@ -1,7 +1,7 @@
 ---
 artifact_type: PhaseReceipt
 task_id: example-task-20260603-120000
-from_agent: review-fix-agent
+from_agent: review-fixer
 phase: fix
 status: completed
 artifact_path: review/fix-records/<group-slug>.md

@@ -3,7 +3,7 @@ artifact_type: PhaseAssignment
 task_id: example-task-20260603-120000
 task_root: teamspace/tasks/example-task-20260603-120000/
 from_agent: delivery-orchestrator
-to_agent: review-research-agent
+to_agent: review-researcher
 phase: review-research
 status: assigned
 output_path: review/research/

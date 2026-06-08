@@ -1,6 +1,6 @@
 # 单组落地执行细节
 
-本文件是 `review-fix-agent` 的本地 reference：作为单个修复 worker，怎么把指派给你的**一组**已核验修复项落地。切分、并行、合并校验、跨组汇总都不在这里——那是 Delivery Orchestrator 的事。
+本文件是 `review-fixer` 的本地 reference：作为单个修复 worker，怎么把指派给你的**一组**已核验修复项落地。切分、并行、合并校验、跨组汇总都不在这里——那是 Delivery Orchestrator 的事。
 
 ## 你的边界
 
@@ -11,7 +11,7 @@
 
 1. **抗漂移核对（不是重做核验）**：读 `OWNED_FILES` 里相关代码，确认 research 的修法建议仍对得上当前代码。
    - 对得上 → 进入实现。
-   - 代码已变 / 建议在当前上下文落不下去 / 会与现有代码冲突 → **不要自行改方案硬上**：`needs-research` 退回让 `review-research-agent` 复核，或 `needs-human` 上报。
+   - 代码已变 / 建议在当前上下文落不下去 / 会与现有代码冲突 → **不要自行改方案硬上**：`needs-research` 退回让 `review-researcher` 复核，或 `needs-human` 上报。
    - 注意：这一步只核对「建议还能不能落地」，**不重新判断 bug 真伪**——真伪 research 已经独立核验过。
 2. **忠实落地**：按修法建议改 root cause，聚焦、贴合仓库约定。
    - **不把建议降格成局部补丁**，不加它没要求的防御代码或兜底，不顺手重构邻居，不回退别人的改动。

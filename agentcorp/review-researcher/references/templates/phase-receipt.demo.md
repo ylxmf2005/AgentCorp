@@ -1,7 +1,7 @@
 ---
 artifact_type: PhaseReceipt
 task_id: example-task-20260603-120000
-from_agent: review-research-agent
+from_agent: review-researcher
 phase: review-research
 status: completed
 artifact_path: review/research/00-index.md

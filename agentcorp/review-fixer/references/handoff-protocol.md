@@ -1,6 +1,6 @@
 # 本地 Handoff 协议
 
-本协议属于 `review-fix-agent` skill 自己的 reference。assignment、receipt 和本角色产物的形态，都从本目录的 `templates/` demo 取用。
+本协议属于 `review-fixer` skill 自己的 reference。assignment、receipt 和本角色产物的形态，都从本目录的 `templates/` demo 取用。
 
 协议字段、`artifact_type`、`status` 枚举、路径、代码标识符和 API/接口契约字段保持原值；面向人阅读的说明正文使用 zh-CN。
 
