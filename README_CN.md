@@ -21,70 +21,13 @@ AgentCorp 建模的是一个交付*组织*,而不是单条 prompt。Delivery Orc
 每种范式都跑同一组 phase 的一个子集。评审 phase(红色)和人工 gate(黄色)夹在工作
 phase 之间;`要求修改` / `驳回` 会回退。
 
-```mermaid
-flowchart TD
-    A["接到任务：分类<br/>选择范式 + workflow mode"] --> B["validate-requirements<br/>需求确认"]
-    B --> C["test-plan<br/>测试计划"]
-    C --> D{"test-plan-review<br/>测试计划评审"}
-    D -->|通过| E["design 设计：architecture / impact / diagnosis<br/>接口共享时加 api-contract"]
-    D -->|要求修改| C
-    E --> F["implementation-plan<br/>实现规划"]
-    F --> G{"plan-review<br/>计划评审"}
-    G -->|通过| H["implement<br/>实现"]
-    G -->|要求修改| F
-    H --> I{"code-review<br/>代码评审"}
-    I -->|无问题| M["verify<br/>验证"]
-    I -->|有 findings| J["review-research<br/>独立复核"]
-    J --> K{"人工 gate：<br/>确认判定"}
-    K -->|批准| L["fix<br/>按文件并行修复"]
-    L --> M
-    M --> N{"acceptance-review<br/>验收评审"}
-    N -->|验收| O["deliver<br/>交付"]
-    N -->|驳回| H
-    classDef review fill:#fde2e2,stroke:#c0392b,color:#000;
-    classDef gate fill:#fff3cd,stroke:#d39e00,color:#000;
-    class D,G,I,N review;
-    class K gate;
-```
+![交付生命周期](docs/diagrams/01-lifecycle.png)
 
 ### 2. 角色
 
 每个 phase 由专门的 skill 负责。评审角色与它评判的工作保持独立;编排者不审批自己的产出。
 
-```mermaid
-flowchart TB
-    O["Delivery Orchestrator 交付编排者<br/>分类 - 路由 - 把关 - 交付"]
-    RRA["review-researcher<br/>断路器"]
-    subgraph PLAN["规划与设计"]
-        SA["solution-architect"]
-        IP["implementation-planner"]
-        TP["test-planner"]
-        SOTA["sota-researcher"]
-    end
-    subgraph EXEC["实现"]
-        IE["implementation-engineer"]
-        RF["review-fixer<br/>并行 worker"]
-    end
-    subgraph REV["独立评审（作者不审自己）"]
-        TPR["test-plan-reviewer"]
-        PRL["plan-review-lead"]
-        CRL["code-review-lead"]
-        ARL["acceptance-review-lead"]
-        SPEC["专项 reviewer：<br/>correctness - security - performance<br/>reliability - simplicity - standards - api-contract"]
-    end
-    subgraph VER["验证"]
-        TL["test-leader"]
-        TST["e2e - api-contract - regression testers"]
-    end
-    O --> PLAN
-    O --> EXEC
-    O --> REV
-    O --> VER
-    CRL --> RRA
-    RRA --> RF
-    CRL --> SPEC
-    TL --> TST
-```
+![角色](docs/diagrams/02-roles.png)
 
 ### 3. review → research → fix 主脊
 
@@ -92,42 +35,14 @@ AgentCorp 的招牌:code-review 的 findings 绝不盲目修。一个独立的 `
 先逐条复核每个 finding——一个掐掉误报的断路器——确认后才落地修复。修复再按文件归属并行
 切分,两个 worker 不会碰同一个文件。
 
-```mermaid
-flowchart TD
-    CR["code-review<br/>产出分级 findings"] --> RR1
-    subgraph RR["review-research - 独立断路器"]
-        RR1["按代码域聚类 findings"] --> RR2["对抗式逐条复核"]
-        RR2 --> RR3["逐条判定：<br/>确认 - 部分成立 - 误报 - 待人确认"]
-    end
-    RR3 --> HG{"人工 gate：<br/>确认判定与修法"}
-    HG -->|批准| FX1
-    subgraph FX["fix - 按文件归属并行"]
-        FX1["把确认项切成<br/>互不重叠的文件组"] --> FX2["review-fixer<br/>忠实落地修复"]
-        FX2 --> FX3["编排者跑一次<br/>合并校验"]
-    end
-    FX3 --> OUT["fix-result.md"]
-```
+![review 到 research 到 fix 主脊](docs/diagrams/03-review-research-fix.png)
 
 ### 4. Handoff 与 gate
 
 被委派的 phase 通过 assignment/receipt 文件流转。每份 receipt 先做*机械校验*(产物是否
 存在、路径 / author / phase 是否对得上),通过后才按该 phase 的*质量 gate* 判断——两者分开。
 
-```mermaid
-sequenceDiagram
-    participant O as Delivery Orchestrator
-    participant W as Phase owner
-    participant H as Human gate
-    O->>W: assignment（task_root, output_path, 上下文）
-    W->>W: 执行该 phase 的工作
-    W-->>O: receipt + output_path 处的产物
-    O->>O: 机械校验（validate-handoff.py）
-    Note over O: envelope 一致性 - 产物存在,<br/>路径 / author / phase 对得上
-    O->>O: 质量 gate（phase 专属）
-    O->>H: 在 active 人工 gate 处暂停
-    H-->>O: 批准 / 跳过 / 改向 / 阻塞
-    O->>O: 记入 manifest.md,同步 workspace
-```
+![Handoff 与 gate](docs/diagrams/04-handoff.png)
 
 ### Workflow modes
 

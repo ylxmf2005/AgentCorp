@@ -23,71 +23,14 @@ an artifact never approves it.
 Every paradigm runs a subset of the same phases. Review phases (red) and the human
 gate (yellow) sit between work phases; `request changes` / `reject` loop back.
 
-```mermaid
-flowchart TD
-    A["Intake: classify task<br/>pick paradigm + workflow mode"] --> B["validate-requirements"]
-    B --> C["test-plan"]
-    C --> D{"test-plan-review"}
-    D -->|approve| E["design: architecture / impact / diagnosis<br/>+ api-contract when interfaces are shared"]
-    D -->|request changes| C
-    E --> F["implementation-plan"]
-    F --> G{"plan-review"}
-    G -->|approve| H["implement"]
-    G -->|request changes| F
-    H --> I{"code-review"}
-    I -->|clean| M["verify"]
-    I -->|findings| J["review-research<br/>independent re-verify"]
-    J --> K{"human gate:<br/>confirm verdicts"}
-    K -->|approved| L["fix<br/>parallel by file"]
-    L --> M
-    M --> N{"acceptance-review"}
-    N -->|accept| O["deliver"]
-    N -->|reject| H
-    classDef review fill:#fde2e2,stroke:#c0392b,color:#000;
-    classDef gate fill:#fff3cd,stroke:#d39e00,color:#000;
-    class D,G,I,N review;
-    class K gate;
-```
+![Delivery lifecycle](docs/diagrams/01-lifecycle.png)
 
 ### 2. Roles
 
 Specialized skills own each phase. Review roles stay independent from the work they
 judge; the orchestrator never approves its own output.
 
-```mermaid
-flowchart TB
-    O["Delivery Orchestrator<br/>classify - route - gate - deliver"]
-    RRA["review-researcher<br/>circuit breaker"]
-    subgraph PLAN["Planning and design"]
-        SA["solution-architect"]
-        IP["implementation-planner"]
-        TP["test-planner"]
-        SOTA["sota-researcher"]
-    end
-    subgraph EXEC["Implementation"]
-        IE["implementation-engineer"]
-        RF["review-fixer<br/>parallel workers"]
-    end
-    subgraph REV["Independent review (author is not reviewer)"]
-        TPR["test-plan-reviewer"]
-        PRL["plan-review-lead"]
-        CRL["code-review-lead"]
-        ARL["acceptance-review-lead"]
-        SPEC["specialist reviewers:<br/>correctness - security - performance<br/>reliability - simplicity - standards - api-contract"]
-    end
-    subgraph VER["Verification"]
-        TL["test-leader"]
-        TST["e2e - api-contract - regression testers"]
-    end
-    O --> PLAN
-    O --> EXEC
-    O --> REV
-    O --> VER
-    CRL --> RRA
-    RRA --> RF
-    CRL --> SPEC
-    TL --> TST
-```
+![Roles](docs/diagrams/02-roles.png)
 
 ### 3. The review → research → fix spine
 
@@ -96,21 +39,7 @@ AgentCorp's signature: code-review findings are never fixed blindly. An independ
 positives — before any fix lands. Fixes then run in parallel, split by file ownership
 so no two workers touch the same file.
 
-```mermaid
-flowchart TD
-    CR["code-review<br/>produces graded findings"] --> RR1
-    subgraph RR["review-research - independent circuit breaker"]
-        RR1["cluster findings by code domain"] --> RR2["adversarially re-verify each finding"]
-        RR2 --> RR3["verdict per issue:<br/>confirmed - partial - false-positive - needs-human"]
-    end
-    RR3 --> HG{"human gate:<br/>confirm verdicts and fixes"}
-    HG -->|approved| FX1
-    subgraph FX["fix - parallel by file ownership"]
-        FX1["split confirmed fixes into<br/>non-overlapping file groups"] --> FX2["review-fixer workers<br/>land fixes faithfully"]
-        FX2 --> FX3["orchestrator runs one<br/>merged validation"]
-    end
-    FX3 --> OUT["fix-result.md"]
-```
+![review to research to fix spine](docs/diagrams/03-review-research-fix.png)
 
 ### 4. Handoff & gates
 
@@ -118,21 +47,7 @@ Delegated phases move over assignment/receipt files. Each receipt is first check
 *mechanically* (does the artifact exist; do paths / author / phase match) and only
 then judged against the phase's *quality gate* — the two are kept separate.
 
-```mermaid
-sequenceDiagram
-    participant O as Delivery Orchestrator
-    participant W as Phase owner
-    participant H as Human gate
-    O->>W: assignment (task_root, output_path, context)
-    W->>W: do the phase work
-    W-->>O: receipt + artifact at output_path
-    O->>O: mechanical validation (validate-handoff.py)
-    Note over O: envelope consistency - artifact exists,<br/>paths / author / phase match
-    O->>O: quality gate (phase-specific)
-    O->>H: pause at active human gate
-    H-->>O: approved / skipped / revised / blocked
-    O->>O: record in manifest.md, sync workspace
-```
+![Handoff and gates](docs/diagrams/04-handoff.png)
 
 ### Workflow modes
 
