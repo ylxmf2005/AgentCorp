@@ -1,0 +1,4 @@
+interface:
+  display_name: "Project Steward Reviewer"
+  short_description: "Protect long-term project health"
+  default_prompt: "Use $project-steward-reviewer to review whether a change belongs in the project long term."

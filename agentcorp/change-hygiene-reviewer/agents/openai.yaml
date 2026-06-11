@@ -1,0 +1,4 @@
+interface:
+  display_name: "Change Hygiene Reviewer"
+  short_description: "Keep MR diffs clean and traceable"
+  default_prompt: "Use $change-hygiene-reviewer to review a diff for noise, scope residue, and intent trace gaps."
