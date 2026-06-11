@@ -4,7 +4,7 @@ task_id: example-task-20260603-120000
 author_agent: delivery-orchestrator
 status: active
 current_phase: validate-requirements
-workflow_mode: single-agent
+workflow_mode: partial-delegation
 ---
 
 # 任务：Example Task
@@ -27,7 +27,7 @@ workflow_mode: single-agent
 
 ## 工作流模式
 
-- single-agent
+- partial-delegation（direct | partial-delegation | full-delegation 三选一）
 
 ## Phase 序列
 
