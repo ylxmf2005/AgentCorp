@@ -12,7 +12,7 @@ skills install in both **Claude Code** and **Codex** from one repository.
 
 ## Features
 
-- 26 specialized skills covering the full delivery flow: requirements, test plan, design, implementation, code review, verification, acceptance, and delivery.
+- 27 specialized skills covering the full delivery flow: requirements, test plan, design, implementation, code review, verification, acceptance, and delivery.
 - Author/reviewer separation — an artifact's author never reviews or approves it.
 - Independent re-verification — code-review findings are re-checked one by one by a separate role before any fix, filtering out false positives.
 - Parallel fixes — fixes are partitioned by file ownership and applied concurrently without overlap.
@@ -62,8 +62,9 @@ then judged against the phase's quality gate — the two checks are kept separat
 
 | Mode | Default | How it runs | When |
 |------|---------|-------------|------|
-| `single-agent` | yes | The orchestrator runs non-review phases itself; reviews are still delegated | regular, small-to-medium tasks |
-| `subagents` | no | Every phase is delegated to its owner via assignment/receipt | large or parallel work, or when independent authorship is required |
+| `direct` | no | No subagents at all; the orchestrator runs every phase itself, review phases produce drafts adjudicated by the sponsor at the human gate | small low-risk changes, or hosts without subagent support; requires explicit sponsor confirmation |
+| `partial-delegation` | yes | The orchestrator runs non-review phases itself; reviews are still delegated | regular, small-to-medium tasks |
+| `full-delegation` | no | Every phase is delegated to its owner via assignment/receipt | large or parallel work, or when independent authorship is required |
 
 ## Output artifacts
 
@@ -90,8 +91,11 @@ teamspace/tasks/<task_id>/
 ├── test/
 │   ├── test-plan.md
 │   └── test-plan-review.md
-├── design/                       # one per paradigm
-│   └── architecture.md | impact-analysis.md | diagnosis.md | api-contract.md
+├── design/                       # combine as needed; multiple artifacts may coexist
+│   ├── architecture.md           # structural design
+│   ├── impact-analysis.md        # incremental impact analysis
+│   ├── diagnosis.md              # defect root-cause diagnosis
+│   └── api-contract.md           # interface/contract definition
 ├── implementation/
 │   ├── implementation-story.md
 │   └── implementation-result.md
@@ -146,16 +150,16 @@ This installs the skill into `~/.codex/skills/`.
 
 ## Skills
 
-26 skills cover the full pipeline:
+27 skills cover the full pipeline:
 
 - **Orchestration** — `delivery-orchestrator`
 - **Planning and design** — `solution-architect`, `implementation-planner`, `test-planner`, `sota-researcher`
 - **Implementation** — `implementation-engineer`, `review-fixer`
 - **Plan and test-plan review** — `plan-review-lead`, `test-plan-reviewer`, `adversarial-reviewer`
-- **Code review** — `code-review-lead`, plus the specialist reviewers `correctness-reviewer`, `security-reviewer`, `performance-reviewer`, `reliability-reviewer`, `simplicity-reviewer`, `standards-reviewer`, `api-contract-reviewer`
+- **Code review** — `code-review-lead`, plus the specialist reviewers `correctness-reviewer`, `security-reviewer`, `performance-reviewer`, `reliability-reviewer`, `simplicity-reviewer`, `change-hygiene-reviewer`, `standards-reviewer`, `project-steward-reviewer`, `api-contract-reviewer`
 - **Verification** — `test-leader`, `e2e-tester`, `api-contract-tester`, `regression-tester`
 - **Research and acceptance** — `review-researcher`, `acceptance-review-lead`
-- **Support** — `change-detailed-walker`, `fresh-start-handoff`
+- **Support** — `change-detailed-walker` (fresh-start handoff and cross-task learnings are built-in capabilities of `delivery-orchestrator`, see its `references/fresh-start-handoff.md` and `references/learnings.md`)
 
 Each skill's full description is in its `agentcorp/<skill>/SKILL.md` and appears in the
 Claude Code and Codex skill pickers.
@@ -169,6 +173,7 @@ Claude Code and Codex skill pickers.
 | `.codex-plugin/plugin.json`, `.agents/plugins/marketplace.json` | Codex manifests (generated) |
 | `tools/codex-interface.json` | Codex-only display and policy metadata |
 | `tools/sync-codex.py` | Regenerates the Codex manifests from the Claude manifests |
+| `tools/sync-shared.py` | Re-copies shared reference files into every skill, keeping each skill self-contained |
 | `docs/diagrams/` | Workflow diagrams (`.drawio` sources and `.png` exports) |
 
 Both tools point their `skills` field at `./agentcorp` and auto-discover the skill
