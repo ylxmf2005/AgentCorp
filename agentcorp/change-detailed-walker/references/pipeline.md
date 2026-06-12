@@ -63,6 +63,13 @@ comments.part-NN.jsonl
 
 walker 收尾时按分片顺序合并为 `comments.jsonl`，再运行校验器。合并前要确认每个分片都是 JSONL，空行可保留，坏行必须修掉或让校验器报出后修掉。
 
+分片编号必须保持 `comments.part-NN.jsonl` 的两位零填充。标准合并和预检命令原文：
+
+```bash
+cat <dir>/comments.part-*.jsonl > <dir>/comments.jsonl
+python3 <skill>/scripts/validate_coverage.py --data <dir>
+```
+
 ## 校验回路
 
 每批或全部批次完成后运行：

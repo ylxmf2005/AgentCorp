@@ -109,6 +109,7 @@ def main():
         return fail(f"cannot bind {HOST}:{args.port}: {exc}. Try another port with --port")
 
     print(f"Serving walkthrough at http://127.0.0.1:{args.port}/", flush=True)
+    print(f"Serving data from {data_dir.resolve()}", flush=True)
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:

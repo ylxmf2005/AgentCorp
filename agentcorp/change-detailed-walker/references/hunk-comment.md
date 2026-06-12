@@ -50,6 +50,8 @@
 
 单文档时代的重排阅读路径在这里改为：页面按文件组织、hunk 按 diff 自然序呈现，跨 hunk 的因果通过 `trace` 与评论正文互相指认。需要连接上下文时，写清「配合 `h-...` 的字段新增」或「由 `requirements/... FR-2` 授权」。
 
+如果分支没有需求、设计或评审文档，trace 可以只做 commit 追溯，格式写 `<repo 代称> <短sha> <commit 主题关键词>`，例如 `target-repo 1a2b3c4 fix clone default title`；不要为凑 trace 编造不存在的上游产物。
+
 ### 代码引用靠 code_refs 定位
 
 `trace` 回答「这个改动的授权从哪来」，取产物、commit 或 hunk 级线索；`code_refs` 回答「去看哪段代码」，取结构化代码坐标。两者互不替代。

@@ -11,11 +11,16 @@
   ]);
   const ATTENTION_CLASSES = new Set(["suspect-refactor", "suspect-residue", "untraceable"]);
   const SIDES = ["old", "new"];
+  const COMMENT_POLL_INTERVAL_MS = 3000;
 
   const state = {
     diff: null,
     comments: new Map(),
     commentWarnings: [],
+    commentError: "",
+    commentText: null,
+    commentPollTimer: null,
+    commentPollInFlight: false,
     banners: [],
     unitsByFile: new Map(),
     selectedFileId: null,
@@ -61,24 +66,14 @@
     indexCoverageUnits(diff);
 
     try {
-      await loadComments("/data/comments.jsonl");
+      applyCommentSnapshot(await fetchCommentSnapshot("/data/comments.jsonl"));
     } catch (error) {
-      state.comments = new Map();
-      state.banners.push({
-        kind: "error",
-        text: `无法加载 comments.jsonl：${error.message}。全部覆盖单元按缺讲解处理。`,
-      });
-    }
-
-    if (state.commentWarnings.length > 0) {
-      state.banners.push({
-        kind: "warning",
-        text: `comments.jsonl 有 ${state.commentWarnings.length} 行被跳过或覆盖，页面只使用可解析的最后一条评论。`,
-      });
+      applyCommentError(`无法加载 comments.jsonl：${error.message}。全部覆盖单元按缺讲解处理。`);
     }
 
     chooseInitialFile();
     render();
+    startCommentPolling();
   }
 
   async function fetchJson(url) {
@@ -101,20 +96,21 @@
     return response.text();
   }
 
-  async function loadComments(url) {
+  async function fetchCommentSnapshot(url) {
     const response = await fetch(url, { cache: "no-store" });
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);
     }
-    parseComments(await response.text());
+    return parseComments(await response.text());
   }
 
   function parseComments(text) {
     const comments = new Map();
+    const warnings = [];
     let invalidLines = 0;
-    state.commentWarnings = [];
+    const rawText = String(text || "");
 
-    text.split(/\r?\n/).forEach((line, index) => {
+    rawText.split(/\r?\n/).forEach((line, index) => {
       const lineNumber = index + 1;
       if (line.trim() === "") {
         return;
@@ -125,33 +121,67 @@
         parsed = JSON.parse(line);
       } catch (error) {
         invalidLines += 1;
-        state.commentWarnings.push(`BAD_LINE ${lineNumber}: JSON 解析失败`);
+        warnings.push(`BAD_LINE ${lineNumber}: JSON 解析失败`);
         return;
       }
 
       const reason = validateComment(parsed);
       if (reason) {
         invalidLines += 1;
-        state.commentWarnings.push(`BAD_LINE ${lineNumber}: ${reason}`);
+        warnings.push(`BAD_LINE ${lineNumber}: ${reason}`);
         return;
       }
 
       if (comments.has(parsed.id)) {
-        state.commentWarnings.push(`WARN duplicate comment for ${parsed.id}, last one wins`);
+        warnings.push(`WARN duplicate comment for ${parsed.id}, last one wins`);
       }
       comments.set(parsed.id, parsed);
     });
 
-    if (text.trim() !== "" && comments.size === 0 && invalidLines > 0) {
-      state.comments = new Map();
-      state.banners.push({
-        kind: "error",
-        text: "comments.jsonl 无可解析评论。全部覆盖单元按缺讲解处理。",
-      });
-      return;
+    if (rawText.trim() !== "" && comments.size === 0 && invalidLines > 0) {
+      throw new Error("comments.jsonl 无可解析评论");
     }
 
-    state.comments = comments;
+    return { comments, warnings, rawText };
+  }
+
+  function applyCommentSnapshot(snapshot) {
+    state.comments = snapshot.comments;
+    state.commentWarnings = snapshot.warnings;
+    state.commentError = "";
+    state.commentText = snapshot.rawText;
+  }
+
+  function applyCommentError(message) {
+    state.comments = new Map();
+    state.commentWarnings = [];
+    state.commentError = message;
+    state.commentText = null;
+  }
+
+  function startCommentPolling() {
+    if (state.commentPollTimer) {
+      window.clearInterval(state.commentPollTimer);
+    }
+    state.commentPollTimer = window.setInterval(refreshComments, COMMENT_POLL_INTERVAL_MS);
+  }
+
+  async function refreshComments() {
+    if (state.commentPollInFlight) {
+      return;
+    }
+    state.commentPollInFlight = true;
+    try {
+      const snapshot = await fetchCommentSnapshot("/data/comments.jsonl");
+      if (snapshot.rawText !== state.commentText) {
+        applyCommentSnapshot(snapshot);
+        renderPreservingViewport();
+      }
+    } catch (error) {
+      // Keep the last rendered comments during transient polling failures.
+    } finally {
+      state.commentPollInFlight = false;
+    }
   }
 
   function validateComment(comment) {
@@ -238,11 +268,15 @@
 
   function setFilter(attentionOnly) {
     state.attentionOnly = attentionOnly;
+    ensureSelectedFileVisible();
+    render();
+  }
+
+  function ensureSelectedFileVisible() {
     const files = visibleFiles();
     if (!files.some((file) => file.id === state.selectedFileId)) {
       state.selectedFileId = files.length > 0 ? files[0].id : null;
     }
-    render();
   }
 
   async function setFileMode(file, mode) {
@@ -318,6 +352,15 @@
     renderSelectedFile();
   }
 
+  function renderPreservingViewport() {
+    const scrollX = window.scrollX;
+    const scrollY = window.scrollY;
+    render();
+    window.requestAnimationFrame(() => {
+      window.scrollTo(scrollX, scrollY);
+    });
+  }
+
   function updateFilterButtons() {
     elements.showAll.classList.toggle("active", !state.attentionOnly);
     elements.showAttention.classList.toggle("active", state.attentionOnly);
@@ -331,6 +374,18 @@
       node.textContent = banner.text;
       elements.banners.appendChild(node);
     });
+    if (state.commentError) {
+      const node = document.createElement("div");
+      node.className = "banner error";
+      node.textContent = state.commentError;
+      elements.banners.appendChild(node);
+    }
+    if (state.commentWarnings.length > 0) {
+      const node = document.createElement("div");
+      node.className = "banner warning";
+      node.textContent = `comments.jsonl 有 ${state.commentWarnings.length} 行被跳过或覆盖，页面只使用可解析的最后一条评论。`;
+      elements.banners.appendChild(node);
+    }
   }
 
   function renderSummary() {
