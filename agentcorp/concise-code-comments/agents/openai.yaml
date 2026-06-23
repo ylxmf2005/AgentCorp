@@ -1,0 +1,4 @@
+interface:
+  display_name: "Concise Code Comments"
+  short_description: "Keep code comments short and useful"
+  default_prompt: "Use $concise-code-comments to revise changed comments so they are concise, useful, and not over-explained."

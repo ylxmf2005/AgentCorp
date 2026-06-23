@@ -1,6 +1,6 @@
 # AgentCorp
 
-**A multi-agent coding pipeline: controllable, understandable, verifiable.**
+**Loop engineering for software delivery: controllable, understandable, verifiable.**
 
 English · [Simplified Chinese](README_CN.md)
 
@@ -21,12 +21,14 @@ that debt gets, the more dependent you become, and the harder it is to correct
 the agent when it goes wrong. Eventually, you no longer dare to hand it important
 work.
 
-AgentCorp exists to break that loop. It turns agent work from an uncontrollable,
-unreadable, untraceable black-box chain into a **controllable, understandable,
-verifiable** pipeline. It includes **29 skills**: 27 specialized delivery roles
-drawn from enterprise-grade software delivery practice, covering the full
-development flow, plus 2 reusable capabilities that any role can call. It works
-with both **Claude Code** and **Codex**.
+AgentCorp exists to break that loop. In the language of
+[loop engineering](https://addyosmani.com/blog/loop-engineering/), it turns agent
+work from an uncontrollable, unreadable, untraceable black-box chain into a
+**controllable, understandable, verifiable** delivery loop. It includes **31
+skills** drawn from enterprise-grade software delivery practice, covering
+orchestration, planning, implementation, review, verification, acceptance,
+browser workflows, plain-language explanation, and code-comment hygiene. It
+works with both **Claude Code** and **Codex**.
 
 - **Controllable** -- The process scales itself to the size of the task. A
   one-line change does not pay the cost of an architecture review, while a new
@@ -42,6 +44,23 @@ with both **Claude Code** and **Codex**.
   before implementation and independently reviewed. Review findings are treated
   as possible false positives and re-verified by another role; only confirmed
   findings enter the fix stage.
+
+## Why This Is Loop Engineering
+
+Loop engineering is the shift from prompting an agent turn by turn to designing
+the system that prompts, checks, records, and advances the agent work for you.
+AgentCorp packages that loop for software delivery:
+
+- **Goal and state** live in `task.md`, `manifest.md`, and `teamspace/`, so the
+  loop can resume without relying on a single chat context.
+- **Reusable skills** encode delivery practices, gates, and project habits the
+  agent would otherwise have to rediscover every run.
+- **Maker/checker separation** keeps implementation, review, research, fix,
+  verification, and acceptance under different responsibilities.
+- **Artifacts and gates** make "done" an auditable claim: each phase produces
+  evidence, and the next phase only runs when the gate passes.
+- **Parallel work and handoffs** let larger tasks split across agents without
+  losing ownership, receipts, or traceability.
 
 ## Quick Start
 
@@ -82,10 +101,10 @@ traces every decision.
 
 ## Skills
 
-The 29 skills are grouped by function below. Each skill's behavior is defined in
+The 31 skills are grouped by function below. Each skill's behavior is defined in
 `agentcorp/<skill>/SKILL.md` and appears in the Claude Code and Codex skill
-pickers. Of these, 27 are specialized delivery roles; the skills marked with [1]
-are reusable support capabilities that any role may call.
+pickers. Together, they cover the delivery loop and the supporting behaviors
+needed to run it in real projects.
 
 - **Orchestration** - `delivery-orchestrator`
 - **Planning and design** - `solution-architect`, `implementation-planner`, `test-planner`, `parallel-researcher`
@@ -94,12 +113,7 @@ are reusable support capabilities that any role may call.
 - **Code review** - `code-review-lead` + `correctness-reviewer`, `security-reviewer`, `performance-reviewer`, `reliability-reviewer`, `simplicity-reviewer`, `change-hygiene-reviewer`, `standards-reviewer`, `project-steward-reviewer`, `api-contract-reviewer`
 - **Verification** - `test-leader`, `e2e-tester`, `api-contract-tester`, `regression-tester`
 - **Recheck and acceptance** - `review-researcher`, `acceptance-review-lead`
-- **Support** - `change-detailed-walker`, `brainstorm`[1], `authenticated-browser-session`[1]
-
-[1] `brainstorm` (a general thinking capability, mainly for requirement
-clarification) and `authenticated-browser-session` (a persistent authenticated
-browser capability) are reusable behavior capabilities, not delivery roles with
-their own gates. Any role can load them when needed.
+- **Support** - `change-detailed-walker`, `brainstorm`, `authenticated-browser-session`, `plain-explain`, `concise-code-comments`
 
 ## Artifacts
 

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Plain Explain"
+  short_description: "Explain AgentCorp work for zero-context readers"
+  default_prompt: "Use $plain-explain to explain this AgentCorp output in plain language for someone without project context."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Concise Code Comments"
+  short_description: "保持代码注释短而有用"
+  default_prompt: "使用 $concise-code-comments 优化当前改动里的注释，让它们短、准、不过度解释。"
