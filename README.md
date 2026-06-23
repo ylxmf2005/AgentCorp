@@ -105,45 +105,56 @@ their own gates. Any role can load them when needed.
 
 Every phase leaves a structured artifact with frontmatter (`artifact_type` /
 `author_agent` / `phase` / `status` / `source_artifacts`), making the work
-auditable and traceable. For example, for "add an invite members feature to a
-web app," a complete delivery creates an artifact tree like this under
-`teamspace/`:
+auditable and traceable. Not every task uses every file below: the tree shows
+the full runtime layout, and AgentCorp creates only the phases, reviews, tests,
+research packages, and handoffs that the task actually needs.
 
 ```
 teamspace/
-├── testing-context.md                   # Cross-task testing context: page map, observable surfaces, test-data conventions
-├── learnings/                           # Cross-task learnings (one file each; grep for duplicates before writing)
-│   └── invite-token-reuse-trap.md       #   Trigger -> root cause -> what to do -> how to move faster next time
-└── tasks/20260622-invite-members/       # Current task root
-    ├── task.md                          # Task record: success criteria, phase flow, gate history, decision log
-    ├── manifest.md                      # Audit ledger: phase owner/status/human gate/quality gate/artifact/receipt
+├── testing-context.md                    # Cross-task runtime facts: entry points, auth, pages, observable surfaces, test data
+├── learnings/                            # Cross-task lessons; one lesson per file, deduped before writing
+│   └── invite-token-reuse-trap.md        #   Trigger -> root cause -> what to do -> how to move faster next time
+├── knowledge/                            # Reusable research snapshots copied out of task research when worth keeping
+│   └── <technology>/INDEX.md
+└── tasks/20260622-invite-members/        # Current task root
+    ├── task.md                           # Task record: request, success criteria, phase sequence, gate history, decisions
+    ├── manifest.md                       # Audit ledger: phase, owner, status, human gate, quality gate, assignment, artifact, receipt
+    │
+    ├── handoffs/                         # Assignment/receipt loop for delegated phases
+    │   ├── 001-validate-requirements.md
+    │   ├── 001-validate-requirements-receipt.md
+    │   ├── 002-test-plan.md
+    │   ├── 002-test-plan-receipt.md
+    │   └── ...
     │
     ├── requirements/
-    │   └── validated-requirements.md    # Validated requirements: user journeys, FR/AC, non-goals, handoff to architecture and testing
+    │   └── validated-requirements.md     # Intent, users, journeys, FR/AC, non-goals, constraints, assumptions, open questions
     │
-    ├── design/
-    │   ├── architecture.md              # Architecture: components, data model, Mermaid diagrams, implementation constraints
-    │   └── api-contract.md              # API contract: POST /invites, compatibility, migration notes, verification hooks
+    ├── design/                           # Created as needed; several design artifacts may coexist
+    │   ├── architecture.md               # Greenfield/subsystem design: components, data/state flow, interfaces, trade-offs
+    │   ├── impact-analysis.md            # Delta design: affected modules, current/target behavior, risks, preserved behavior
+    │   ├── diagnosis.md                  # Bugfix diagnosis: reproduction, hypotheses, root cause, proposed fix, regression criteria
+    │   └── api-contract.md               # Public/shared contracts: schemas, auth, errors, compatibility, verification hooks
     │
     ├── test/
-    │   ├── test-plan.md                 # Master test plan: risk levels, must-haves, forbidden zones, coverage summary
-    │   ├── api-test-plan.md             # API manual: literal curl requests, expectations, evidence, failure handling
-    │   ├── e2e-test-plan.md             # E2E manual: browser steps, literal input, screenshots as primary evidence
-    │   ├── regression-test-plan.md      # Regression manual: blast radius, existing suites, new "fails before fix" checks
-    │   ├── test-plan-review.md          # Test-plan review decision (approve / request_changes)
-    │   └── exploration/                 # Exploratory test work files (kept in the task; confirmed conclusions update testing-context)
-    │       ├── charters.md              # Exploration charters: C-1/C-2/C-3 goals and status
-    │       ├── frontier.md              # Exploration backlog: entry points and provenance
-    │       └── journal.md               # Exploration journal: each action, observation, screenshot
+    │   ├── test-plan.md                  # Overall risk-ordered strategy, required layers, explicit gaps, forbidden zones
+    │   ├── api-test-plan.md              # API/integration playbook: literal requests, expected responses, evidence handling
+    │   ├── e2e-test-plan.md              # E2E playbook: browser steps, literal input, screenshot/URL evidence
+    │   ├── regression-test-plan.md       # Regression playbook: blast radius, existing suites, before-fails/after-passes checks
+    │   ├── test-plan-review.md           # Independent review of the test plan: approve / request_changes / needs_more_evidence
+    │   └── exploration/                  # Work files used to fill testing-context.md; confirmed facts are written back
+    │       ├── charters.md               # Exploration charters and status
+    │       ├── frontier.md               # Candidate entry points and where they came from
+    │       └── journal.md                # Action-by-action observations, screenshots, and blockers
     │
     ├── implementation/
-    │   ├── implementation-story.md      # Implementation story: AC, task tree (file pointers), constraints, verification expectations
-    │   └── implementation-result.md     # Implementation result: changed files, commands, deviations, blockers, review handoff
+    │   ├── implementation-story.md       # Story spec: scoped AC, ordered tasks, target modules, constraints, verification expectations
+    │   └── implementation-result.md      # Actual result: changed files, commands, deviations, blockers, review handoff
     │
     ├── review/
-    │   ├── plan-review.md               # Plan review decision: must-fix/suggested/evidence gaps/residual risk/next owner
-    │   ├── code-review.md               # Code-review decision: aggregates specialists, approve / request_changes
-    │   ├── specialist-findings/         # Specialist findings (each with severity/confidence/evidence/impact/recommendation)
+    │   ├── plan-review.md                # Plan Review Lead decision on the Story Spec
+    │   ├── code-review.md                # Code Review Lead aggregate decision
+    │   ├── specialist-findings/          # Specialist findings; only invoked reviewers write files here
     │   │   ├── correctness-reviewer.md
     │   │   ├── security-reviewer.md
     │   │   ├── performance-reviewer.md
@@ -153,30 +164,40 @@ teamspace/
     │   │   ├── standards-reviewer.md
     │   │   ├── project-steward-reviewer.md
     │   │   ├── api-contract-reviewer.md
-    │   │   └── adversarial-reviewer.md  # Adversarial: broken assumptions, combination failures, cascades, abuse cases
-    │   ├── research/                    # Review recheck: each finding is tested as a possible false positive
-    │   │   ├── 00-index.md              # Index: 7-column list, confirmed first -> false positives at the bottom
-    │   │   ├── F-01-confirmed-...md     # One file per issue: context, code context, root cause, fix recommendation
-    │   │   └── F-02-false-positive-...md#   Includes a Human decision skeleton left blank for human checkoff
-    │   ├── fix-records/                 # Fix records (parallelized by file-group ownership)
-    │   │   └── invite-service.md        # Each entry: verdict, changed files, regression check (fails before, passes after)
-    │   └── fix-result.md                # Fix summary
+    │   │   ├── adversarial-reviewer.md
+    │   │   └── parallel-researcher.md    # Desk/source-verified research when used as specialist evidence
+    │   ├── research/                     # Review recheck; every finding is tested as a possible false positive
+    │   │   ├── 00-index.md               # Aggregated index across per-issue research files
+    │   │   ├── 001-confirmed-...md       # One file per issue: verdict, evidence, root cause, fix recommendation
+    │   │   └── 002-false-positive-...md  # False-positive or needs-human-confirmation record
+    │   ├── fix-records/                  # One record per non-overlapping Review Fixer file group
+    │   │   └── invite-service.md         # Item dispositions, files changed, validation, drift notes
+    │   └── fix-result.md                 # Orchestrator rollup of all fix groups and merge validation
+    │
+    ├── research/                         # Hands-on research packages, when a task needs experiments or snapshots
+    │   └── invite-email-provider/
+    │       ├── 00-report.md
+    │       ├── env/
+    │       ├── sources/
+    │       └── experiments/
     │
     ├── verification/
-    │   ├── verification-report.md       # Verification decision: approve / request_changes, citing each test result
-    │   └── test-results/                # Test execution results (based on real evidence, never invented)
-    │       ├── e2e-tester.md            # Status, checks, commands, screenshot/URL evidence
-    │       ├── api-contract-tester.md   # Requests/responses, pass/fail
-    │       └── regression-tester.md     # Before/after comparison, exit code
+    │   ├── assignments/                  # Tester assignments written by Test Leader during delegated verification
+    │   │   ├── e2e-tester.md
+    │   │   ├── api-contract-tester.md
+    │   │   └── regression-tester.md
+    │   ├── test-results/                 # Real execution evidence; no assumed success
+    │   │   ├── e2e-tester.md             # Status, checked flows, commands, screenshot/URL evidence
+    │   │   ├── api-contract-tester.md    # Requests/responses, pass/fail, schema/contract evidence
+    │   │   └── regression-tester.md      # Before/after comparison, commands, exit codes
+    │   └── verification-report.md        # Test Leader decision citing the result files and remaining gaps
     │
     ├── acceptance/
-    │   ├── acceptance-package.md        # Acceptance package: all artifact indexes + success criteria and direct evidence
-    │   └── acceptance-decision.md       # Final acceptance decision: accept / reject / needs_more_evidence
+    │   ├── acceptance-package.md         # Orchestrator package: success criteria, artifact index, direct evidence, gaps
+    │   └── acceptance-decision.md        # Acceptance Review Lead decision: accept / reject / needs_more_evidence
     │
-    └── _handoffs/                       # Phase assignment-receipt loop (one pair per delegated phase)
-        ├── to-solution-architect.md     # Assignment: goal, inputs, constraints, stop conditions, output_path
-        ├── from-solution-architect.md   # Receipt: artifact path, completion notes, blockers
-        └── ...                          # One pair each for test-planner / implementation-engineer / etc.
+    └── delivery/
+        └── delivery-report.md            # Final delivery report: status, code/artifact locations, tests, risks, follow-ups
 ```
 
 ---
