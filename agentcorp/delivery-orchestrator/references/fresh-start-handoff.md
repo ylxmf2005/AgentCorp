@@ -1,59 +1,59 @@
-# Fresh Start Handoff（上下文重启交接）
+# Fresh Start Handoff
 
-当前对话或工作区可能污染接下来的工作时用这份能力：长多轮调试/重构、同一底层问题反复修不动、需求散落多轮或中途变更、早期架构假设被推翻、工作区堆着跨模块的探索性未提交改动，或发起人说「重新开始 / 换个会话 / context 乱了」。目标不是总结一切，而是判断当前线程是否已成负债，征得发起人同意后，产出一份让新 session（或新 subagent assignment）不继承污染的干净 handoff prompt。
+Use this capability when the current conversation or working tree might contaminate the work that follows: a long multi-turn debugging/refactoring session, the same underlying problem that won't stay fixed despite repeated attempts, requirements scattered across many turns or changed midstream, early architectural assumptions overturned, a working tree littered with cross-module exploratory uncommitted changes, or the sponsor saying "start over / new session / the context is a mess." The goal is not to summarize everything but to judge whether the current thread has become a liability, and — with the sponsor's agreement — produce a clean handoff prompt that lets a new session (or a new subagent assignment) avoid inheriting the contamination.
 
-核心动作：把散落的上下文转成一份自包含的 source-of-truth prompt，同时把探索、失败尝试和过期假设隔离出去、明确标记，而不是把它当成叙事接着往下写。
+Core move: turn the scattered context into a self-contained source-of-truth prompt, while isolating and clearly marking the exploration, failed attempts, and stale assumptions, rather than continuing to write them up as narrative.
 
-## 何时触发（评分指引）
+## When to Trigger (scoring guide)
 
-在自然的阶段边界做一次快速检查：大重构前、反复调试失败后、提交前、需求变更后、对话开始变长变陈旧时。
+Do a quick check at natural phase boundaries: before a big refactor, after repeated failed debugging, before committing, after a requirements change, when the conversation starts getting long and stale.
 
-- +3：发起人明示或暗示「重新开始」「新会话」「handoff」「context 乱了」。
-- +3：同一底层问题连续两次以上修复失败。
-- +3：发现早期的架构假设或诊断是错的。
-- +2：需求跨多轮才拼齐、或实现开始后被改。
-- +2：下一步依赖记住多条早期约束或例外。
-- +2：工作区有跨模块的探索性未提交改动。
-- +2：工作正从探索/调试转入干净的实现阶段。
-- +1：对话里有互相矛盾的结论、臃肿的复盘、「别再做 X」的纠正。
-- +1：验证结果混杂、过期或不清。
+- +3: the sponsor explicitly or implicitly says "start over," "new session," "handoff," or "the context is a mess."
+- +3: the same underlying problem has failed to be fixed two or more times in a row.
+- +3: you discover that an early architectural assumption or diagnosis was wrong.
+- +2: requirements only came together across many turns, or were changed after implementation began.
+- +2: the next step depends on remembering several early constraints or exceptions.
+- +2: the working tree has cross-module exploratory uncommitted changes.
+- +2: the work is shifting from exploration/debugging into a clean implementation phase.
+- +1: the conversation contains contradictory conclusions, bloated post-mortems, or "stop doing X" corrections.
+- +1: verification results are mixed, stale, or unclear.
 
-≥3 分：暂停并征询；≥5 分：强烈建议重启。一步小改、上下文仍清爽、或发起人刚拒绝过且风险未实质增加时，不要打断。
+≥3 points: pause and consult; ≥5 points: strongly recommend a restart. Don't interrupt for a small one-step change, when the context is still clean, or when the sponsor just declined and the risk hasn't materially increased.
 
-## 征询（这是一个 human gate）
+## Consult (this is a human gate)
 
-发起人明确要 handoff prompt 时直接写；否则只问一次、给一个具体理由，选项：A) 只要 prompt；B) git 隔离方案 + prompt；C) 留在当前会话继续。选 C 就继续原任务，风险不升级就不再问。绝不替发起人决定重启；未经发起人明确批准，绝不 discard、reset、stash、commit 或 branch 他的工作。
+If the sponsor explicitly wants a handoff prompt, just write it; otherwise ask only once, with one concrete reason, offering: A) prompt only; B) a git isolation plan + prompt; C) stay in the current session and continue. If they choose C, continue the original task and don't ask again unless the risk escalates. Never decide on a restart for the sponsor; without the sponsor's explicit approval, never discard, reset, stash, commit, or branch their work.
 
-## 产出 handoff prompt
+## Producing the Handoff Prompt
 
-动笔前，先把本轮过了门槛的教训沉进 `teamspace/learnings/`（见 `references/learnings.md`）——重启丢掉的应该只是被污染的对话，不该连教训一起丢。
+Before you start writing, capture the round's qualifying lessons into `teamspace/learnings/` (see `references/learnings.md`) — a restart should drop only the contaminated conversation, not the lessons along with it.
 
-1. **盘点当前真相。** 以源码、测试、`git status`、diff、日志和发起人的明确指示为准，不信对话记忆；能查仓库就先查再动笔，查不了就把未知如实写明。
-2. **信息分桶。** 目标 / 完成定义 / 已验证事实（带证据）/ 相关文件与入口 / 已接受的约束与决策 / 失败尝试（作为教训与禁区，不是续写起点）/ 可疑或未验证假设 / 工作区状态。
-3. **定工作区姿态。** 新工作从哪开始，四选一：干净基线分支（探索性工作归档为只读参考）；当前脏树（未提交改动视为候选工作，不是已验证事实）；checkpoint 分支；仅作历史参考的归档。
-4. **写 prompt 并直接交给发起人。** 用下面的骨架，不适用的节删掉，但保住 source-of-truth 与防污染措辞；放进 fenced markdown 块让发起人能立即复制，不要埋在长篇复盘下面。
+1. **Take stock of the current truth.** Trust the source, the tests, `git status`, the diff, the logs, and the sponsor's explicit instructions, not the conversation's memory; if you can query the repo, query first and write second, and if you can't, state the unknowns honestly.
+2. **Bucket the information.** Goal / definition of done / verified facts (with evidence) / relevant files and entry points / accepted constraints and decisions / failed attempts (as lessons and no-go zones, not a starting point to continue from) / suspect or unverified assumptions / working-tree state.
+3. **Set the working-tree stance.** Where new work starts, one of four: a clean baseline branch (exploratory work archived as read-only reference); the current dirty tree (uncommitted changes treated as candidate work, not verified fact); a checkpoint branch; an archive kept only as historical reference.
+4. **Write the prompt and hand it straight to the sponsor.** Use the skeleton below, deleting the sections that don't apply, but keeping the source-of-truth and anti-contamination wording; put it in a fenced markdown block so the sponsor can copy it immediately, not buried under a long post-mortem.
 
 ```markdown
-你从零开始，不依赖任何先前对话。以本 prompt 与当前仓库状态为唯一事实来源；两者冲突时信仓库与测试，先报告差异再改代码。
+You are starting from scratch and rely on no prior conversation. Treat this prompt and the current repo state as the single source of truth; where the two conflict, trust the repo and the tests, and report the discrepancy before changing code.
 
-## 目标
-## 完成定义（可观察的成功标准、该过的测试/构建/人工检查）
-## 工作区姿态（四选一及对应分支/归档位置）
-## 相关文件与入口（路径 + 为什么相关）
-## 命令与验证
-## 已验证事实（VERIFIED: 事实 — 证据：文件/测试/日志/发起人指示）
-## 已接受的约束与决策（ACCEPTED: …）
-## 失败尝试，勿盲目重复（FAILED: 方案 — 证据 — 教训）
-## 可疑/未验证假设（UNVERIFIED: 假设 — 如何核实）
-## 建议路径（先确认事实，再最小改动，再跑验证；验证失败按证据修订而非按旧假设）
-## 护栏（破坏性 git 操作、大改写、依赖升级、迁移、删文件先问；不复用失败代码除非能解释失败为何不再适用；缺上下文就提针对性的问题，不要猜）
+## Goal
+## Definition of Done (observable success criteria, the tests/builds/manual checks that must pass)
+## Working-Tree Stance (one of four, with the corresponding branch/archive location)
+## Relevant Files and Entry Points (path + why it's relevant)
+## Commands and Verification
+## Verified Facts (VERIFIED: fact — evidence: file/test/log/sponsor instruction)
+## Accepted Constraints and Decisions (ACCEPTED: …)
+## Failed Attempts, Don't Blindly Repeat (FAILED: approach — evidence — lesson)
+## Suspect/Unverified Assumptions (UNVERIFIED: assumption — how to verify)
+## Suggested Path (confirm facts first, then minimal change, then run verification; if verification fails, revise per evidence rather than per old assumptions)
+## Guardrails (ask before destructive git operations, large rewrites, dependency upgrades, migrations, file deletions; don't reuse failed code unless you can explain why the failure no longer applies; when context is missing, ask a targeted question rather than guess)
 ```
 
-## 常见错误
+## Common Mistakes
 
-- 不写「聊天里发生了什么」的流水账。
-- 不把失败代码当起点传下去，除非已归档并明确标注。
-- 没验证过的不写成「我们已知 X」。
-- 旧 workaround 和新计划不混进同一条指令。
-- 不让新 session 无意继承脏工作区——要么解释清楚，要么建议隔离。
-- 不罗列所有碰过的文件，只给下一次尝试可能相关的；工作区状态单独说明。
+- Don't write a "what happened in the chat" running account.
+- Don't pass failed code downstream as a starting point unless it's been archived and clearly labeled.
+- Don't write something unverified as "we know X."
+- Don't mix an old workaround and the new plan into the same instruction.
+- Don't let the new session unknowingly inherit a dirty working tree — either explain it clearly or recommend isolation.
+- Don't list every file you touched, only the ones that might be relevant to the next attempt; cover the working-tree state separately.

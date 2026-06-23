@@ -6,47 +6,47 @@ from_agent: delivery-orchestrator
 to_agent: review-fixer
 phase: fix
 status: assigned
-group_slug: <本组的简短英文 slug>
+group_slug: <this group's short English slug>
 output_path: review/fix-records/<group-slug>.md
 ---
 
-# 指派：fix（单组）
+# Assignment: fix (single group)
 
-## 目标
+## Goal
 
-把本组（一个互不与其它组重叠的文件集）的已核验修复项忠实落地。本 assignment 只是本轮并行修复中的一个分组；切分与跨组合并由 Delivery Orchestrator 负责。
+Faithfully land this group's verified fix items (a file set that does not overlap any other group's). This assignment is just one group in this round of parallel fixing; slicing and the cross-group merge are the Delivery Orchestrator's responsibility.
 
-## FIX_ITEMS（本组要落地的项）
+## FIX_ITEMS (the items this group must land)
 
-- P0-1：判定 确认；根因 …；修法建议 …；涉及 path/to/service.py
-- P2-2：判定 部分成立；修正后修法 …；涉及 path/to/service.py
-（每条引用 review/research/ 里对应 issue 文件的判定与修法建议；只含确认/部分成立项。）
+- P0-1: verdict confirmed; root cause …; fix approach …; involves path/to/service.py
+- P2-2: verdict partial; corrected fix approach …; involves path/to/service.py
+(Each item references the verdict and fix approach in the corresponding issue file under review/research/; only confirmed/partial items are included.)
 
-## OWNED_FILES（本组允许编辑的文件集）
+## OWNED_FILES (the file set this group may edit)
 
 - path/to/service.py
 - path/to/helper.py
-（不得编辑集合外的后端文件；需外溢就 needs-human 上报。）
+(Must not edit backend files outside the set; if you need to spill over, escalate as needs-human.)
 
-## 输入
+## Inputs
 
-- review/research/ 里本组各 issue 的判定与修法建议（必需）
-- human 评论（如有，优先级最高）
-- 本组该跑的聚焦校验提示
+- The verdict and fix approach for each of this group's issues under review/research/ (required)
+- Human comments (if any, highest priority)
+- The focused validation hints this group should run
 
-## 约束
+## Constraints
 
-- 不重做核验：真伪/根因/修法以 research 为准；本角色只落地。
-- 忠实落地那份优雅修法，治本不打补丁；改动聚焦、贴合既有约定。
-- 只编辑 OWNED_FILES 内的后端代码并留在工作区；不提交、不 push；不碰前端。
-- 只跑聚焦校验，不跑全量 suite（全量由 Orchestrator 合并后跑）。
-- 建议对不上当前代码就退回复核（needs-research），不自行改方案硬上。
+- Do not re-verify: validity/root cause/fix approach follow research; this role only lands.
+- Land that elegant fix faithfully, at the root rather than as a patch job; keep changes focused and aligned with existing conventions.
+- Edit only the backend code within OWNED_FILES and leave it in the working tree; do not commit, do not push; do not touch the frontend.
+- Run only the focused validation, not the full suite (the Orchestrator runs the full suite after the merge).
+- If a suggestion does not match the current code, send it back for re-check (needs-research); do not patch your own alternative on top.
 
-## 必需输出
+## Required outputs
 
-- 在 `output_path` 写入本组修复记录（`templates/fix-record.demo.md` 形态）。
-- 返回一份匹配 `templates/phase-receipt.demo.md` 的 receipt，`artifact_path` 指向本组记录。
+- Write this group's fix record at `output_path` (shape of `templates/fix-record.demo.md`).
+- Return a receipt matching `templates/phase-receipt.demo.md`, with `artifact_path` pointing to this group's record.
 
-## 停止条件
+## Stop conditions
 
-- FIX_ITEMS 引用的 research 结论缺失、需编辑 OWNED_FILES 之外的文件、或修复会触碰前端 / 需未批准的依赖。
+- The research conclusions referenced by FIX_ITEMS are missing, a file outside OWNED_FILES must be edited, or the fix would touch the frontend / requires an unapproved dependency.

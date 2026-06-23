@@ -1,0 +1,4 @@
+interface:
+  display_name: "Plan Review Lead"
+  short_description: "Review implementation plans"
+  default_prompt: "Use $plan-review-lead to perform the AgentCorp Plan Review Lead role."

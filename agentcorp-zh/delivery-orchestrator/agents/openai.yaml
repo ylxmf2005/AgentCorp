@@ -1,0 +1,4 @@
+interface:
+  display_name: "Delivery Orchestrator"
+  short_description: "Run AgentCorp delivery workflow"
+  default_prompt: "Use $delivery-orchestrator to perform the AgentCorp Delivery Orchestrator role."

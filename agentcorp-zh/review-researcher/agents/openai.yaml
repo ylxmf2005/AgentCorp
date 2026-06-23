@@ -1,0 +1,4 @@
+interface:
+  display_name: "Review Researcher"
+  short_description: "Verify, suggest fixes, explain each finding"
+  default_prompt: "Use $review-researcher to perform the AgentCorp Review Researcher role."

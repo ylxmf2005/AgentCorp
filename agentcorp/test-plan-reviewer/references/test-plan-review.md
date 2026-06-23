@@ -1,14 +1,14 @@
-# TestPlan 评审参考
+# TestPlan review reference
 
-评审 TestPlan 时常见的红旗信号——看到这些，多半说明计划照着执行也建立不起信心。
+Red flags common to reviewing a TestPlan — when you see these, executing the plan most likely will not build confidence either.
 
-- 「测一下功能能用」——没有可验证的断言，无法证伪。
-- 面向用户的工作流改动，却只有 unit 覆盖，缺端到端验证。
-- public surface（API）变更，却没有 request/response 检查。
-- 迁移或持久化改动，却没有 before/after 的数据核对。
-- browser/UI 工作，却没有真实交互或视觉证据。
-- E2E 用例没有声明执行形态，或实际是 API 调用却挂着 E2E 的名——证明不了用户真正看到的东西。
-- 检查只有意图没有步骤（「发起 Plan 并验证恢复」），或用户输入处留白（「输入一个合适的 prompt」）——tester 得自己发明操作。
-- 计划引用的入口、页面、数据在测试上下文文档（`teamspace/testing-context.md`）里查无出处，靠现场猜。
-- 环境假设被默认掉，没写明 tester 实际怎么跑。
-- coverage 汇总里有条目既没有 E2E 目标、也没给出省略的理由。
+- "Test that the feature works" — no verifiable assertion, nothing to falsify.
+- A user-facing workflow change covered only by unit tests, with no end-to-end verification.
+- A public surface (API) change with no request/response checks.
+- A migration or persistence change with no before/after data reconciliation.
+- Browser/UI work with no real interaction or visual evidence.
+- An E2E case that does not declare its execution form, or that is actually an API call wearing the E2E label — it cannot prove what the user actually sees.
+- A check that states intent but no steps ("kick off a Plan and verify recovery"), or leaves the user input blank ("enter a suitable prompt") — the tester has to invent the procedure.
+- Entry points, pages, or data the plan references have no source in the testing context document (`teamspace/testing-context.md`), so the tester guesses on the spot.
+- Environment assumptions are assumed away, with no statement of how the tester actually runs it.
+- The coverage summary has an entry with neither an E2E objective nor a stated reason for the omission.

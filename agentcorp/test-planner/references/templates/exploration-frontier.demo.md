@@ -1,5 +1,5 @@
-# Frontier：待探清单
+# Frontier: To-Explore List
 
-- [x] 任务列表页 `/app/tasks` ｜来源：README ｜结果：已记入页面地图
-- [ ] 设置页 `/app/settings` ｜来源：列表页左侧导航
-- [ ] 「分享」按钮指向的页面 ｜来源：任务详情页
+- [x] Task list page `/app/tasks` | source: README | result: recorded in the page map
+- [ ] Settings page `/app/settings` | source: left nav on the list page
+- [ ] Page the "Share" button leads to | source: task detail page

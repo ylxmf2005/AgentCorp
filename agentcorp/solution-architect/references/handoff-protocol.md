@@ -1,18 +1,18 @@
-# 本地 Handoff 协议
+# Local Handoff Protocol
 
-本协议属于 `solution-architect` skill 自己的 reference。assignment、receipt 和本角色产物的形态，都从本目录的 `templates/` demo 取用。
+This protocol is the `solution-architect` skill's own reference. The shape of the assignment, the receipt, and this role's artifacts are all taken from the `templates/` demos in this directory.
 
-协议字段、`artifact_type`、`status` 枚举、路径、代码标识符和 API/接口契约字段保持原值；面向人阅读的说明正文使用 zh-CN。
+Keep the protocol fields, `artifact_type`, the `status` enum, paths, code identifiers, and API/interface contract fields at their original values; write the human-facing explanatory body in zh-CN.
 
-## 读取 Assignment
+## Reading the Assignment
 
-- 被 Delivery Orchestrator 指派时，把 assignment 文件当作任务输入。
-- 将 `output_path` 相对 `task_root` 解析。
-- 如果 assignment 没有 `task_root`，从 assignment 文件位置推导：找到父级 `handoffs/` 目录，并把它的父目录作为 task root。
-- 在 `output_path` 写入本 phase 产物。若本次设计需要多份产物，assignment 的 `output_path` 应指向 `design/` 目录；在该目录下按需要创建 `architecture.md`、`impact-analysis.md`、`diagnosis.md`、`api-contract.md`。
-- 返回一份 receipt；receipt 的 `artifact_path` 必须与 assignment 的 `output_path` 一致，或在 `output_path` 是目录时指向该目录下的一份实际设计产物。若产生多份设计产物，在 receipt 正文的「说明」里列出全部路径。
+- When the Delivery Orchestrator assigns you, treat the assignment file as the task input.
+- Resolve `output_path` relative to `task_root`.
+- If the assignment has no `task_root`, derive it from the assignment file's location: find the parent `handoffs/` directory and take its parent as the task root.
+- Write this phase's artifact at `output_path`. If this design needs multiple artifacts, the assignment's `output_path` should point at the `design/` directory; under it, create `architecture.md`, `impact-analysis.md`, `diagnosis.md`, `api-contract.md` as needed.
+- Return a receipt; the receipt's `artifact_path` must match the assignment's `output_path`, or, when `output_path` is a directory, point at one actual design artifact under it. If multiple design artifacts are produced, list every path in the receipt body's "Notes" section.
 
-## 本角色可用模板
+## Templates available to this role
 
 - `templates/phase-assignment.demo.md`
 - `templates/phase-receipt.demo.md`

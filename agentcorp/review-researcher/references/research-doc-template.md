@@ -1,110 +1,111 @@
-# 评审研究文件夹骨架
+# Review Research Folder Skeleton
 
-`review-researcher` 产出一个文件夹：一份索引 + 每个 issue 一份研究文件。下面给两者的骨架，组装时照搬结构、替换成当前 issue 的内容。
+`review-researcher` produces a folder: one index + one research file per issue. Below are the skeletons for both; when assembling, copy the structure and replace the content with the current issue.
 
-这些文件是 **human gate**：人只看这一份文件就要裁决「修不修、按谁的说法修」。所以每份文件必须自包含——读者没看过 diff、没看过任何 review 产物、不认识任何任务内代号。
+These files are the **human gate**: a person reads only this one file and then decides "fix or not, and according to whose account." So every file must be self-contained — the reader has not seen the diff, has not seen any review artifact, and recognizes none of the in-task codes.
 
-判定取值（verdict）：**确认（confirmed）/ 误报（false-positive）/ 部分成立（partial）/ 待人确认（needs-human）**。
+Verdict values: **confirmed / false-positive / partial / needs-human**.
 
 ---
 
-## 索引：`00-index.md`
+## Index: `00-index.md`
 
-行序固定：要修的在前（确认、部分成立，按 P0→P1→P2），待人确认其次，**误报沉底**。「人工裁决」列留空给人填。
+Fixed row order: those to fix first (confirmed, partial, ordered P0→P1→P2), needs-human next, **false positives at the bottom**. Leave the "human decision" column empty for a person to fill.
 
 ```markdown
-# 评审研究索引
+# Review Research Index
 
-本轮共 N 个 issue。判定列告诉你哪些要修、哪些是噪声；点链接看单个问题的完整研究；「人工裁决」列请阅后填写。
+This round has N issues in total. The verdict column tells you which need fixing and which are noise; click a link for the full research on a single problem; please fill in the "human decision" column after reading.
 
-| 编号 | 严重度 | 一句话 | 判定 | 建议修法 | 人工裁决 | 详情 |
+| ID | Severity | One sentence | Verdict | Suggested fix | Human decision | Details |
 | --- | --- | --- | --- | --- | --- | --- |
-| F-01 | P0 | <一句话讲清这个问题是什么> | 确认 | <一句话修法> | | [详情](F-01-confirmed-<slug>.md) |
-| F-04 | P2 | <一句话> | 部分成立 | <修正后的一句话修法> | | [详情](F-04-partial-<slug>.md) |
-| F-05 | P1 | <一句话> | 待人确认 | 需 <谁> 决定 <什么> | | [详情](F-05-needs-human-<slug>.md) |
-| F-03 | P1 | <一句话> | **误报·不用修** | —— | | [详情](F-03-false-positive-<slug>.md) |
+| F-01 | P0 | <one sentence stating clearly what this problem is> | Confirmed | <one-sentence fix> | | [details](F-01-confirmed-<slug>.md) |
+| F-04 | P2 | <one sentence> | Partial | <corrected one-sentence fix> | | [details](F-04-partial-<slug>.md) |
+| F-05 | P1 | <one sentence> | Needs-human | needs <who> to decide <what> | | [details](F-05-needs-human-<slug>.md) |
+| F-03 | P1 | <one sentence> | **False positive · no fix needed** | —— | | [details](F-03-false-positive-<slug>.md) |
 
-小结：确认 X 条、部分成立 Y 条（这两类待人工裁决后交 review-fixer 落地）、待人确认 W 条、误报 Z 条。
+Summary: X confirmed, Y partial (these two categories go to review-fixer to land after the human decision), W needs-human, Z false positives.
 ```
 
 ---
 
-## 单个 issue：`<编号>-<判定>-<slug>.md`
+## Single issue: `<id>-<verdict>-<slug>.md`
 
-文件名里的判定段用英文：`confirmed` / `partial` / `false-positive` / `needs-human`——让人在文件列表就分清要修的与噪音。判定必须同时出现在**文件名、标题、首句**三处。
+The verdict segment in the file name is in English: `confirmed` / `partial` / `false-positive` / `needs-human` — so the file list separates what needs fixing from the noise. The verdict must appear in all three places: the file name, the title, and the first sentence.
 
 ```markdown
 ---
 artifact_type: ReviewResearchNote
 task_id: <task_id>
 author_agent: review-researcher
-finding_id: <编号>
+finding_id: <id>
 verdict: <confirmed/false-positive/partial/needs-human>
 severity: <P0/P1/P2>
 status: completed
 ---
 
-# <编号>【确认 · P0】<一句话标题>
+# <id> [Confirmed · P0] <one-sentence title>
 
-<!-- 标题判定标签按实际判定写：【确认 · P0】/【部分成立 · P2】/【误报 · 不用修】/【待人确认】 -->
+<!-- Write the title verdict tag per the actual verdict: [Confirmed · P0] / [Partial · P2] / [False positive · no fix needed] / [Needs-human] -->
 
-**一句话**：判定 **<确认/误报/部分成立/待人确认>** · <是什么、为什么是（或不是）要修的问题，用一两句人话说完>
+**One sentence**: verdict **<confirmed/false-positive/partial/needs-human>** · <what it is and why it is (or is not) a problem to fix, said in one or two plain sentences>
 
-## 人工裁决
+## Human decision
 
-<!-- 此节留给人批注：只搭骨架，绝不替人勾选或填写 -->
-- [ ] 同意判定与建议修法
-- [ ] 不同意 / 部分采纳（见批注）
-- 批注：
+<!-- This section is left for a person to annotate: build the skeleton only, never check or fill it in for the human -->
+- [ ] Agree with the verdict and suggested fix
+- [ ] Disagree / partially accept (see annotations)
+- Annotations:
 
-## 背景
-<读者没看过 diff、没看过任何 review 产物。先回答三件事：这块代码/这张表/这条流程**是什么**、
-**给谁用/什么时候被触发**、**正常路径下本应发生什么**——再进入问题本身。
-这一段是后文一切因果的地基，任何细节论证都不许出现在它之前。>
+## Background
+<The reader has not seen the diff, has not seen any review artifact. Answer three things first: what this code/this table/this flow
+**is**, **who uses it / when it is triggered**, and **what is supposed to happen on the normal path** —
+then move into the problem itself.
+This paragraph is the foundation for all the causality that follows; no detailed argument may appear before it.>
 
-## 代码上下文
-<涉及的文件、函数、行号；调用链怎么走（谁调谁，用文字讲清）；
-特别要点出上游有没有相关的权限/校验闸、前置断言、类型或不变式保证。
-关键证据贴代码片段并解释——读者手边没有仓库，只甩文件:行号等于没给证据。>
+## Code context
+<The files, functions, and line numbers involved; how the call chain runs (who calls whom, stated in prose);
+in particular, point out whether there is a relevant permission/validation gate, an earlier assertion, or a type or invariant guarantee upstream.
+Paste and explain code snippets for key evidence — the reader has no repo at hand, so throwing only file:line is the same as giving no evidence.>
 
-## finding 原说法
-<reviewer 原本怎么描述这个问题、建议怎么修。用自己的话完整转述（读者没看过 review 产物），便于对照你的判定。>
+## The finding's original account
+<How the reviewer originally described this problem and the fix they suggested. Restate it in full in your own words (the reader has not seen the review artifact), so it can be compared against your verdict.>
 
-## 我的核验与判定
-<去读真实代码后得到的结论，必须有据：
-- 确认：把「输入 → 分支 → 落到这一行 → 错误结果」这条失败路径走通，说明它真会发生。
-- 误报：点明是哪条证据推翻了它——例如某道上游闸（权限校验/前置 raise/类型保证）让该条件不可能成立，
-  或它撞上一条记录在案的故意设计，或根因其实在前端。
-- 部分成立：问题真有，但原 finding 的机制/严重度/建议修法哪里不对，给出修正后的正确描述。
-- 待人确认：判定依赖仓库里没有的上下文（外部系统/运行时配置/产品意图），写清还缺什么。>
+## My verification and verdict
+<The conclusion reached after reading the real code, which must be evidence-backed:
+- Confirmed: walk the failure path "input → branch → lands on this line → wrong result" and show it really happens.
+- False positive: point out which piece of evidence overturns it — e.g. some upstream gate (a permission check / earlier raise / type guarantee) makes the condition impossible,
+  or it collides with a documented intentional design, or the root cause is actually in the frontend.
+- Partial: there is a real problem, but state where the original finding's mechanism/severity/suggested fix is wrong, and give the corrected, correct description.
+- Needs-human: the verdict depends on context not in the repo (external systems / runtime configuration / product intent); write down clearly what is still missing.>
 
-## 根因（确认 / 部分成立时）
-<把因果链讲通：到底为什么会错。如果某层兜底本应拦住却没拦住，说明为什么。>
+## Root cause (when confirmed / partial)
+<Tell the causal chain through: exactly why it goes wrong. If some layer's fallback should have caught it but did not, explain why.>
 
-## 影响 / 爆炸半径（确认 / 部分成立时）
-<会坏到什么程度、谁受影响、属于数据错乱/泄漏/资源泄漏/卡死/…中的哪类。>
+## Impact / blast radius (when confirmed / partial)
+<How badly it breaks, who is affected, and which category it falls into: data corruption / leakage / resource leak / hang / ….>
 
-## 建议修法（确认 / 部分成立时）
-<根因级、最小、优雅、贴合既有分层与约定的修法。给出方向与关键改动点（必要时贴 before/after 片段）。
-如果原 finding 建议的修法是丑补丁或没治本，说清它丑在哪、为什么这版更干净。
-这是给 review-fixer 落地的建议，本角色不动产品代码。>
+## Suggested fix (when confirmed / partial)
+<A root-cause-level, minimal, elegant fix that conforms to existing layering and conventions. Give the direction and the key change points (paste a before/after snippet when needed).
+If the fix suggested by the original finding is an ugly patch or fails to cure the root cause, state clearly where it is ugly and why this version is cleaner.
+This is a suggestion for review-fixer to land; this role does not touch product code.>
 
-## 预防 / 复发检查
-<以后怎么避免；建议补什么「修复前会失败」的回归检查；能否在结构层面（类型/枚举/锁/不变式）堵住复发。>
+## Prevention / recurrence check
+<How to avoid it in the future; what "would-fail-before-the-fix" regression check to add; whether recurrence can be blocked at the structural level (types/enums/locks/invariants).>
 
-## 关联
-<相关 issue、相关产物或上游 finding——每个被引用的编号都要带一句话说明它是什么；没有就写"无"。>
+## Related
+<Related issues, related artifacts, or upstream findings — every referenced ID gets one sentence explaining what it is; if there are none, write "none".>
 ```
 
 ---
 
-### 交付前自检
+### Pre-delivery self-check
 
-每份文件交付前过一遍，命中任一条就回去重写：
+Run this over every file before delivery; if it hits any item, go back and rewrite:
 
-- 骨架与模板不一致，或缺「背景」节；
-- 出现未解释的任务内代号（T-xx、F-xx、ST、内部 artifact 名……）；
-- 关键断言只有 `文件:行号`、没贴代码片段；
-- 判定没有同时出现在文件名、标题、首句三处；
-- 缺「人工裁决」块，或替人勾选/填写了内容；
-- 误报/部分成立没写清「为什么不是（或不全是）要改的问题」。
+- the skeleton does not match the template, or the "Background" section is missing;
+- an unexplained in-task code appears (T-xx, F-xx, ST, internal artifact name, etc.);
+- a key assertion has only `file:line` with no code snippet pasted;
+- the verdict does not appear in all three of the file name, title, and first sentence;
+- the "Human decision" block is missing, or content was checked/filled in for the human;
+- a false positive / partial does not state clearly "why this is not (or not entirely) a problem to change."

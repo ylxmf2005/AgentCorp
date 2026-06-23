@@ -1,19 +1,19 @@
-# 本地 Handoff 协议
+# Local handoff protocol
 
-本协议属于 `review-fixer` skill 自己的 reference。assignment、receipt 和本角色产物的形态，都从本目录的 `templates/` demo 取用。
+This protocol is the `review-fixer` skill's own reference. The shapes of the assignment, the receipt, and this role's artifact are all drawn from the `templates/` demos in this directory.
 
-协议字段、`artifact_type`、`status` 枚举、路径、代码标识符和 API/接口契约字段保持原值；面向人阅读的说明正文使用 zh-CN。
+Keep protocol fields, `artifact_type`, the `status` enum, paths, code identifiers, and API/interface contract fields at their original values; the human-facing explanatory prose uses zh-CN.
 
-## 读取 Assignment
+## Reading the assignment
 
-- 被 Delivery Orchestrator 指派时，把 assignment 文件当作任务输入。assignment 给的是**一组**修复项（`FIX_ITEMS`）和你被授权的文件集（`OWNED_FILES`）。
-- 将 `output_path` 相对 `task_root` 解析；`output_path` 指向本组的修复记录 `review/fix-records/<group-slug>.md`。
-- 如果 assignment 没有 `task_root`，从 assignment 文件位置推导：找到父级 `handoffs/` 目录，并把它的父目录作为 task root。
-- 在 `output_path` 写入本组修复记录；只编辑 `OWNED_FILES` 内的后端代码；除此之外不要额外散落产物。
-- 返回一份 receipt；receipt 的 `artifact_path` 指向本组修复记录路径。
-- 跨组的合并校验与汇总 `review/fix-result.md` 由 Delivery Orchestrator 做，不由你写。
+- When dispatched by the Delivery Orchestrator, treat the assignment file as your task input. The assignment gives you **one group** of fix items (`FIX_ITEMS`) and your authorized file set (`OWNED_FILES`).
+- Resolve `output_path` relative to `task_root`; `output_path` points to this group's fix record `review/fix-records/<group-slug>.md`.
+- If the assignment has no `task_root`, derive it from the assignment file's location: find the parent `handoffs/` directory and take its parent directory as the task root.
+- Write this group's fix record at `output_path`; edit only the backend code within `OWNED_FILES`; do not scatter any other artifacts beyond that.
+- Return a receipt; the receipt's `artifact_path` points to this group's fix record path.
+- The cross-group merge check and the `review/fix-result.md` rollup are done by the Delivery Orchestrator, not written by you.
 
-## 本角色可用模板
+## Templates available to this role
 
 - `templates/phase-assignment.demo.md`
 - `templates/phase-receipt.demo.md`

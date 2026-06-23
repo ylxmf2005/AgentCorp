@@ -9,35 +9,35 @@ status: assigned
 output_path: review/research/
 ---
 
-# 指派：review-research
+# Assignment: review-research
 
-## 目标
+## Goal
 
-把本轮 code review 的每个 finding 研究透：核验真伪、判定确认/误报/部分成立/待人确认，对成立的给出优雅修法建议，并写成让人完全看懂的逐 issue 解释 + 索引。
+Research every finding from this round of code review to the bottom: verify whether it is real, give a verdict of confirmed/false-positive/partial/needs-human, give an elegant fix suggestion for those that hold, and write a fully understandable per-issue explanation + index.
 
-## 输入
+## Inputs
 
-- review/code-review.md（必需）
-- review/specialist-findings/（如有）
-- 真实 diff / 改动文件清单（如有）
-- 记录在案的设计原则（CLAUDE.md / auto memory / 设计记忆）（如有）
+- review/code-review.md (required)
+- review/specialist-findings/ (if any)
+- the real diff / changed-file list (if any)
+- documented design principles (CLAUDE.md / auto memory / design memory) (if any)
 
-## 来源产物
+## Source artifacts
 
 - review/code-review.md
 
-## 约束
+## Constraints
 
-- zh-CN，面向不熟悉这块代码的人写；涉及代码要贴关键片段并解释。
-- 判定必须落到真实代码上、有据；读码不足/缺仓库外上下文就标待人确认，别硬下结论。
-- 只给修法建议，不改产品代码、不做验收判断。
-- 研究/解释文档是 *.md，绝不纳入提交。
+- zh-CN, written for someone unfamiliar with this code; where code is involved, paste key snippets and explain.
+- The verdict must land on real code and be evidence-backed; mark needs-human when code reading is insufficient or out-of-repo context is missing, and do not force a conclusion.
+- Give only fix suggestions; do not change product code or make acceptance judgments.
+- Research/explanation documents are *.md and are never included in a commit.
 
-## 必需输出
+## Required outputs
 
-- 在 `output_path` 文件夹下写 `00-index.md`（含每条判定）和每个 issue 一份研究文件。
-- 返回一份匹配 `templates/phase-receipt.demo.md` 的 receipt，`artifact_path` 指向 `00-index.md`。
+- Under the `output_path` folder, write `00-index.md` (with every verdict) and one research file per issue.
+- Return a receipt matching `templates/phase-receipt.demo.md`, with `artifact_path` pointing to `00-index.md`.
 
-## 停止条件
+## Stop conditions
 
-- 缺少 code review findings，或无法读取关键代码/diff 以致无法诚实核验。
+- Code review findings are missing, or the key code/diff cannot be read, so honest verification is impossible.

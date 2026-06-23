@@ -1,19 +1,19 @@
-# 回归测试参考
+# Regression Testing Reference
 
-证明一个 bug 仍然修着、或一个有风险的行为仍然兼容时，用这份参考。
+Use this reference when proving a bug is still fixed, or that an at-risk behavior is still compatible.
 
-## 怎样算把回归证清楚
+## What it takes to prove a regression clearly
 
-先把要验的 bug 或有风险的行为讲清楚，然后在当前 baseline 上尽量复现它——复现不了就说明为什么。接着跑那条本该抓住问题的针对性检查；blast radius 不小时，把受影响模块或契约里相邻的测试也带上。最后用直接证据确认修好的或被保留的行为确实成立，并把没能复现、flaky、被 block 或依赖环境的结果如实记下来。
+First state the bug or at-risk behavior to be verified, then try as hard as you can to reproduce it on the current baseline — and if you cannot reproduce it, explain why. Next run the targeted check that should have caught the problem; when the blast radius is non-trivial, pull in the neighboring tests across the affected modules or contracts as well. Finally, use direct evidence to confirm that the fixed or preserved behavior genuinely holds, and faithfully record any result that could not be reproduced, was flaky, was blocked, or was environment-dependent.
 
-## 什么是好的回归证据
+## What counts as good regression evidence
 
-- 原始复现步骤，以及当前观测到的结果。
-- 有条件时，一个「改前失败、改后通过」的测试。
-- 命令、请求、截图、日志或产物。
-- 从受影响模块或契约里挑出的相邻检查。
-- 明确的 pass/fail 状态。
+- The original reproduction steps, and the result observed now.
+- Where feasible, a test that fails before the change and passes after it.
+- Commands, requests, screenshots, logs, or artifacts.
+- Neighboring checks picked out from the affected modules or contracts.
+- A clear pass/fail status.
 
-## 边界
+## Boundaries
 
-除非被指派，不要扩张成宽泛的探索式测试。不要把评判实现代码当作主要证据。flaky 或依赖环境的失败不要藏。
+Unless assigned to, do not expand into broad exploratory testing. Do not treat judging the implementation code as your primary evidence. Do not hide flaky or environment-dependent failures.

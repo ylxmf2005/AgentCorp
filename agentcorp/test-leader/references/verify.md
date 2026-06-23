@@ -1,26 +1,26 @@
-# 本地验证统筹参考
+# Local verification orchestration reference
 
-实现和 code review 之后，用它来统筹各 tester。
+After implementation and code review, use this to orchestrate the testers.
 
-## 验证层级
+## Verification levels
 
-验证是分层的，层级之间有先后：底层的必需检查没过，上层的证据就还不算成立。
+Verification is layered, and the layers are ordered: until the required checks at a lower level pass, the evidence at a higher level does not yet hold.
 
-- **Capability**——每一条 Must Have 都要有直接证据；有自动化测试就跑；TestPlan 点名要人工确认的，才走人工。
-- **Integration/API**——跨模块的数据流被真正走过；边界处的错误传播被检查过；public 契约用真实的请求、响应、schema 或 CLI 输出来验，而不是空口。
-- **E2E**——每一项面向用户的能力，至少有一条完整用户目标跑通；该走的 happy path 和 error path 都走；每一步都记下动作、预期结果、实际结果和证据。
+- **Capability** — every Must Have needs direct evidence; if automated tests exist, run them; go manual only where the TestPlan calls out a manual confirmation.
+- **Integration/API** — the cross-module data flow has actually been exercised; error propagation at the boundaries has been checked; public contracts are verified with real requests, responses, schemas, or CLI output, not asserted on faith.
+- **E2E** — every user-facing capability has at least one complete user goal that runs through; the happy path and error path that should be exercised both are; each step records the action, expected result, actual result, and evidence.
 
-## 环境处理
+## Handling environments
 
-有 TestPlan 的环境规格就照它来。环境不可用时，如实说清到底是哪些检查被 blocked 或降级，而不是从读源码里编出证据。
+When the TestPlan has an environment spec, follow it. When the environment is unavailable, say honestly which checks are blocked or downgraded, rather than inventing evidence from reading the source.
 
-## 指派
+## Assignment
 
-- **API Contract Tester**——HTTP、JSON-RPC、A2A、CLI、SDK、schema、对外接口契约。
-- **E2E Tester**——经由 browser、CLI、API 或产品 UI 的真实用户流程。
-- **Regression Tester**——bug 复现、修复证明、邻近的 regression suite。
-- **专项 reviewer**——需要时，在各自的风险域内解读证据。
+- **API Contract Tester** — HTTP, JSON-RPC, A2A, CLI, SDK, schema, external interface contracts.
+- **E2E Tester** — real user flows through a browser, CLI, API, or the product UI.
+- **Regression Tester** — bug reproduction, fix proof, neighboring regression suites.
+- **Specialist reviewers** — when needed, to interpret evidence within their own risk domain.
 
-## 证据质量
+## Evidence quality
 
-好的证据带着命令、请求、响应、截图、日志、产物、环境、时间戳和 pass/fail 状态。弱证据是「看起来没问题」「应该能过」，或者本该被执行的行为却只靠读源码来推断。
+Good evidence carries commands, requests, responses, screenshots, logs, artifacts, environment, timestamps, and a pass/fail status. Weak evidence is "looks fine," "should pass," or inferring behavior that was supposed to run purely from reading the source.

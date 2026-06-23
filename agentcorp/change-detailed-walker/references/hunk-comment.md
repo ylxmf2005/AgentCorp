@@ -1,72 +1,99 @@
-# 逐 hunk 评论写作规则
+# Comment writing rules
 
-本文定义 `comments.jsonl` 中每条评论怎么写。评论数据字段、分类枚举、写作质量与追溯纪律均以本文为准。
+This document defines how to write each comment posted into the forge PR. Writing quality and traceability are governed here; how comments are posted, how lines are anchored, and how coverage is enforced are in `references/pipeline.md`.
 
-## 评论行 schema
+You write from a **god's-eye view**: you have already read the diff and the surrounding code, and whatever needed checking, you already checked. A comment is a **conclusion you hand a colleague** — not your investigation process, and not a to-do list for them. The change is already delivered; your job is to explain, clearly and conclusively, **what it is** and **why it's done this way**, the way a senior colleague who has read everything would just tell you. It is **not** a risk audit.
 
-`comments.jsonl` 是 UTF-8 JSON Lines，每行一个 object。五个基础字段必填，`code_refs` 可选：
+## Fields of one comment
 
-| 字段 | 规则 |
-| --- | --- |
-| `id` | 锚定 `diff.json` 中某个 hunk id，或无 hunk 文件的 file id。 |
-| `file` | 展示路径；deleted 取 `old_path`，其他情况取 `new_path`。 |
-| `classification` | 六值枚举：`core`、`supporting`、`mechanical`、`suspect-refactor`、`suspect-residue`、`untraceable`。 |
-| `why` | 非空 zh-CN markdown，回答「为什么改」。 |
-| `trace` | 字符串数组，可为空；写上游产物、commit 或关联 hunk id。 |
-| `code_refs` | 可选数组；每项含 `path`、`side: old|new`、`start_line`、`end_line`，可含 `label`。 |
+Each comment passed to `post_review.py` is `{path, body, new_position or old_position}`:
 
-示例：
+- `path`: repo-relative path (new path for additions/modifications, old path for pure deletions).
+- `body`: zh-CN markdown — the conclusion.
+- `new_position` / `old_position`: the anchor line number from the real values in `diff_outline.py`. Anchor added/context lines on `new`, pure deletions on `old`. Pick one.
 
-```json
-{"id":"h-3f2a9c1d8e4b","file":"src/helpers/db_helper.py","classification":"supporting","why":"`get_project_files` 原来只按 project_id 查询；本 hunk 给查询加上 `asset_flag` 过滤，是 asset 主流程（见 trace）牵连的取数口径调整。","trace":["requirements/validated-requirements.md FR-1","target-repo 1a2b3c4 feat: asset flow"]}
-```
+## What every comment says
 
-## 四条原则的逐 hunk 落点
+Two things, always, stated as conclusions (not as questions or things to verify):
 
-### 读者没读过这片代码
+1. **What it is / what it does** — in plain words: which function or logic was added/changed, what it's responsible for, roughly how it flows. Even if a code comment already says so, restate it more plainly. Without this layer the comment fails.
+2. **Why it's done this way** — the intent: what this change or refactor is trying to achieve. If it's part of a pattern, say so ("same 'push the logic down into the service' refactor as the two endpoints above").
 
-每条评论先用一句话交代该 hunk 触及的代码原职责，再解释这次为什么改。文件内第一个相关 hunk 要介绍该文件或模块的职责；同文件后续 hunk 可引用前文，但不能假设读者已经知道调用图。
+Then, **only if there is a genuine, real problem**, add **one conclusive sentence** about it — a true bug, leftover residue, a drive-by refactor, an out-of-scope change. State it as a fact you found, not as something to investigate. No real problem → write no risk text at all.
 
-### 忠于 diff
+That's the whole comment. Two layers plus, when warranted, one conclusion. Keep it tight.
 
-评论必须点名该 hunk 实际出现的标识符、字段、分支、调用或结构变化。自检标准：把这条评论换到另一个 hunk 下面会明显不成立；如果换 hunk 仍成立，它就太泛。
+## Write conclusions — not your process, and don't hand work to the reader
 
-### 区分 churn 与语义
+This is the most important rule, and the one most easily broken.
 
-`classification` 使用六值枚举：
+- **State the conclusion, not your investigation.** ✗ "我已对照 remix_service.py:592-617，四项都搬过去了" — that's you showing your work. ✓ "四项逻辑在 service 里完整保留，行为等价。" The reader doesn't want to watch you verify; they want the verdict.
+- **Don't defer to the reader.** ✗ "（必看）", "逐项核对 service 是否完整复刻了旧逻辑，否则静默丢功能", "维护者要确认 X". You have the god's-eye view — *you* do the confirming and write the result. If something genuinely wasn't carried over, state it as a fact: "X 没搬过去，这里会丢 Y 功能。"
+- **Don't pile up risks or hedge.** A delivered change does not need a risk checklist. If there is one real issue, name it in one conclusive line — no "可能", no "否则", no "要注意". If there isn't, say nothing about risk; don't write "此处无新增风险".
+- **No meta.** Don't reference earlier versions, your own iteration, or the review process. The comment stands alone.
 
-| 分类 | 判法 | 示例 |
+A cross-file fact is fine and useful — but state it as the **conclusion of a check you already did** ("四项已在 service 完整复刻，行为等价"), never as a contract for the reader to go verify or a hedge ("若 X 改成抛错则全失效").
+
+## Granularity: anchor on semantic units, don't lay out by line
+
+- One comment per function / per branch / per meaningful group of constants; when logic is dense, as fine as a single line.
+- **Big blocks must be split**: a hunk over ~20 changed lines splits by function into multiple comments, each anchored to a real changed line in that function.
+- **Don't carve into even line-range blocks just to hit density.** The gate enforces a density floor, not "slice the file into contiguous ranges, one comment per block." If your comment ranges, sorted, tile the whole file with zero gaps, that's laid-out blocks — re-anchor to real semantic units. Better several complementary comments on one function than one comment over an unrelated range.
+- Pure mechanical churn (formatting, import reordering, bulk rename): one brief comment stating which kind of mechanical change it is. If it's itself a big block, still anchor at sufficient density.
+
+## Classification (decides how you write; not a label pasted into the body)
+
+Have a classification in mind for each change. **Don't prefix the body with "normal" labels** (`core`/`supporting`/`mechanical`) — readers want the explanation, not a tag. Only the three "needs caution" classes get a conspicuous marker at the start of the body, as a one-line conclusion:
+
+| Classification | How to decide | Body marker |
 | --- | --- | --- |
-| `core` | 直接承载本次主体能力或主要修复 | 新增入口校验、核心服务分支、主流程数据写入 |
-| `supporting` | 为主体能力提供必要支撑 | 调用点透传字段、测试 fixture、辅助查询调整 |
-| `mechanical` | 机械 churn，行为意图很弱或无行为变化 | import 重排、格式化、批量 rename、生成代码同步 |
-| `suspect-refactor` | 看起来像顺手重构，授权链不清 | 抽 helper、改命名、重排控制流但与需求关系弱 |
-| `suspect-residue` | 疑似早期方案残留或需求外语义 | 未被调用的新分支、临时开关、无入口字段 |
-| `untraceable` | 读不到可信授权或意图证据 | diff 存在，但需求、设计、commit、邻近代码都解释不了 |
+| `core` | Directly carries the main capability or fix | none |
+| `supporting` | Necessary support (call-site pass-through, helper query, fixture) | none |
+| `mechanical` | Mechanical churn, weak or no behavioral intent | none |
+| `suspect-refactor` | Looks like a drive-by refactor, authorization unclear | `【可疑·顺手重构】` |
+| `suspect-residue` | Suspected leftover from an earlier approach, or out-of-scope semantics | `【可疑·残留】` |
+| `untraceable` | No credible authorization/intent evidence | `【追溯不到】` |
 
-`mechanical` 可以简短，但必须说清是哪类机械变化；不能用 `mechanical` 掩盖行为改动。
+- A `suspect-*` marker is a conclusion: state the suspicious fact in one line ("这是顺手重构，和本次需求无关"), don't open a risk discussion.
+- `untraceable`: don't fabricate a source; say which evidence you checked (requirements, design, commits, neighboring code) and couldn't trace it.
+- Catching residue and out-of-scope changes is a core purpose of this tool — but it's a verdict, not a hedge. **Zero suspects across a dozens-of-files change usually means you didn't look hard**, not that it's clean.
 
-### 阅读顺序靠 trace 串联
+## Traceability
 
-单文档时代的重排阅读路径在这里改为：页面按文件组织、hunk 按 diff 自然序呈现，跨 hunk 的因果通过 `trace` 与评论正文互相指认。需要连接上下文时，写清「配合 `h-...` 的字段新增」或「由 `requirements/... FR-2` 授权」。
+Light touch: when it clarifies why a spot exists, point to the authorization (a requirements/design item, or a commit). For a branch with no design doc, use `<repo alias> <short sha> <subject keywords>`. When one large commit covers many spots, don't repeat the same branch label everywhere — either name the sub-intent for this spot, or chain causality with "配合 `<file>:<symbol>`". Don't turn trace into clutter.
 
-如果分支没有需求、设计或评审文档，trace 可以只做 commit 追溯，格式写 `<repo 代称> <短sha> <commit 主题关键词>`，例如 `target-repo 1a2b3c4 fix clone default title`；不要为凑 trace 编造不存在的上游产物。
+## Counterexamples
 
-### 代码引用靠 code_refs 定位
+### Counterexample 1 (most common): investigation process + risk audit + deferring to the reader
 
-`trace` 回答「这个改动的授权从哪来」，取产物、commit 或 hunk 级线索；`code_refs` 回答「去看哪段代码」，取结构化代码坐标。两者互不替代。
+> 核心：update_remix_cache 是改动最大的一处。原 handler 里塞了管理员校验、按 compilation_content_id/file_id 分流、文件存在性校验、asyncio.create_task 起异步日志，现在全删掉压成一次 await remix_service.update_cache_for_user(...)。
+> 风险 / 行为等价性（必看）：这次搬迁要逐项核对 service 侧是否完整复刻了旧逻辑，否则就是静默丢功能：①②③④……我已对照 remix_service.py:592-617，四项都搬过去了。但有个隐患……维护者要知道这条日志旁路不可靠……
 
-评论引用 hunk 之外的支撑代码、或讲跨文件因果时，写结构化 `code_refs`，不要只在 `why` 里写裸路径或行号；前端不会解析裸路径。`[[ref:N]]` 只是把第 N 个 `code_refs` 内联到正文的辅助写法，评论卡片底部的完整相关代码列表才是基线。
+What's wrong: "（必看）/逐项核对/否则静默丢功能/维护者要知道" hands the verification to the reader; "我已对照……四项都搬过去了" is the walker showing its work; the whole thing is a hedged risk audit for an already-delivered change.
 
-## 写作层规则
+On target (god's-eye conclusion):
 
-- 评论使用 zh-CN；代码标识符、路径、字段名、命令保持原样。
-- `why` 回答「为什么这里要改」，不是复述「这里改了什么」。
-- `core` 与 `supporting` 至少一条 `trace`；没有 trace 就不能标成这两类。
-- `untraceable` 不许编造引用；`trace` 可以为空，但 `why` 要说明已尝试过哪些证据仍无法追溯。
-- `suspect-refactor` 与 `suspect-residue` 要写出可疑点，不要只贴标签。
-- 评论新增 util/helper 类 hunk 时，核对仓库是否已有同职责工具；疑似重复造轮按 `suspect-refactor` 写明可疑点。
-- 评论测试类 hunk 时，指出其覆盖是否只有 happy path；这只是提示，不替代测试负责人裁决。
-- 超大 hunk 可以用列表分点，但每点仍要落到该 hunk 的实际标识符或结构变化。
-- `file` 字段取展示路径：删除用 `old_path`，其他情况用 `new_path`。
-- 同一 id 需要修订时可追加新行，后行生效；不要删除历史行来假装没有修订过程。
+> `update_remix_cache`：原来在 handler 里直接做的四件事——管理员鉴权、按 compilation_content_id / file_id 分流、文件存在性校验、异步操作日志——整体下沉进 `remix_service.update_cache_for_user`，handler 只剩一行转发。和上面两个删除接口是同一套「逻辑收进 service」重构，四项在 service 里完整保留、行为等价；那几行 `logger.info` 只是单行字符串拆成多行拼接，无行为变化。一处遗留：异步日志仍是裸 `asyncio.create_task`，出错会被静默吞、请求结束可能被取消——旧代码就这样，本次没动。
+
+Why it lands: what + why as conclusions; "行为等价" is a verdict you reached (you don't show the checking); the one real leftover is a single factual line, not a "must-check" audit.
+
+### Counterexample 2: play-by-play (reciting code in order)
+
+> 先校验源归档就绪，再生成不冲突 id（最多重试 5 次），再复制归档（失败先删目标再抛），然后在 try 块里创建任务、创建记录、写引用、创建提交、初始化对象，任一步异常走整组回收并 raise……
+
+What's wrong: recited the code in order; the reader still doesn't know **why** retry 5 times or **why** delete-then-raise.
+
+On target:
+
+> 复制失败后先删目标对象再抛，是为了不让半拷贝留下的孤儿对象在下次重试里被当成已就绪。
+
+### Counterexample 3: only praising, or over-hedged risk
+
+> （只夸）补偿写在 clone 旁边，登记失败就回收私有副本避免孤儿，和 task_file 分支对称，设计很好。
+> （过度对冲）……接手前要确认它幂等、失败可吞；若 create_asset 改成撞键抛错，这里的回收逻辑全失效……
+
+On target (one conclusion on the one real issue):
+
+> 补偿紧贴 clone：登记失败时回收本次铸的私有副本——只有这层握着 `clone_result`，外层不知道铸了什么。一个真问题：`cleanup_cloned_forge_project` 失败时会用清理异常盖掉原始的 create 异常，上层看到的是「清理失败」而非真正的登记失败。
+
+Final self-check, runs through the whole document: would I say this, in these words, to a colleague taking over the code? If it reads like my notes-to-self, a risk checklist, or homework for them — rewrite it into a plain conclusion.

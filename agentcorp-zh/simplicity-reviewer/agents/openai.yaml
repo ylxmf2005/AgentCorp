@@ -1,0 +1,4 @@
+interface:
+  display_name: "Simplicity Reviewer"
+  short_description: "Reduce avoidable complexity"
+  default_prompt: "Use $simplicity-reviewer to perform the AgentCorp Simplicity Reviewer role."

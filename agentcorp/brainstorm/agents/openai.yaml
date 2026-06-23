@@ -1,0 +1,4 @@
+interface:
+  display_name: "Brainstorm"
+  short_description: "Clarify and pressure-test requirements"
+  default_prompt: "Use $brainstorm to clarify and pressure-test these requirements before AgentCorp proceeds."

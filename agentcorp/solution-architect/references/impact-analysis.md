@@ -6,29 +6,29 @@ outputs: [impact analysis design artifact]
 optional: false
 ---
 
-# 影响分析（增量设计 / Delta Design）
+# Impact Analysis (Delta Design)
 
-对现有代码改动的精确记录。它不是把架构重写一遍——只讲增量：现状是什么、要改什么、什么绝对不能破坏、还剩哪些风险。
+A precise record of a change to existing code. It is not a rewrite of the architecture — it covers only the delta: what is there now, what will change, what must never break, and what risks remain.
 
-## 你要做的
+## What you do
 
-先读受影响的模块、接口和数据流，让增量是针对代码「实际怎么跑」来设计的，而不是针对你「以为它怎么跑」。然后用和架构设计一样的目标来设计这次改动：让变更局部化、不要把接口撑得比改动所需更宽、新代码放进它本就该在的模块。某个边界或隐藏决策拿不准时，去翻 `principles/`。
+First read the affected modules, interfaces, and data flows, so the delta is designed against how the code "actually runs," not how you "assume it runs." Then design the change with the same goals as architecture design: localize the change, don't widen an interface beyond what the change requires, and put new code in the module where it already belongs. When a boundary or hiding decision is unclear, consult `principles/`.
 
-## 这份产物要达到什么
+## What this artifact must achieve
 
-读者读完，应当明白：现状行为是什么、目标行为是什么、改动具体落在哪里、什么必须保住、哪里可能会坏。要讲清楚：
+After reading it, the reader should understand: what the current behavior is, what the target behavior is, exactly where the change lands, what must be preserved, and where things might break. It must make clear:
 
-- 改什么、为什么改，用一段诚实的概述说明；
-- 受影响的模块和文件（用真实路径；只有在能消除歧义时才标行号）；
-- 接口和数据上的改动，逐条写明——`none`（无）是一个有效且有用的答案；
-- 新代码与现有代码相接的集成点；
-- 必须继续正常工作的现有行为；
-- 风险：什么可能会坏、暴露程度有多大。
+- what changes and why, in one honest overview paragraph;
+- the affected modules and files (real paths; mark line numbers only when it removes ambiguity);
+- the interface and data changes, spelled out item by item — `none` is a valid and useful answer;
+- the integration points where new code meets existing code;
+- the existing behavior that must keep working;
+- risks: what might break, and how exposed it is.
 
-只在某个视图能比文字更便于推敲「现状路径、目标路径或被保住的行为」时，才画图。图要诚实、具体——真实的模块和结果，别用占位方框。
+Draw a diagram only where a view makes the "current path, target path, or preserved behavior" easier to reason about than prose. Diagrams must be honest and concrete — real modules and outcomes, not placeholder boxes.
 
-如果这次改动牵动很多模块，或带来结构性的接口改动，不要硬把 impact analysis 撑大去覆盖所有内容：把结构性决策放进 `architecture.md`，把 public/shared 或跨模块边界放进 `api-contract.md`，让 impact analysis 继续聚焦 delta 和必须保留的行为。
+If this change ripples through many modules or brings structural interface changes, don't strain the impact analysis to cover everything: put the structural decisions in `architecture.md`, put public/shared or cross-module boundaries in `api-contract.md`, and keep the impact analysis focused on the delta and the behavior that must be preserved.
 
-## 输出
+## Output
 
-把产物写到 assignment 的 `output_path`（通常是 `design/impact-analysis.md`），遵循 `design-artifact` demo 模板。
+Write the artifact to the assignment's `output_path` (usually `design/impact-analysis.md`), following the `design-artifact` demo template.

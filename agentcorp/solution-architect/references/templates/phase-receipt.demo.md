@@ -7,13 +7,13 @@ status: completed
 artifact_path: review/example-output.md
 ---
 
-# 回执：example-phase
+# Receipt: example-phase
 
-## 说明
+## Notes
 
-- 一句话完成说明。
-- 设计产物：逐条列出相对 task root 的路径。
+- One-line completion note.
+- Design artifacts: list each path relative to the task root.
 
-## 阻塞项
+## Blockers
 
-- 无。
+- None.

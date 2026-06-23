@@ -7,23 +7,23 @@ source_artifacts:
   - path/to/reviewed-artifact.md
 ---
 
-# Project Steward 评审发现
+# Project Steward Review Findings
 
-## 发现
+## Findings
 
-### 发现 1：<title>
+### Finding 1: <title>
 
-- 严重程度:
-- 置信度:
-- 长期健康影响:
-- 证据:
-- 建议:
-- 路由:
+- Severity:
+- Confidence:
+- Long-term health impact:
+- Evidence:
+- Recommendation:
+- Routing:
 
-## 证据缺口
+## Evidence gaps
 
-- 没有时写“无”。
+- Write "None" when there are none.
 
-## 残余风险
+## Residual risks
 
-- 没有时写“无”。
+- Write "None" when there are none.

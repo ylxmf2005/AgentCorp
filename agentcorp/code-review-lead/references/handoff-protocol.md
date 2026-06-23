@@ -1,18 +1,18 @@
-# 本地 Handoff 协议
+# Local handoff protocol
 
-本协议属于 `code-review-lead` skill 自己的 reference。assignment、receipt 和本角色产物的形态，都从本目录的 `templates/` demo 取用。
+This protocol is the `code-review-lead` skill's own reference. The shape of the assignment, the receipt, and this role's artifacts all come from the `templates/` demos in this directory.
 
-协议字段、`artifact_type`、`status` 枚举、路径、代码标识符和 API/接口契约字段保持原值；面向人阅读的说明正文使用 zh-CN。
+Keep protocol fields, `artifact_type`, the `status` enum, paths, code identifiers, and API/interface contract fields at their original values; the human-facing explanatory prose uses zh-CN.
 
-## 读取 Assignment
+## Reading the assignment
 
-- 被 Delivery Orchestrator 指派时，把 assignment 文件当作任务输入。
-- 将 `output_path` 相对 `task_root` 解析。
-- 如果 assignment 没有 `task_root`，从 assignment 文件位置推导：找到父级 `handoffs/` 目录，并把它的父目录作为 task root。
-- 在 `output_path` 写入本 phase 的主要持久产物；除非本角色说明需要创建 tester assignment、子结果或 acceptance package，否则不要额外散落产物。
-- 返回一份 receipt；receipt 的 `artifact_path` 必须与主要产物路径一致，或在本角色明确产生多个产物时指向最终汇总产物。
+- When assigned by the Delivery Orchestrator, treat the assignment file as the task input.
+- Resolve `output_path` relative to `task_root`.
+- If the assignment has no `task_root`, derive it from the assignment file's location: find the parent `handoffs/` directory and take its parent as the task root.
+- Write this phase's primary persistent artifact at `output_path`; unless this role's instructions call for creating a tester assignment, a sub-result, or an acceptance package, do not scatter extra artifacts.
+- Return a receipt; the receipt's `artifact_path` must match the primary artifact path, or point to the final summary artifact when this role explicitly produces multiple artifacts.
 
-## 本角色可用模板
+## Templates available to this role
 
 - `templates/phase-assignment.demo.md`
 - `templates/phase-receipt.demo.md`

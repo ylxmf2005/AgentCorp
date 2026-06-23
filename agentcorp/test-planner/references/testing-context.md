@@ -1,103 +1,103 @@
-# 测试上下文文档（testing-context）
+# Testing-context document (testing-context)
 
-项目级的运行时事实底册，固定路径 `teamspace/testing-context.md`。它存在的理由：测试计划写不具体，根因几乎都是规划者不知道系统从哪进、怎么登录、页面长什么样、数据有什么惯例。这些事实跨任务稳定，探索一次、沉淀下来，之后每个任务的规划都站在它上面。
+The project-level ledger of runtime facts, at the fixed path `teamspace/testing-context.md`. The reason it exists: when a test plan is not specific enough, the root cause is almost always that the planner does not know where the system is entered, how to log in, what the pages look like, or what conventions the data follows. These facts are stable across tasks — explore once, lay them down, and every later task's planning stands on top of them.
 
-「自由探索一个产品、沉淀成可复用文档」是一门有方法的活，不是随便点点。下面的流程揉了两路成熟实践——人类探索性测试学科（charter、tours）和 agent 自主探索研究（frontier、新增量约束、验证标记）——照步骤做。
+"Freely explore a product and distill it into a reusable document" is a methodical job, not random clicking. The flow below blends two streams of mature practice — the human exploratory-testing discipline (charters, tours) and agent autonomous-exploration research (frontier, the novelty constraint, verification markers) — so follow the steps.
 
-## 它要回答什么
+## What it must answer
 
-一份够用的上下文文档，能让一个从没接触过这个项目的 tester 答出：
+A context document that is good enough lets a tester who has never touched this project answer:
 
-- **入口与访问**——各环境（pre/test/formal）的入口 URL；登录方式（已登录浏览器会话、账号体系、凭据引用——只给引用，不写密文）。
-- **页面地图**——主要页面/视图有哪些，互相怎么到达；每个页面承载哪些核心操作。
-- **核心用户 flow**——这个产品的用户典型在干什么：从哪进、走几步、到哪算完成。
-- **可观测面**——除了页面，还能从哪取证：API 端点的形态、DB（怎么连、只读约束）、日志（怎么查、查哪里）。
-- **测试数据惯例**——现成可用的测试账号/项目/数据集；造数据的安全方式；哪些数据绝不能动。
-- **已知限制**——环境差异（如服务路由、池切换）、常见的 blocked 场景、历史上踩过的坑。
-- **待补缺口**——还没探到或没探进去的部分，留给下一次增量探索。
+- **Entry and access** — the entry URL for each environment (pre/test/formal); the login method (already-logged-in browser session, account system, credential reference — reference only, never the secret).
+- **Page map** — what the main pages/views are and how to reach each other; what core operations each page carries.
+- **Core user flows** — what users of this product typically do: where they enter, how many steps, what counts as done.
+- **Observable surface** — beyond the pages, where else evidence can be drawn from: the shape of API endpoints, the DB (how to connect, read-only constraints), the logs (how to query, where to look).
+- **Test-data conventions** — ready-to-use test accounts/projects/datasets; the safe way to create data; which data must never be touched.
+- **Known limitations** — environment differences (e.g. service routing, pool switching), common blocked scenarios, pitfalls hit in the past.
+- **Gaps to fill** — the parts not yet reached or not yet entered, left for the next incremental exploration.
 
-## 探索的工作文件
+## Working files for exploration
 
-探索是有产物的工作，不是脑内活动。动手前在当前任务目录下建 `test/exploration/`，四样东西：
+Exploration is work that produces artifacts, not a mental activity. Before you start, create `test/exploration/` under the current task directory, with four things:
 
-| 文件 | 是什么 | 形态 |
+| File | What it is | Shape |
 |---|---|---|
-| `frontier.md` | 待探清单：见过但还没进去的入口/页面/线索 | `references/templates/exploration-frontier.demo.md` |
-| `charters.md` | charter 台账：每轮探索的目标声明，以及题外发现转成的待办 | `references/templates/exploration-charters.demo.md` |
-| `journal.md` | 探索日志：每轮实际走了什么、证据在哪 | `references/templates/exploration-journal.demo.md` |
-| `shots/` | 截图目录 | `NN-<slug>.png` 编号命名，journal 里按名引用 |
+| `frontier.md` | The to-explore list: entries/pages/leads seen but not yet entered | `references/templates/exploration-frontier.demo.md` |
+| `charters.md` | The charter ledger: each round's goal statement, plus side findings turned into to-dos | `references/templates/exploration-charters.demo.md` |
+| `journal.md` | The exploration journal: what each round actually walked, and where the evidence is | `references/templates/exploration-journal.demo.md` |
+| `shots/` | The screenshot directory | numbered `NN-<slug>.png`, referenced by name in the journal |
 
-形态照搬 demo、替换成当前项目的内容。这四样是任务产物，留在任务目录里当探索证据；只有确认的结论才回写 `teamspace/testing-context.md`（形态见 `references/templates/testing-context.demo.md`）。
+Copy the shape from the demos and replace it with the current project's content. These four are task artifacts; leave them in the task directory as exploration evidence. Only confirmed conclusions get written back to `teamspace/testing-context.md` (shape per `references/templates/testing-context.demo.md`).
 
-## 怎么探索：步骤
+## How to explore: the steps
 
-**Step 0 初始化（不开浏览器）**
-建好上面四个工作文件。读已有材料：`teamspace/learnings/`、既有任务的 test 产物、项目文档/README、代码里的路由表和 handler 注册。把读到的种子全部记下：声称的功能和入口写进 `frontier.md`；接口形态、日志/DB 取证方式直接写进 testing-context.md 的「可观测面」初稿。
+**Step 0 Initialize (no browser yet)**
+Create the four working files above. Read existing material: `teamspace/learnings/`, the test artifacts of prior tasks, project docs/README, the route tables and handler registrations in the code. Record every seed you read: claimed features and entry points go into `frontier.md`; the shape of interfaces and the log/DB evidence paths go straight into a first draft of the "Observable surface" of testing-context.md.
 
-**Step 1 立 charter**
-从 `frontier.md` 挑一条未探的（挑选规则见下节「推进策略」），按模板写进 `charters.md`、标 `in-progress`：
+**Step 1 Set a charter**
+Pick an unexplored item from `frontier.md` (selection rules in the "Advancement strategy" section below), write it into `charters.md` per the template, and mark it `in-progress`:
 
-> 探索 <目标区域>，借助 <手段/资源>，以查明 <要写进文档的哪类信息>。
+> Explore <target area>, using <means/resource>, to find out <which kind of information to write into the document>.
 
-例：「探索资产库列表页，借助已登录 Chrome 会话，以查明入口路径、列表页可见操作和到详情页的跳转方式。」「以查明」一栏强制你出发前想清要带回什么——这是防止探索变成漫游的第一道缰绳。
+Example: "Explore the asset-library list page, using the already-logged-in Chrome session, to find out the entry path, the operations visible on the list page, and the way to navigate to the detail page." The "to find out" field forces you to settle, before you set out, what you intend to bring back — this is the first rein against exploration turning into wandering.
 
-立 charter 守三条：①先把文档和 journal 里已覆盖的部分扫一眼，新 charter 必须明显不同于已探内容，不重复确认已知；②目标必须可验证——「以查明」的东西要能用页面证据确认，不出超出当前权限/环境的题；③不为单次点击立 charter——优先选能覆盖多步、涉及增删改查或筛选的目标，单个控件的行为顺路看就行。
+When setting a charter, hold three rules: (1) first scan what the document and journal already cover; a new charter must be clearly different from what has been explored, not a re-confirmation of what is known; (2) the goal must be verifiable — what you set out "to find out" must be confirmable with page evidence, and must not pose a question beyond the current permissions/environment; (3) do not set a charter for a single click — prefer goals that span multiple steps, or involve create/read/update/delete or filtering; the behavior of a single control can be checked along the way.
 
-**Step 2 执行**
-照 charter 用浏览器走。每做一步：截图落盘 `shots/`，`journal.md` 记一行「页面 → 动作 → 观察」。途中看到的新入口随手追加进 `frontier.md`（只记，不进）；题外发现（可疑行为、没见过的功能）写进 `charters.md` 标 `pending`，不当场深挖。
+**Step 2 Execute**
+Walk the charter with the browser. For each step: save a screenshot into `shots/`, and record one line in `journal.md` — "page → action → observation". New entry points seen along the way get appended to `frontier.md` (record only, do not enter); side findings (suspicious behavior, an unseen feature) go into `charters.md` marked `pending`, not dug into on the spot.
 
-**Step 3 收割**
-本轮走完，把确认的事实按归属写进 `teamspace/testing-context.md` 对应节（格式见「怎么记录」）。`frontier.md` 该条标 `[x]`，charter 标 `done`。
+**Step 3 Harvest**
+After this round is done, write the confirmed facts into the corresponding section of `teamspace/testing-context.md`, sorted by where they belong (format per "How to record"). Mark that item in `frontier.md` `[x]`, and the charter `done`.
 
-**Step 4 判停**
-对照停止条件（见下）。不满足就回 Step 1 挑下一条。
+**Step 4 Decide whether to stop**
+Check against the stop conditions (below). If none are met, go back to Step 1 and pick the next item.
 
-**Step 5 收尾**
-自检一遍：testing-context.md 哪些节还空着或很薄、哪里被挡住没进去、哪些条目信心低——如实写进它的「待补缺口」节。`exploration/` 整个目录留在任务里，不删。
+**Step 5 Wrap up**
+Do a self-check: which sections of testing-context.md are still empty or thin, where you were blocked from entering, which entries you have low confidence in — write them faithfully into its "Gaps to fill" section. Leave the entire `exploration/` directory in the task; do not delete it.
 
-## 推进策略（Step 1 怎么挑）
+## Advancement strategy (how to pick in Step 1)
 
-探索分两个节奏，对应不同的挑选规则：
+Exploration has two tempos, with different selection rules:
 
-1. **铺图阶段用广度优先**——目标是建页面地图。每轮挑一个未访问的页面，只看一层：记 URL、用途、页面上可见的核心操作、能跳去哪（出边）；新链接全部入 frontier，本轮不深入。frontier 里没有未访问页面了，铺图结束。
-2. **走线阶段用深度优先**——目标是核心用户 flow 和数据惯例。每轮挑一条完整的用户目标（从哪进、走几步、到哪算完成），沿着它走到底，中途不岔开；岔路记进 frontier 或 charters，回头再说。走线时顺带跟一份核心数据对象：它在哪些页面/接口/表出现。
+1. **Map-laying phase, breadth-first** — the goal is to build the page map. Each round, pick an unvisited page and look at one layer only: record the URL, purpose, the core operations visible on the page, and where it can navigate to (out-edges); all new links go into the frontier, with no depth this round. Once the frontier has no unvisited pages, map-laying is done.
+2. **Line-walking phase, depth-first** — the goal is the core user flows and data conventions. Each round, pick one complete user goal (where to enter, how many steps, what counts as done) and walk it all the way to the end without branching off; record forks into the frontier or charters and come back later. While walking a line, also track one core data object: which pages/interfaces/tables it appears in.
 
-顺序固定：先铺图、后走线——没有地图，选哪条线走都是瞎选。整个过程中持续留意权限墙、环境差异、解析不了的页面，随手写进「已知限制」。
+The order is fixed: lay the map first, then walk lines — without a map, picking which line to walk is blind. Throughout the whole process, keep an eye out for permission walls, environment differences, and pages you cannot parse, and jot them into "Known limitations" as you go.
 
-## 探索纪律
+## Exploration discipline
 
-- **用已登录的真实会话**——撞到登录墙，先确认你驱动的是用户已登录的浏览器实例，而不是新开的空白实例；确认后仍被挡，把这一支记进「已知限制」并停在那里，不要编造墙后面的内容。
-- **只读优先**——导航、查看、截图随便做；要创建/修改/删除业务对象、对外发送、花钱的动作，探索阶段不做——从页面控件和代码推断步骤，标「未实测」。
-- **探索是你的本职，不许让渡**——任务约束里「不执行测试」「不调用写接口」限制的是写操作和验证执行，**不是不开浏览器的理由**：只读浏览页面、看结构、截图，就是规划期探索的本体。把铺图走线「留给 verify 阶段的 tester 补」是失职——tester 拿到的手册应当踩在你已核实的页面地图上，而不是替你探路。环境真的进不去（登录失效、服务没起），按上面「用已登录的真实会话」那条记成已知限制，那是 blocked，不是让渡。
-- **卡住换法，不原样重试**——某一步失败（点不到、没反应），换一种方式达成同一个目标（换入口、换控件、改用导航），不要把失败的动作原样再来一遍；也只做完成这一步所需的最小动作，别顺手多点。
-- **失败也是事实**——页面打不开、走错路，照实写进「已知限制」，或把那条路记成「实际通向 X」。注意区分两种情况：「我没走通」和「产品本就没有这个功能/信息」——后者本身就是有效发现，照实记，不算失败。绕过去编一个顺畅版本，是在污染文档。
+- **Use the real, already-logged-in session** — when you hit a login wall, first confirm you are driving the browser instance the user is already logged into, not a freshly opened blank one; if you are still blocked after confirming that, record this branch into "Known limitations" and stop there, do not fabricate what is behind the wall.
+- **Read-only first** — navigate, view, and screenshot freely; actions that create/modify/delete business objects, send externally, or spend money are not done during exploration — infer the steps from page controls and code, and mark them "not actually tested".
+- **Exploration is your own job and may not be delegated away** — the task constraints "do not execute tests" and "do not call write interfaces" restrict write operations and verification execution; they are **not a reason to keep the browser closed**: read-only browsing of pages, examining structure, and screenshotting *are* the body of planning-time exploration. Leaving map-laying and line-walking "for the verify-phase tester to fill in" is dereliction — the manual a tester receives should stand on the page map you have already verified, not scout the path on your behalf. If the environment is genuinely unreachable (login expired, service not up), record it as a known limitation per the "Use the real, already-logged-in session" rule above; that is blocked, not delegation.
+- **When stuck, change approach, do not retry as-is** — when a step fails (can't click it, no response), reach the same goal a different way (a different entry point, a different control, switch to navigation); do not repeat the failed action verbatim; and do only the minimum action needed to complete that step, do not click extra along the way.
+- **Failure is also a fact** — a page won't open, a wrong path — record it faithfully into "Known limitations", or record that path as "actually leads to X". Be careful to distinguish two cases: "I couldn't get through" and "the product simply does not have this feature/information" — the latter is itself a valid finding, recorded faithfully, and is not a failure. Routing around it to make up a smooth version is polluting the document.
 
-## 何时停
+## When to stop
 
-满足任意一条就进 Step 5 收尾：
+Meeting any one condition moves you to the Step 5 wrap-up:
 
-1. testing-context.md 每节都有了非空、经核对的内容，且 frontier 里剩下的条目都明显次要；
-2. 连续两三轮探索没有给文档带来新增量；
-3. 预算见底（步数/时间）。
+1. every section of testing-context.md now has non-empty, checked content, and the items remaining in the frontier are all clearly secondary;
+2. two or three consecutive rounds of exploration have brought no new increment to the document;
+3. the budget is exhausted (steps/time).
 
-缺口留给下一个任务增量探索，不要硬补。
+Leave gaps for the next task's incremental exploration; do not force-fill them.
 
-## 怎么记录（回写 testing-context.md 时）
+## How to record (when writing back to testing-context.md)
 
-章节与条目形态以 `references/templates/testing-context.demo.md` 为准。落笔时守住这几条判断规则：
+The section and entry shapes follow `references/templates/testing-context.demo.md`. As you write, hold these judgment rules:
 
-- **页面地图记成转移**——「页面 A --<动作>--> 页面 B」，每个页面一行：URL 模式、用途、承载的核心操作。比散文好检索、好核对。
-- **每条 flow 带前置和来源标记**——前置状态（要登录吗、要先有什么数据）、逐步动作，以及 `已实走` 还是 `代码推断`。读者据此决定信多少。写一般情形而非那次的具体值：可变的部分用 `{描述性名}` 占位（`{资产名}` 而不是某个具体 ID），界面上固定的文字（按钮名、菜单名）保留原文。
-- **重复子序列抽成子流程**——多条 flow 里反复出现的同一段步骤（比如登录、进入某模块），抽成一个命名子流程单独记，flow 里引用它，不要每条都抄一遍。子流程至少两步才值得抽。
-- **控件引用用可见文本**——步骤里指认控件，用用户看得见的文字加位置消歧（「提交（个人信息区）」「编辑（第 2 行）」），不要写 css/xpath——界面一改全废，而且人没法照着核对。
-- **数据惯例写成条件规则**——「在<什么场景>下 → <什么规则> → 因为<为什么>」。带上 why，读者才能泛化到没写到的相邻情形。
-- **踩坑当场留痕**——探索中吃过的亏（重名控件要更精确的定位、某接口响应缺某字段），就地写在相关条目下面。这是文档里最值钱的部分。
-- **不写时间敏感措辞**——「目前」「上线前」这类话会悄悄过期；过期内容挪进文档末尾的「已废弃」一节，主线只讲当下。
+- **Record the page map as transitions** — "page A --<action>--> page B", one line per page: URL pattern, purpose, core operations carried. More searchable and checkable than prose.
+- **Each flow carries preconditions and a provenance marker** — the precondition state (does it need login, does some data need to exist first), the step-by-step actions, and whether it is `actually walked` or `inferred from code`. Readers use this to decide how much to trust it. Write the general case rather than that run's specific values: put a `{descriptive name}` placeholder for the variable parts (`{asset name}` rather than a specific ID), and keep the fixed UI text verbatim (button names, menu names).
+- **Factor repeated subsequences into subflows** — when the same stretch of steps recurs across multiple flows (e.g. logging in, entering a module), factor it into a named subflow recorded separately, and reference it from the flows rather than copying it into each. A subflow is worth factoring only at two steps or more.
+- **Reference controls by visible text** — when identifying a control in a step, use the text the user sees plus position to disambiguate ("Submit (personal-info section)", "Edit (row 2)"); do not write css/xpath — one UI change breaks it all, and a human cannot check against it.
+- **Write data conventions as conditional rules** — "in <which scenario> → <which rule> → because <why>". With the why included, readers can generalize to the adjacent cases you did not write down.
+- **Leave a trace of pitfalls on the spot** — the bruises taken during exploration (a duplicate-named control needing a more precise locator, an interface response missing a field) get written in place under the relevant entry. This is the most valuable part of the document.
+- **No time-sensitive wording** — phrases like "currently" or "before launch" silently go stale; move stale content into the "Deprecated" section at the end of the document, and keep the main line about the present only.
 
-## 维护规则
+## Maintenance rules
 
-- **首次**：文档不存在时，走完整的 Step 0–5 再开始规划。
-- **增量**：之后的任务只补缺口——本任务涉及的页面/接口/数据在文档里查不到，就对那一块走 Step 0–5（frontier 只放缺口相关的种子）。不要每个任务全量重探。
-- **整段重生**：发现某一节（尤其页面地图）和现状对不上时，重新探索那一节、整段重写，不要逐行打补丁——补丁会让新旧两版各说各话。
-- **只收稳定事实**：跨任务可复用的进文档；本任务特有的（专门造的数据、临时开关）写进该任务的执行手册，不进这里。
-- **能删就删**：每行用一个问题检验——「删掉它，之后的规划或测试会不会因此犯错？」不会就删。臃肿的上下文文档会被整体忽略。
+- **First time**: when the document does not exist, walk the full Step 0–5 before starting to plan.
+- **Incremental**: later tasks only fill gaps — when the pages/interfaces/data this task touches cannot be found in the document, walk Step 0–5 over just that part (the frontier holds only gap-related seeds). Do not re-explore everything for each task.
+- **Whole-section regeneration**: when you find a section (especially the page map) no longer matches the current state, re-explore that section and rewrite the whole section; do not patch it line by line — patches make the old and new versions contradict each other.
+- **Collect stable facts only**: what is reusable across tasks goes into the document; what is specific to this task (data created on purpose, a temporary toggle) goes into that task's execution manual, not here.
+- **Delete when you can** — test each line with one question: "if I delete it, will later planning or testing make a mistake because of that?" If not, delete it. A bloated context document gets ignored wholesale.

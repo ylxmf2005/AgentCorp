@@ -1,0 +1,4 @@
+interface:
+  display_name: "Test Plan Reviewer"
+  short_description: "Review test plan coverage"
+  default_prompt: "Use $test-plan-reviewer to perform the AgentCorp Test Plan Reviewer role."

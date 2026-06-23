@@ -1,27 +1,27 @@
 # Implementation Story Spec
 
-把已批准的需求和设计，变成 Implementation Engineer 能照着建的可执行计划。它有意地坐落在设计与编码之间：需求说要什么结果，TestPlan/Test Strategy 说要证明什么，architecture/impact/diagnosis/contract 说系统该长成什么样，而这份 Story Spec 说工程师到底该实现什么。
+Turn the approved requirements and design into an executable plan the Implementation Engineer can build against. It deliberately sits between design and code: requirements say what outcome is wanted, the TestPlan/Test Strategy says what must be proven, architecture/impact/diagnosis/contract say what the system should look like — and this Story Spec says what the engineer actually has to implement.
 
-## 你要做的
+## What you do
 
-仔细读源产物，把切分建立在「系统实际长什么样」之上，而不是你以为的样子。把工作切成连贯、有序、可独立验证的 story/任务：让每个切片都有明确的边界和落点，任务的先后顺序反映真实的 dependency，规模合到工程师能逐个完成、逐个验证。引用源产物来承载细节，再把这一次实现专属的判断写清楚，而不是把设计原样抄一遍。
+Read the source artifacts carefully and base the slicing on what the system actually looks like, not on what you assume it looks like. Slice the work into coherent, ordered, independently verifiable stories/tasks: give each slice clear boundaries and a landing point, order tasks so the sequence reflects real dependencies, and size them so the engineer can complete and verify each one in turn. Reference the source artifacts to carry the detail, then spell out the judgments specific to this implementation, rather than copying the design over verbatim.
 
-## 这份产物要达到什么
+## What this artifact must achieve
 
-工程师读完，应当不必再去倒推范围、也不必现场重做设计判断就能动手。所以它必须讲清楚（用最能服务于实现的结构来组织即可）：
+When the engineer finishes reading it, they should be able to start without reverse-engineering the scope or remaking design judgments on the spot. So it must make clear (organized in whatever structure best serves the implementation):
 
-- 这次实现的 story——谁/什么角色、要的能力或改动、带来的结果；
-- 起步所需的源上下文：源产物的精简指引，外加工程师立刻就要知道的那几条关键事实；
-- 可观察的 acceptance criteria，每条都能追溯到某个需求；
-- 有序的任务/子任务清单，已知时标明落点的模块/文件，并把每个任务关联到它服务的 acceptance criteria 或技术护栏；
-- 设计约束：模块边界、要遵循的模式、必须稳定的接口/契约，以及数据/安全/可靠性上的护栏；
-- 对增强或缺陷修复，列出必须继续正常工作的现有行为；公开或跨模块接口有变动时，把契约写明确；
-- 禁区与 non-goals，免得工程师越界或扩张范围；
-- 验证预期：引用 TestPlan 或 diagnosis 里的判定标准（给出路径和章节），只点名工程师在实现时该添加或运行的那些聚焦检查——最终验证证据由 Test Leader 负责；
-- 供 Plan Review Lead 重点查看的地方。
+- the story for this implementation — who/what role, the capability or change wanted, the outcome it produces;
+- the source context needed to start: a concise pointer to the source artifacts, plus the few key facts the engineer needs to know right away;
+- observable acceptance criteria, each traceable to a requirement;
+- an ordered list of tasks/subtasks, marking the landing module/file where known, and linking each task to the acceptance criterion or technical guardrail it serves;
+- design constraints: module boundaries, the patterns to follow, the interfaces/contracts that must stay stable, and the data/security/reliability guardrails;
+- for an enhancement or bug fix, list the existing behavior that must keep working; when a public or cross-module interface changes, spell out the contract;
+- forbidden zones and non-goals, so the engineer doesn't overreach or expand scope;
+- verification expectations: reference the decision criteria in the TestPlan or diagnosis (give path and section), and name only the focused checks the engineer should add or run during implementation — the Test Leader owns the final verification evidence;
+- where the Plan Review Lead should focus.
 
-需要多少细节，就给多少能让工程师无歧义起步的细节；细节密的地方用表格或要点列举。如果还有任何会改变实现走向的悬而未决问题，就别把它藏起来——要么写明，要么连同缺失的设计一起返回 `blocked`。
+Give as much detail as it takes for the engineer to start without ambiguity; where the detail is dense, use a table or bullet list. If there is any open question that would change the implementation's direction, don't bury it — either spell it out, or return `blocked` along with the missing design.
 
-## 形态
+## Shape
 
-需要或有用时，遵循 `references/templates/implementation-story-spec.demo.md`。Status 初始化为 `ready-for-plan-review`；不要把自己写的 Story Spec 标成可开发——那要等 Plan Review Lead 批准。
+Follow `references/templates/implementation-story-spec.demo.md` where it is needed or useful. Initialize Status to `ready-for-plan-review`; do not mark a Story Spec you authored as ready to develop — that waits for the Plan Review Lead's approval.

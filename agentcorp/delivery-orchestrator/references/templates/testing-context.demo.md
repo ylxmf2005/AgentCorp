@@ -5,45 +5,45 @@ maintained_by: test-planner
 updated: 2026-06-03
 ---
 
-# Example Project 测试上下文
+# Example Project Testing Context
 
-## 入口与访问
+## Entry Points and Access
 
-- pre 环境：`https://example.local/app`；登录方式：已登录 Chrome 会话（凭据只写引用，不写密文）。
+- pre environment: `https://example.local/app`; login method: logged-in Chrome session (record only a reference to credentials, never the secret itself).
 
-## 页面地图
+## Page Map
 
-- 任务列表页 `/app/tasks`——产品主入口；核心操作：新建任务、搜索、进入详情。
-  - 任务列表页 --点击「新建」--> 创建对话框
-  - 任务列表页 --点击任务行--> 任务详情页 `/app/tasks/<id>`
-- 任务详情页——查看执行状态与产物；核心操作：下载产物、重跑。
+- Task list page `/app/tasks` — the product's main entry point; core actions: create task, search, open detail.
+  - Task list page --click "New"--> create dialog
+  - Task list page --click task row--> task detail page `/app/tasks/<id>`
+- Task detail page — view execution status and artifacts; core actions: download artifact, rerun.
 
-## 核心用户 flow
+## Core User Flows
 
-- FLOW：从零创建一个任务并拿到产物（`已实走`，2026-06-03）
-  - 前置：已登录；无需既有数据。
-  - 步骤：任务列表页点「新建」→ 对话框输入 prompt → 提交跳详情页 → 等状态变成功 → 下载产物。
-  - 踩坑：prompt 为空时提交按钮置灰，自动化要先断言可点。
+- FLOW: Create a task from scratch and obtain its artifact (`walked`, 2026-06-03)
+  - Precondition: logged in; no preexisting data required.
+  - Steps: on the task list page click "New" → enter a prompt in the dialog → submit and jump to the detail page → wait for status to turn success → download the artifact.
+  - Gotcha: when the prompt is empty the submit button is disabled, so automation must first assert it is clickable.
 
-## 可观测面
+## Observable Surfaces
 
-- API：`/api/tasks` 系列；响应统一 BaseResponse（trace_id/code/message/data）。
-- DB：MDB 只读；`tasks` 表按 task_id 查。
-- 日志：CLS 按 trace_id 检索。
+- API: the `/api/tasks` family; responses share a uniform BaseResponse (trace_id/code/message/data).
+- DB: MDB read-only; query the `tasks` table by task_id.
+- Logs: search CLS by trace_id.
 
-## 测试数据惯例
+## Test Data Conventions
 
-- 在<需要造测试任务>时 → 用 title 前缀 `e2e-` 创建 → 因为清理脚本按该前缀回收。
-- 绝不能动：演示账号 demo@example 下的数据。
+- When <a test task needs to be created> → create it with the title prefix `e2e-` → because the cleanup script reclaims by that prefix.
+- Never touch: data under the demo account demo@example.
 
-## 已知限制
+## Known Limitations
 
-- 测试池路由未切时，执行链路证据只能到 Manager 层。
+- When the test-pool routing has not been switched, execution-chain evidence reaches only the Manager layer.
 
-## 待补缺口
+## Gaps to Fill
 
-- 设置页未探索（上轮被权限墙挡住）。
+- The settings page is unexplored (blocked by a permission wall last round).
 
-## 已废弃
+## Deprecated
 
-- （过期条目挪到这里，注明废弃原因与日期，不直接删。）
+- (Move expired entries here, noting the reason for deprecation and the date, rather than deleting them outright.)

@@ -1,26 +1,26 @@
-# 契约测试参考
+# Contract testing reference
 
-执行 API、JSON-RPC、A2A、CLI、SDK 或其它对外接口面的契约验证时使用。
+Use when performing contract verification on an API, JSON-RPC, A2A, CLI, SDK, or other external interface surface.
 
-## 各类接口面要核对的契约要素
+## Contract elements to check per interface surface
 
-- **HTTP 路由**：method、path、status code、headers、请求体、响应体、auth。
-- **JSON-RPC / A2A**：method 名、params、result/error 形态、streaming 行为、协议扩展。
-- **CLI**：flag、参数、exit code、stdout/stderr 形态、机器可读输出。
-- **SDK / 导出类型**：函数签名、schema、向后兼容的可选字段。
-- **错误契约**：status/code、body 形态、可重试性、用户可见消息。
+- **HTTP routes**: method, path, status code, headers, request body, response body, auth.
+- **JSON-RPC / A2A**: method name, params, result/error shape, streaming behavior, protocol extensions.
+- **CLI**: flags, arguments, exit codes, stdout/stderr shape, machine-readable output.
+- **SDK / exported types**: function signatures, schemas, backward-compatible optional fields.
+- **error contract**: status/code, body shape, retriability, user-visible message.
 
-## 执行要点
+## Execution points
 
-有可用环境时，跑真实的请求或命令，而不是靠看代码推断契约是否被兑现。happy path 与契约相关的错误路径都要走到。把实际响应与 TestPlan、文档、schema 或既往契约预期逐一对照。除非 TestPlan 明确授权改动、或环境本身一次性可丢弃，否则保持持久数据不变。无法执行的接口面，显式记录它没测以及原因。
+When an environment is available, run real requests or commands rather than inferring from code whether the contract is honored. Walk both the happy path and the contract-relevant error paths. Check actual responses against the TestPlan, docs, schema, or prior contract expectations one by one. Leave persistent data unchanged unless the TestPlan explicitly authorizes a change, or the environment itself is disposable. For interface surfaces that cannot be executed, explicitly record that they were not tested and why.
 
-## 每条检查要留下的证据
+## Evidence to leave for each check
 
-- 接口面，以及版本（若有）。
-- 用的请求或命令。
-- 预期的 status / 形态 / 输出。
-- 实际的 status / 形态 / 输出。
-- pass / fail。
-- 有用时附上产物路径，或内联一段脱敏样本。
+- The interface surface, and the version (if any).
+- The request or command used.
+- The expected status / shape / output.
+- The actual status / shape / output.
+- pass / fail.
+- An artifact path when useful, or an inline redacted sample.
 
-报告、日志、截图、payload 里都不要泄露任何密钥。
+Never leak any secret in reports, logs, screenshots, or payloads.

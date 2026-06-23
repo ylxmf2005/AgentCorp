@@ -10,23 +10,23 @@ output_path: review/specialist-findings/project-steward-reviewer.md
 
 # Phase Assignment
 
-## 目标
+## Goal
 
-从 project steward / maintainer 视角评审本次计划、设计或 diff 是否值得进入项目长期历史。
+From a project steward / maintainer viewpoint, review whether this plan, design, or diff is worth admitting into the project's long-term history.
 
-## 输入
+## Input
 
 - implementation/implementation-story.md
 - implementation/implementation-result.md
 - review/code-review.md
-- git diff 或改动文件清单
+- git diff or the list of changed files
 
-## 输出
+## Output
 
 - `review/specialist-findings/project-steward-reviewer.md`
 
-## 约束
+## Constraints
 
-- 面向人阅读的产出使用 zh-CN。
-- 只报告有长期维护影响、可定位、可行动的问题。
-- 不把个人风格偏好包装成阻断项。
+- Human-readable output uses zh-CN.
+- Report only issues that have long-term maintenance impact, are locatable, and are actionable.
+- Do not dress up personal style preferences as blockers.

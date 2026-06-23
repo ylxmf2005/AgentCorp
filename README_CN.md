@@ -1,174 +1,139 @@
 # AgentCorp
 
-[English](README.md) | **简体中文**
+**一套多智能体编程流水线——可控、可理解、可验证。**
 
-AgentCorp 是一套以 **Agent Skills** 形式打包的多 agent 软件交付流水线。Delivery
-Orchestrator(交付编排者)对每个任务分类,把各阶段路由给专门的角色——规划、实现、独立的
-代码评审、分层验证,并在阶段之间设置明确的 gate。
+[English](README.md) · 简体中文
 
-基于 [Agent Skills](https://agentskills.io) 的 `SKILL.md` 标准,因此同一套 skill 可从
-这一个仓库同时安装到 **Claude Code** 与 **Codex**。
+[快速上手](#快速上手) · [技能一览](#技能一览) · [产物一览](#产物一览)
 
-## 特性
+---
 
-- 27 个专职 skill 覆盖完整交付流程:需求、测试计划、设计、实现、代码评审、验证、验收、交付。
-- 作者与评审分离:产物的作者不评审、不审批自己的产物。
-- 独立复核:代码评审的 finding 在修复前由独立角色逐条复核,排除误报。
-- 并行修复:修复按文件归属切分,互不重叠地并行执行。
-- 结构化产物:每个阶段输出带 YAML frontmatter 的 Markdown,形成可追溯的记录。
-- 一套源码、双工具安装:基于 Agent Skills 标准,同时支持 Claude Code 与 Codex,且不重复内容。
+AI 生成代码的速度越来越快，但验证代码是否正确的成本，始终在你身上。当你拿到一堆「看起来没问题」的代码，判断其对错的责任全落在你肩上——而你对 AI 的依赖越深，这种判断能力反而越迟钝。
 
-## 工作流程
+更棘手的是恶性循环：Agent 的工作过程如同黑箱，你无法理解它的推理逻辑；看不懂，就只能跳过 Review；跳过 Review，认知债务便会累积；债务越深，你越离不开它，也越难在它出错时及时纠正。最终，重要的任务你不敢完全交给它。
 
-编排者把每个任务归类为四种范式之一——`dev/architecture-first`、`enhancement/delta-design`、
-`bugfix/hypothesis-driven`、`addition/simple`——并按分阶段的生命周期推进;产物的作者不
-审批自己的产物。
+AgentCorp 要解决的正是这个问题。它将 Agent 的工作流程从一条不可控、不可读、无法回溯的黑箱链条，转变为一条**可控、可理解、可验证**的流水线。它由 **29 项技能**组成——其中 27 项源自企业级交付实践，覆盖完整开发流程的专职角色；另有 2 项通用能力，供任何角色随时调用。全面适配 **Claude Code** 与 **Codex**。
 
-### 1. 交付生命周期
+- **可控**——流程按任务规模自动裁剪，改一行代码不必承担架构评审的负担，从零搭建新系统则一个环节都不会少；关卡真正具备拦截能力，验证不通过就停止，两次失败就重新规划；你可以随时介入，也可以完全放手。
+- **可理解**——每个阶段都留下结构清晰的产物，并记录「谁在什么证据下做出了什么决策」；评审提出的每个问题都解释到「即使你没读过这段代码，也能判断该不该改」；交付时自动把最终 diff 转化为函数级别的「为什么这么改」注释。
+- **可验证**——没有任何角色能为自己的产出放行；测试在写代码之前就已经确定，并经过独立审查；评审发现由另一个角色当作误报去证伪，只有被证实的结论才会进入修复环节。
 
-每种范式运行同一组阶段的一个子集。评审阶段(红色)与人工 gate(橙色)位于工作阶段之间;
-`要求修改` 与 `驳回` 会把工作退回前序阶段。
+## 快速上手
 
-![交付生命周期](docs/diagrams/01-lifecycle.png)
+### 安装
 
-### 2. 角色
-
-每个阶段由专门的 skill 负责。评审角色与其评判的工作相互独立,编排者不审批自己的产物。
-
-![角色](docs/diagrams/02-roles.png)
-
-### 3. 评审 → 复核 → 修复
-
-代码评审的 finding 不会被直接修复。先由独立的 `review-researcher` 逐条复核,排除误报;
-确认成立的问题再进入修复。修复按文件归属切分并行执行,不会有两个 worker 改动同一文件。
-
-![评审、复核与修复](docs/diagrams/03-review-research-fix.png)
-
-### 4. Handoff 与 gate
-
-被委派的阶段通过 assignment/receipt 文件流转。每份 receipt 先做机械校验(产物是否存在,
-路径、author、phase 是否一致),通过后再按该阶段的 quality gate 判断——两项检查相互独立。
-
-![Handoff 与 gate](docs/diagrams/04-handoff.png)
-
-### 运行模式
-
-| 模式 | 默认 | 运作方式 | 适用场景 |
-|------|------|---------|---------|
-| `direct` | 否 | 不派任何 subagent;编排者亲自执行所有阶段,评审产出 draft、由发起人在 human gate 裁决 | 小而低风险的改动,或无 subagent 能力的环境;需发起人明确确认 |
-| `partial-delegation` | 是 | 编排者亲自执行非评审阶段,评审仍委派出去 | 常规的中小型任务 |
-| `full-delegation` | 否 | 每个阶段都通过 assignment/receipt 委派给对应 owner | 大型或可并行的工作,或需要独立 authorship 时 |
-
-## 运行产物
-
-每个阶段都会把一份带 YAML frontmatter 的 Markdown 产物写到固定路径,因此一个完成的任务
-会留下可追溯、可复查的完整记录。被委派的阶段使用 **assignment → receipt** 成对流转;每份
-receipt 先经机械校验(`validate-handoff.py`——产物是否存在,路径、author、phase 是否一致)
-再过 quality gate,`manifest.md` 记录每个阶段、owner、gate 结果与产物路径。
-
-所有产物都位于工作目录下的 `teamspace/`。它是本地协调状态,不会被提交(若出现在 git
-status 中,可加入 `.git/info/exclude`);只创建任务需要的子目录。
-
-```text
-teamspace/tasks/<task_id>/
-├── task.md                       # 目标、任务分类、gate 历史
-├── manifest.md                   # 索引:phase · owner · gate · 产物路径
-├── handoffs/                     # assignment + receipt 成对(委派的阶段)
-│   ├── 001-validate-requirements.md
-│   └── 001-validate-requirements-receipt.md
-├── requirements/
-│   └── validated-requirements.md
-├── test/
-│   ├── test-plan.md
-│   └── test-plan-review.md
-├── design/                       # 按任务需要组合，可同时存在多份
-│   ├── architecture.md           # 结构设计
-│   ├── impact-analysis.md        # 增量影响分析
-│   ├── diagnosis.md              # 缺陷根因诊断
-│   └── api-contract.md           # 接口/契约固化
-├── implementation/
-│   ├── implementation-story.md
-│   └── implementation-result.md
-├── review/
-│   ├── plan-review.md
-│   ├── code-review.md
-│   ├── specialist-findings/
-│   ├── research/                 # review-researcher:逐条 finding 一文件 + 索引
-│   │   ├── 00-index.md
-│   │   └── <编号>-<slug>.md
-│   ├── fix-result.md
-│   └── fix-records/              # 每个并行 review-fixer 组一份
-├── verification/
-│   ├── assignments/
-│   ├── test-results/
-│   └── verification-report.md
-├── acceptance/
-│   ├── acceptance-package.md
-│   └── acceptance-decision.md
-└── delivery/
-    └── delivery-report.md
-```
-
-## 安装 — Claude Code
+**Claude Code：**
 
 ```
 /plugin marketplace add ylxmf2005/AgentCorp
 /plugin install agentcorp@agentcorp
 ```
 
-随后运行 `/reload-plugins`(或重启 Claude Code)。skill 在插件下带命名空间,例如
-`/agentcorp:delivery-orchestrator`、`/agentcorp:code-review-lead`。
+随后 `/reload-plugins`（或重启）。技能带命名空间，例如 `/agentcorp:delivery-orchestrator`。
 
-## 安装 — Codex
-
-整套(插件):
+**Codex：**
 
 ```
 codex plugin marketplace add ylxmf2005/AgentCorp
 ```
 
-随后启动 Codex,在 `/plugins` 菜单中启用 **AgentCorp** 并重启以加载 skill。
+启动 Codex，在 `/plugins` 菜单启用 **AgentCorp** 并重启。单独安装某个技能：`use skill-installer to install the skill at repo ylxmf2005/AgentCorp path agentcorp/delivery-orchestrator`。
 
-单个 skill(不使用插件)——在 Codex 中调用内置 installer:
+### 第一次使用
 
-```
-use skill-installer to install the skill at repo ylxmf2005/AgentCorp path agentcorp/delivery-orchestrator
-```
+安装完成后，直接描述你的需求，或调用 `/agentcorp:delivery-orchestrator`。它会先与你确认成功标准、推荐执行路线，然后按阶段推进，在每个关卡停下汇报。
 
-这会把 skill 安装到 `~/.codex/skills/`。
+需要真实浏览器或登录态验证时，它会使用独立的浏览器配置打开页面，请你手动登录一次，之后在页面内自动执行检查——不会触碰你的本地 Cookie。任务结束后，你将获得一份交付报告，以及一份可回溯每个决策的审计记录。
 
-## 技能列表
+## 技能一览
 
-完整流水线包含 27 个 skill:
+29 项技能按职能分组如下。每个技能的具体行为定义在 `agentcorp/<skill>/SKILL.md` 中，也会出现在 Claude Code 和 Codex 的技能选择器里。其中 27 项为交付专职角色，标注 ¹ 的为任何角色都可调用的通用能力。
 
 - **编排** — `delivery-orchestrator`
 - **规划与设计** — `solution-architect`、`implementation-planner`、`test-planner`、`parallel-researcher`
 - **实现** — `implementation-engineer`、`review-fixer`
 - **计划与测试计划评审** — `plan-review-lead`、`test-plan-reviewer`、`adversarial-reviewer`
-- **代码评审** — `code-review-lead`,以及专项 reviewer `correctness-reviewer`、`security-reviewer`、`performance-reviewer`、`reliability-reviewer`、`simplicity-reviewer`、`change-hygiene-reviewer`、`standards-reviewer`、`project-steward-reviewer`、`api-contract-reviewer`
+- **代码评审** — `code-review-lead` + `correctness-reviewer`、`security-reviewer`、`performance-reviewer`、`reliability-reviewer`、`simplicity-reviewer`、`change-hygiene-reviewer`、`standards-reviewer`、`project-steward-reviewer`、`api-contract-reviewer`
 - **验证** — `test-leader`、`e2e-tester`、`api-contract-tester`、`regression-tester`
 - **复核与验收** — `review-researcher`、`acceptance-review-lead`
-- **支撑** — `change-detailed-walker`(fresh-start handoff 与跨任务学习沉淀是 `delivery-orchestrator` 的内置能力,见其 `references/fresh-start-handoff.md` 与 `references/learnings.md`)
+- **支撑** — `change-detailed-walker`、`brainstorm`¹、`authenticated-browser-session`¹
 
-每个 skill 的完整描述见各自的 `agentcorp/<skill>/SKILL.md`,也会显示在 Claude Code 与
-Codex 的 skill 选择器中。
+¹ `brainstorm`（通用思考能力，主要用于需求澄清）与 `authenticated-browser-session`（持久化登录态浏览器）为通用行为能力，不是带独立 Gate 的交付角色，任何角色需要时都可加载。
 
-## 目录结构
+## 产物一览
 
-| 路径 | 作用 |
-|------|------|
-| `agentcorp/<skill>/SKILL.md` | skill 本体——单一源,两个工具共用 |
-| `.claude-plugin/plugin.json`、`.claude-plugin/marketplace.json` | Claude Code 清单(canonical 元数据) |
-| `.codex-plugin/plugin.json`、`.agents/plugins/marketplace.json` | Codex 清单(自动生成) |
-| `tools/codex-interface.json` | Codex 专属的展示与 policy 元数据 |
-| `tools/sync-codex.py` | 从 Claude 清单重新生成 Codex 清单 |
-| `tools/sync-shared.py` | 把共享 reference 重新拷贝到每个 skill,保持各 skill 自包含 |
-| `docs/diagrams/` | 工作流程图(`.drawio` 源文件与 `.png` 导出) |
-
-两个工具都把各自的 `skills` 字段指向 `./agentcorp` 并自动发现 skill 文件夹,因此不存在
-重复内容。如需修改元数据,编辑 Claude 清单(以及用于 Codex 展示的
-`tools/codex-interface.json`),然后运行:
+每个阶段都会留下结构清晰的产物，全部带 frontmatter（`artifact_type` / `author_agent` / `phase` / `status` / `source_artifacts`），可审计、可回溯。以「给 Web 应用新增邀请成员功能」为例，一次完整交付会在 `teamspace/` 下产生这样的产物树：
 
 ```
-python3 tools/sync-codex.py
+teamspace/
+├── testing-context.md                   # 跨任务测试上下文：页面地图、可观测面、测试数据约定
+├── learnings/                           # 跨任务经验沉淀（每条一文件，写前先 grep 去重）
+│   └── invite-token-reuse-trap.md       #   触发情境 → 根因 → 怎么做 → 下次如何更快
+└── tasks/20260622-invite-members/       # 本次任务根目录
+    ├── task.md                          # 任务记录：成功标准、阶段流转、门禁历史、决策日志
+    ├── manifest.md                      # 审计台账：每阶段 Owner/状态/人工门/质量门/产物/回执
+    │
+    ├── requirements/
+    │   └── validated-requirements.md    # 已验证需求：用户旅程、FR/AC、非目标、交接给架构与测试
+    │
+    ├── design/
+    │   ├── architecture.md              # 架构设计：组件、数据模型、Mermaid 图、实现约束
+    │   └── api-contract.md              # API 契约：POST /invites、兼容性、迁移说明、验证钩子
+    │
+    ├── test/
+    │   ├── test-plan.md                 # 测试总计划：风险分级、Must-Have、禁区、覆盖总结
+    │   ├── api-test-plan.md             # API 手册：字面 curl 请求、预期、证据、失败处理
+    │   ├── e2e-test-plan.md             # E2E 手册：浏览器步骤、字面输入、截图为主证据
+    │   ├── regression-test-plan.md      # 回归手册：爆炸半径、既有套件、新增「改前失败」检查
+    │   ├── test-plan-review.md          # 测试计划评审决策（approve / request_changes）
+    │   └── exploration/                 # 探索性测试工作文件（留在任务目录，确认结论回写 testing-context）
+    │       ├── charters.md              # 探索章程：C-1/C-2/C-3 各自目标与状态
+    │       ├── frontier.md              # 探索待办：待探入口点及来源
+    │       └── journal.md               # 探索日志：每轮操作、观察、截图
+    │
+    ├── implementation/
+    │   ├── implementation-story.md      # 实现故事：AC、任务树（指向文件）、约束、验证期望
+    │   └── implementation-result.md     # 实现结果：改动文件、命令、偏差、阻塞、移交评审
+    │
+    ├── review/
+    │   ├── plan-review.md               # 计划评审决策：必改/建议改/证据缺口/残余风险/下一任
+    │   ├── code-review.md               # 代码评审总决策：汇聚各专项，approve / request_changes
+    │   ├── specialist-findings/         # 各专项评审发现（每条带 严重度/置信度/证据/影响/建议）
+    │   │   ├── correctness-reviewer.md
+    │   │   ├── security-reviewer.md
+    │   │   ├── performance-reviewer.md
+    │   │   ├── reliability-reviewer.md
+    │   │   ├── simplicity-reviewer.md
+    │   │   ├── change-hygiene-reviewer.md
+    │   │   ├── standards-reviewer.md
+    │   │   ├── project-steward-reviewer.md
+    │   │   ├── api-contract-reviewer.md
+    │   │   └── adversarial-reviewer.md  # 对抗性：假设违背、组合失败、级联、滥用场景
+    │   ├── research/                    # 评审复核：逐条当作误报去证伪
+    │   │   ├── 00-index.md              # 索引：7 列表，confirmed 在前 → false-positive 在底
+    │   │   ├── F-01-confirmed-...md     # 每问题一文件：背景、代码上下文、根因、修复建议
+    │   │   └── F-02-false-positive-...md#   含 Human decision 骨架，留空给人类勾选
+    │   ├── fix-records/                 # 修复记录（按文件组分区并行）
+    │   │   └── invite-service.md        # 每条：verdict、改动文件、回归检查（修前失败修后通过）
+    │   └── fix-result.md                # 修复汇总
+    │
+    ├── verification/
+    │   ├── verification-report.md       # 验证总裁决：approve / request_changes，引用各测试结果
+    │   └── test-results/                # 测试执行结果（基于真实证据，不臆造）
+    │       ├── e2e-tester.md            # 状态、检查、命令、截图/URL 证据
+    │       ├── api-contract-tester.md   # 请求/响应、通过/失败
+    │       └── regression-tester.md     # 前后对比、退出码
+    │
+    ├── acceptance/
+    │   ├── acceptance-package.md        # 验收包：汇聚所有产物索引 + 成功标准与直接证据
+    │   └── acceptance-decision.md       # 最终验收裁决：accept / reject / needs_more_evidence
+    │
+    └── _handoffs/                       # 阶段委托-回报闭环（每个委派阶段各一对）
+        ├── to-solution-architect.md     # 分派单：目标、输入、约束、停止条件、output_path
+        ├── from-solution-architect.md   # 回执：产物路径、完成说明、阻塞项
+        └── ...                          # test-planner / implementation-engineer 等各一对
 ```
+
+---
+
+AgentCorp 让工作能够复利增长——同时将可控、可理解、可验证焊入结构本身，而非留给操作者自行保证。

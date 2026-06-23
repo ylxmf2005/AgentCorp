@@ -1,13 +1,13 @@
-# Charter 台账
+# Charter Ledger
 
-## C-1（done）
+## C-1 (done)
 
-探索任务列表页，借助已登录 Chrome 会话，以查明入口路径、列表页可见操作和到详情页的跳转方式。
+Explore the task list page, using the already-logged-in Chrome session, to find out the entry path, the operations visible on the list page, and the way to navigate to the detail page.
 
-## C-2（in-progress）
+## C-2 (in-progress)
 
-探索「从零创建任务并拿到产物」这条用户目标，借助已登录会话与 `e2e-` 前缀测试数据，以查明核心 flow 的每一步与完成判据。
+Explore the "create a task from scratch and obtain an artifact" user goal, using the logged-in session and `e2e-`-prefixed test data, to find out each step of the core flow and its completion criteria.
 
-## C-3（pending，题外发现）
+## C-3 (pending, side finding)
 
-任务详情页有「分享」入口，行为未知——查明它通向哪、是否产生对外可见数据。
+The task detail page has a "Share" entry point with unknown behavior — find out where it leads and whether it produces externally visible data.

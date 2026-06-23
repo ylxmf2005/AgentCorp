@@ -1,45 +1,45 @@
-# 学习沉淀（Learnings）
+# Learnings
 
-每完成一份工作，都该让下一份更容易。第一次解决一个问题要花研究；沉淀下来，下次同类问题就是几分钟的查阅。流水线的其他产物（delivery report、research、walkthrough）都只面向**这一个任务**；`teamspace/learnings/` 是唯一跨任务存活的层——没有它，每个任务都从零开始，同样的坑反复踩。
+Every finished piece of work should make the next one easier. Solving a problem the first time costs research; once captured, the next problem of the same kind is a few minutes of lookup. The pipeline's other artifacts (delivery report, research, walkthrough) all serve **this one task**; `teamspace/learnings/` is the only layer that survives across tasks — without it, every task starts from zero and the same pits get stepped in over and over.
 
-## 存放与形态
+## Storage and Shape
 
-一条教训一份文件：`teamspace/learnings/<slug>.md`，frontmatter 可被 grep 检索：
+One lesson per file: `teamspace/learnings/<slug>.md`, with greppable frontmatter:
 
 ```yaml
 ---
-slug: <短横线英文>
+slug: <hyphenated-english>
 date: <YYYY-MM-DD>
-task_id: <来源任务>
+task_id: <source task>
 type: repo-trap | root-cause | process | convention
-applies_when: <一句话：什么情景下该想起它>
-tags: [模块名, 错误关键词, 领域词]
+applies_when: <one line: in what situation should this come to mind>
+tags: [module-name, error-keyword, domain-word]
 ---
 ```
 
-正文四段以内：触发情景 → 根因或事实 → 该怎么做 → 下次怎么更快。短到一屏读完；要展开的证据引用来源任务的产物路径，不复述。Workspace 与 Location 的同步规则与其他 `teamspace/` 产物相同。
+The body is four paragraphs at most: triggering situation → root cause or fact → what to do → how to be faster next time. Short enough to read in one screen; for evidence that needs expanding, cite the artifact path of the source task rather than restate it. The sync rules for Workspace and Location are the same as for other `teamspace/` artifacts.
 
-## 什么值得沉淀（门槛）
+## What's Worth Capturing (the bar)
 
-- 这次让人意外、与直觉相反的事实（看着像 X，根因其实是 Y）。
-- 反复修不动之后才找到的根因；诊断揭示的非显然机制。
-- 仓库/系统专有的陷阱与约定，而 repo 文档、CLAUDE.md 都没记。
-- 流程教训：某个 phase 的产物形态不够用、某类 reviewer 的系统性误报模式、gate 误放的原因。指向某个 skill 文本本身的教训照样沉淀为 `process` 类，并在 deliver 时向发起人点名——skill 的修改权在人。
+- A fact that was surprising or counterintuitive this time (it looked like X, the root cause was actually Y).
+- A root cause found only after repeated failed fixes; a non-obvious mechanism that the diagnosis revealed.
+- A repo/system-specific trap or convention that neither the repo docs nor CLAUDE.md records.
+- A process lesson: a phase's artifact shape was inadequate, a reviewer type's systematic false-positive pattern, the reason a gate let something through wrongly. A lesson that points at a skill's own text is still captured as a `process` entry, and is named to the sponsor at deliver time — the right to modify a skill stays with humans.
 
-不沉淀：一次性琐事；repo 文档、CLAUDE.md 或 git history 已记录的；只对本任务有意义的细节。判据只有一条：**下一个不同任务的 agent 读到它，会不会少走弯路**——不会就不写，不要为了仪式感凑条目。
+Don't capture: one-off trivia; anything already recorded in the repo docs, CLAUDE.md, or git history; details meaningful only to this task. The single criterion: **would an agent on a different next task, reading this, avoid a wrong turn** — if not, don't write it; don't pad the list for ritual's sake.
 
-## 先查重，再写
+## Dedup First, Then Write
 
-动笔前先按模块、错误信息、关键词 grep `teamspace/learnings/`。与现有条目高度重叠（同一问题、同一根因）就**更新旧文件**、补 `last_updated`，不要新建第二份——两份描述同一问题的文档必然漂移，新上下文更可信，就把它折进旧文件。同一领域、不同角度才新建，并互相点名。
+Before you start writing, grep `teamspace/learnings/` by module, error message, and keyword. If there's heavy overlap with an existing entry (same problem, same root cause), **update the old file** and bump `last_updated`; don't create a second one — two documents describing the same problem will inevitably drift, and since the newer context is more trustworthy, fold it into the old file. Create a new file only for the same domain from a different angle, and have the two name each other.
 
-## 何时写
+## When to Write
 
-- **deliver 收尾时回顾**：本次有没有过门槛的教训？有就写，没有就明确不写。
-- **任务中途也写**：fresh-start 重启前（教训最高发的时刻，别让它随旧对话丢失）、review-research 推翻一批误报后、诊断出非显然根因后。趁上下文新鲜写，不要等到 deliver 时已经忘了细节。
-- 这不是 human gate：沉淀是编排者的内务，三种 mode 下都静默执行，对话里一句话带过即可；发起人明确不要时尊重。
+- **Review at deliver wrap-up**: did this round produce any qualifying lessons? If so, write them; if not, explicitly decide not to.
+- **Write mid-task too**: before a fresh-start restart (the moment lessons are most at risk — don't let them be lost with the old conversation), after review-research overturns a batch of false positives, after a non-obvious root cause is diagnosed. Write while the context is fresh, don't wait until deliver when the details are already forgotten.
+- This is not a human gate: capturing is the orchestrator's housekeeping, done silently in all three modes, with one line mentioned in the conversation; respect it when the sponsor explicitly doesn't want it.
 
-## 何时查（回流）
+## When to Search (the reflux)
 
-- **intake / validate-requirements 开始时**，按任务关键词（模块、错误信息、领域词）grep `teamspace/learnings/`，命中的先读 frontmatter 判相关性，相关才读正文。
-- 相关条目以**路径 + 一句话提要**写进下游 assignment 的上游上下文——`architecture`、`diagnose`、`implementation-plan`、`review-research` 最受益。learning 对 owner 是线索不是指令，采不采纳由它对着当前代码判断（条目反映的是写下时的事实，代码可能已变）。
-- 修 bug 时尤其先查 `root-cause` / `repo-trap` 类——同类问题可能已经解过一次。
+- **At the start of intake / validate-requirements**, grep `teamspace/learnings/` by task keyword (module, error message, domain word); for hits, read the frontmatter first to judge relevance, and read the body only if relevant.
+- Write relevant entries into the downstream assignment's upstream context as **path + one-line summary** — `architecture`, `diagnose`, `implementation-plan`, and `review-research` benefit most. To the owner, a learning is a lead, not an instruction; whether to adopt it is for the owner to judge against the current code (an entry reflects the facts at the time it was written, and the code may have since changed).
+- When fixing a bug, especially search the `root-cause` / `repo-trap` types first — a problem of the same kind may already have been solved once.

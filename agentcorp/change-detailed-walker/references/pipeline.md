@@ -1,114 +1,66 @@
-# 逐 hunk 走查管线
+# pipeline: walk a change through into a local forge PR
 
-本文定义 change-detailed-walker 的运行管线。命令签名、数据面与退出码语义以本文为准，评论行字段与枚举见 `references/hunk-comment.md`。
+Dependencies: `python3` (stdlib), `git`. All scripts are in `scripts/` and use only the standard library. Forge credentials are written by `setup_forge.py` to `~/walker-forgejo/walker.env` and read automatically by the scripts.
 
-## 三条命令
+## Comment JSON contract (produced by walker, consumed by post_review)
 
-抽取 diff：
+```json
+{
+  "body": "optional overall comment (one sentence on what this change is)",
+  "comments": [
+    {"path": "<repo-relative path>", "body": "<why, zh-CN markdown>", "new_position": <new-file line number>},
+    {"path": "<...>",                "body": "<...>",                 "old_position": <old-file line number>}
+  ]
+}
+```
+
+- One comment anchors one line: use `new_position` (new-file line number) for added/context lines, `old_position` (old-file line number) for pure deletion lines. Pick one.
+- Line numbers must come from the real values in `diff_outline.py`; don't count by hand.
+- Granularity: one comment per function / per branch / per meaningful group of constants; big blocks must be split (see the coverage gate).
+
+## Steps
 
 ```bash
-python3 <skill>/scripts/extract_diff.py --repo <path> --base <ref> [--head <ref>] --out <dir> [--include-worktree] [--no-fulltext]
+S=<skill>/scripts        # this skill's scripts directory
+REPO=/path/to/target     # target repo (read-only)
+BASE=origin/main         # base ref
+HEAD=<sha or ref>        # head
+
+# 1. Ensure the local forge is running (idempotent; reuses one already running)
+python3 $S/setup_forge.py
+
+# 2. Mirror into a local PR (base branch = merge-base, head branch = head, PR diff == git diff BASE..HEAD three-dot)
+python3 $S/mirror_pr.py --repo $REPO --base $BASE --head $HEAD --name <forge-repo-name>
+#   → JSON: {owner, repo, index, merge_base, head_sha, files_url}
+
+# 3. Get the diff outline with line numbers
+python3 $S/diff_outline.py --repo $REPO --merge-base <merge_base> --head <head_sha> > /tmp/outline.json
 ```
 
-校验覆盖：
+**Check the scope before writing comments**: every file and every hunk listed by `diff_outline.py` must enter your comment set. Reviewing only one file, or skipping a whole new file / SQL migration, is a miss by default, not a deliberate scope reduction — unless the assignment limited the scope and you declare in the receipt "walked through only X this time, the rest not covered." SQL migrations, handlers, schemas, and the like are often where risk density is highest, and are the last thing that should be missed.
+
+Step 4 is your (the walker's) job: read `/tmp/outline.json` and write comments file by file, function by function. Each `files[].hunks[]` gives `changed` (number of changed lines) and the `new`/`old` line number of every changed line. Write the `body` per the discipline in `references/hunk-comment.md`, pick one changed line's `new` within that function (or the `old` of a deleted segment) as the anchor, and assemble the comment JSON above into `/tmp/comments.json`.
 
 ```bash
-python3 <skill>/scripts/validate_coverage.py --data <dir> [--comments <file>]
+# 5. Post them all into the PR (one POST creates one review)
+python3 $S/post_review.py --repo <forge-repo-name> --index <index> --comments /tmp/comments.json
+
+# 6. Coverage gate: read back and reconcile
+python3 $S/coverage_gate.py --repo $REPO --merge-base <merge_base> --head <head_sha> \
+        --forge-repo <forge-repo-name> --index <index>
+#   exit 0 = pass; non-zero = lists the GAPs (which hunk, how many changed lines, how many comments, how many needed)
 ```
 
-启动 viewer：
+## Coverage and density
 
-```bash
-python3 <skill>/scripts/serve.py --data <dir> [--port 8123]
-```
+The gate's rule (default): each hunk has at least 1 comment anchored within its line range; **a large hunk (changed lines > 20) needs ≥ ceil(changed lines / 40) comments** — forcing big blocks to be split by function rather than swept past with one comment.
 
-## 输出目录
+The gap-filling loop: gate reports a GAP → add function-level comments for those hunks → `post_review.py` again (it creates a new review; the gate reads back the comments across all reviews and reconciles cumulatively) → `coverage_gate.py` again, until it exits 0. Don't stuff in empty filler to pass the gate — each comment still has to explain a real "why"; for what you genuinely can't explain, mark it `untraceable` and state the evidence you checked. The gate only enforces density; quality is backstopped by writing discipline and review.
 
-编排默认输出目录为 `<task_root>/walkthrough/`，也可由 assignment 指定。输出目录必须在目标仓库外，目录内有三个数据面：
+## Wrap-up
 
-```text
-<OUT_DIR>/
-├── diff.json
-├── comments.jsonl
-└── contents/
-```
+Hand the `files_url` to the requester, who logs into the local forge and reviews in the native PR UI. When sandbox repos pile up, delete them as needed: `DELETE /api/v1/repos/{owner}/{repo}`.
 
-`diff.json` 只由抽取端写；`comments.jsonl` 只由讲解 agent 写；`contents/` 默认由抽取端写入完整文件内容，`--no-fulltext` 时可不存在。讲解 agent 对 `diff.json` 与 `contents/` 都只有读取权。
+## Boundaries
 
-## 批次策略
-
-- 默认一文件一批。
-- 单文件超过 20 个 hunk 时，拆成连续 hunk 段。
-- 超大单 hunk 单独成批。
-- 批次是上下文窗口管理单位，不是必须并行的单位；默认顺序写最稳。
-
-## 上下文阶梯
-
-每批按从便宜到贵的顺序取上下文，够用即停：
-
-1. `diff.json` 中该批 hunk 的逐行内容。
-2. `git -C <repo> show HEAD:<path>` 查看文件完整现状。
-3. `git -C <repo> log --oneline <merge-base>..HEAD -- <path>` 查看该文件相关 commit。
-4. assignment 授权清单中的需求、设计、计划、评审、验证原文。
-
-所有目标仓库操作都是只读；绝不 checkout、stash、写临时文件或修改目标仓库。
-
-## 并行分片
-
-如 assignment 明确允许并行，worker 不直接共同写 `comments.jsonl`。每个分片写独立文件：
-
-```text
-comments.part-NN.jsonl
-```
-
-walker 收尾时按分片顺序合并为 `comments.jsonl`，再运行校验器。合并前要确认每个分片都是 JSONL，空行可保留，坏行必须修掉或让校验器报出后修掉。
-
-分片编号必须保持 `comments.part-NN.jsonl` 的两位零填充。标准合并和预检命令原文：
-
-```bash
-cat <dir>/comments.part-*.jsonl > <dir>/comments.jsonl
-python3 <skill>/scripts/validate_coverage.py --data <dir>
-```
-
-## 校验回路
-
-每批或全部批次完成后运行：
-
-```bash
-python3 <skill>/scripts/validate_coverage.py --data <dir> [--comments <file>]
-```
-
-`COVERAGE OK: n/n` 且退出 0 才表示讲解阶段完成。退出 1 表示评论侧违例：出现 `MISSING` 就补写缺失 id，出现 `UNKNOWN` 就修正过期或写错的 id，出现 `BAD_LINE` 就修 JSONL 行。退出 2 表示数据源问题：`diff.json` 缺失、损坏或覆盖单元 id 重复；`DUPLICATE_ID` 属抽取端 bug，不是评论问题。`contents/` 与 `fulltext` 不参与覆盖率对账。receipt 必须附校验器输出原文。
-
-## serve 使用
-
-校验通过后运行：
-
-```bash
-python3 <skill>/scripts/serve.py --data <dir> [--port 8123]
-```
-
-服务只绑定 `127.0.0.1`。启动成功后把打印出的 URL 写进交付说明；端口被占时换 `--port`，不要改 viewer 或复制数据文件。
-
-## 最小自检
-
-维护 `scripts/` 或 `assets/viewer/` 后，至少在目标仓库外用 `/tmp` 产物跑以下检查；运行 Python 命令时带 `PYTHONPYCACHEPREFIX=/tmp/agentcorp-pycache`，避免在 skill 目录生成 `__pycache__/`：
-
-```bash
-PYTHONPYCACHEPREFIX=/tmp/agentcorp-pycache python3 <skill>/scripts/extract_diff.py --repo <repo> --base <ref> --out /tmp/cdw-selfcheck-1
-jq '[.files[].hunks | length] | add // 0' /tmp/cdw-selfcheck-1/diff.json
-git -C <repo> diff <ref>...HEAD | grep -c '^@@'
-```
-
-两条计数应相等。同一 HEAD 跑两次到不同目录，`cmp run1/diff.json run2/diff.json` 应无输出。已有全覆盖 `comments.jsonl` 时，`validate_coverage.py --data <dir>` 应输出 `COVERAGE OK` 且退出 0；删掉一条唯一 id 的评论副本应列出该 id 的 `MISSING` 且退出 1；挪走 `diff.json` 应退出 2。负路径抽查：`--include-worktree` 与显式 `--head` 同时给出应退出 2，`--out` 指向 repo 内应退出 2。
-
-skill 文本自检：
-
-```bash
-python3 tools/validate-skills.py
-# 这里故意拼接 grep pattern，避免自检源码含旧文档名字面量而被自身扫描命中。
-old_walkthrough='walkthrough'
-grep -rn "${old_walkthrough}-doc\\|change-detailed-${old_walkthrough}" agentcorp/ tools/ hooks/
-```
-
-后一条 grep 应无输出。
+Target repo is read-only (only rev-parse / merge-base / push existing commits). Operate only on the **local** forge, never push to or post comments on a real remote. Don't write credentials into any file that will be committed.

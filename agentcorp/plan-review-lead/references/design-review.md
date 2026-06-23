@@ -1,25 +1,25 @@
-# 计划与设计产物评审参考
+# Plan and design artifact review reference
 
-在实现之前评审 architecture、impact analysis、diagnosis 或 API contract 时用这份参考。核心问题始终一致：这组设计产物有没有给 Implementation Engineer 足够的上下文，让他不必自行发明架构就能开工。设计产物可以组合：逐份检查结构决策、delta 影响、根因证据或契约边界是否讲清；不要因为存在多份产物而要求合并，也不要因为只有一份产物就默认足够。下面按产物类型说明各自要让你信任什么。
+Use this reference when reviewing architecture, impact analysis, diagnosis, or an API contract before implementation. The core question is always the same: does this set of design artifacts give the Implementation Engineer enough context to start without having to invent the architecture? Design artifacts can be combined: check artifact by artifact whether the structural decisions, the delta impact, the root-cause evidence, or the contract boundaries are spelled out; do not demand they be merged just because several artifacts exist, and do not assume one artifact is sufficient just because it is the only one. The sections below describe, by artifact type, what each must let you trust.
 
 ## Architecture
 
-用于 greenfield 或重要子系统。它要让你看清：要解决的问题、组件的拆分与归属、数据如何流动、技术选型及其理由，以及这套结构带来多少复杂度、又如何把复杂度压住——尤其是在变更放大、认知负担、未知的未知这三个方向上。它该把关键模块、接口和隐藏决策讲明白，把哪些接口/契约必须保持稳定、相关时数据/状态如何流动、兼容性行为、风险、约束以及对验证有影响的点都交代清楚。它应当读起来像一份真正的工程设计文档，细节密的地方该有就有，而不是一张干巴巴的清单。
+Used for greenfield work or a significant subsystem. It must make clear: the problem to be solved, how the components are decomposed and owned, how data flows, the technology choices and their rationale, and how much complexity this structure introduces and how it keeps that complexity down — especially along the three axes of change amplification, cognitive load, and unknown unknowns. It should spell out the key modules, interfaces, and hidden decisions; make clear which interfaces/contracts must stay stable; describe how data/state flows where relevant; and lay out compatibility behavior, risks, constraints, and the points that bear on verification. It should read like a real engineering design document, dense with detail where detail is warranted, not a bare checklist.
 
-值得信任的 architecture：模块职责清晰，接口隐藏实现细节，复杂度被正视而非甩给调用方，对验证有影响的风险可见。凡是某个视图能比文字更清楚地表达结构、流程、状态、归属或前后变化的地方，就该有图或等价的流程说明，让结构可被检视；图要用真实的模块和边界、说清每一步「做了什么、保护了什么」，占位式的 `User --> System --> DB` 不合格。有图时校验其语法和可读性。
+A trustworthy architecture: module responsibilities are clear, interfaces hide implementation details, complexity is faced head-on rather than offloaded onto the caller, and the risks that bear on verification are visible. Wherever a view would express structure, flow, state, ownership, or before/after change more clearly than prose, there should be a diagram or an equivalent flow description that makes the structure inspectable; the diagram must use real modules and boundaries and state, for each step, "what it does and what it protects" — a placeholder `User --> System --> DB` does not pass. When a diagram is present, check its syntax and readability.
 
 ## Impact Analysis
 
-用于对既有代码的增强。它要让你看清：改动摘要、受影响的模块/文件、接口改动（没有就显式写 `none`）、集成点、必须保留的既有行为、新引入的行为、风险评估和复杂度估计。值得信任的 impact analysis：所有受影响模块都被点到，接口改动显式，风险具体，当前/目标行为和集成点可理解，复杂度落在 S/M；当复杂度、结构决策或接口边界超出它的承载范围时，能配套引用 architecture 或 api-contract，而不是把所有内容塞进同一份文档。前后对比的视图在能直接讲清改动时值得画。
+Used for an enhancement to existing code. It must make clear: the change summary, the affected modules/files, interface changes (write `none` explicitly if there are none), integration points, the existing behavior that must be preserved, the newly introduced behavior, the risk assessment, and the complexity estimate. A trustworthy impact analysis: every affected module is named, interface changes are explicit, risks are concrete, the current/target behavior and integration points are understandable, and complexity lands in S/M; when the complexity, structural decisions, or interface boundaries exceed what it can carry, it can reference an architecture or api-contract alongside, rather than cramming everything into one document. A before/after view is worth drawing when it makes the change clearer directly.
 
 ## Diagnosis
 
-用于缺陷修复。它要让你看清：报告的症状与期望行为、复现（或无法复现的原因）、验证过的假设及各自证据、带因果链的确认根因、提议的最小修复、受影响的文件/模块，以及回归测试或验证判据。除非协调方明确接受残留的不确定性，否则没有证据支撑的根因就不该往下走。失败路径、根因、修正后的行为必须能被理解——用精确的流程说明或图都行；图要标出触发者、入口、失败组件、根因状态或决策点、修正路径、被保留的行为，以及相关时的成功/失败结果。
+Used for defect fixes. It must make clear: the reported symptom and the expected behavior, the reproduction (or why it cannot be reproduced), the hypotheses tested and the evidence for each, the confirmed root cause with its causal chain, the proposed minimal fix, the affected files/modules, and the regression test or verification criteria. Unless the coordinator explicitly accepts residual uncertainty, a root cause unsupported by evidence should not proceed. The failure path, the root cause, and the corrected behavior must be understandable — a precise flow description or a diagram both work; the diagram should mark the trigger, the entry point, the failing component, the root-cause state or decision point, the corrected path, the behavior that is preserved, and the success/failure outcome where relevant.
 
 ## API Contract
 
-用于并行实现，或涉及公共/共享接口时。每个公共端点、共享 schema、协议、SDK/CLI 接口或跨模块边界各自一份契约，共享类型/schema 收在一处共享契约里，不要重复。契约写清签名、请求/响应形态、协议规则、兼容性行为、auth/权限假设和错误语义，但不写实现体。值得信任的 API contract：每个公共/共享/跨模块接口都有契约，契约只暴露调用方需要知道的，API Contract Reviewer 或 Tester 不必猜就能验证其行为。
+Used for parallel implementation, or whenever public/shared interfaces are involved. One contract per public endpoint, shared schema, protocol, SDK/CLI interface, or cross-module boundary; collect shared types/schemas into a single shared contract, don't duplicate them. A contract spells out the signature, the request/response shape, the protocol rules, the compatibility behavior, the auth/permission assumptions, and the error semantics, but not the implementation body. A trustworthy API contract: every public/shared/cross-module interface has a contract, the contract exposes only what the caller needs to know, and the API Contract Reviewer or Tester can verify its behavior without guessing.
 
-## 下判断
+## Deciding
 
-只有当设计产物组合给了 Implementation Engineer 足够上下文、让他不必发明架构就能开工时，才 `approve`。存在具体缺陷时 `request_changes`。当产物也许是对的、但缺证据或源上下文时，用 `needs_more_evidence`。
+Only `approve` when the set of design artifacts gives the Implementation Engineer enough context to start without inventing the architecture. `request_changes` when there are concrete defects. Use `needs_more_evidence` when the artifact may be right but is missing evidence or source context.

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Standards Reviewer"
+  short_description: "Check standards compliance"
+  default_prompt: "Use $standards-reviewer to perform the AgentCorp Standards Reviewer role."

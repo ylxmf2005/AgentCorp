@@ -6,39 +6,39 @@ outputs: [architecture design artifact]
 optional: false
 ---
 
-# 架构设计（Architecture Design）
+# Architecture Design
 
-在任何实现之前先把系统结构设计好。目的是趁结构决策还便宜的时候就把它定清楚，免得后续工作在一个早期的错误上越垒越高。
+Design the system's structure before any implementation. The goal is to settle the structural decisions while they are still cheap, so that later work does not keep building on top of an early mistake.
 
-## 你在对抗的是什么
+## What you are fighting
 
-复杂度是头号敌人。好的结构能从三个方向把它压住：
+Complexity is the number-one enemy. Good structure holds it down along three axes:
 
-- **变更放大**——一个简单的改动不该牵动很多处。要让变更局部化：一个决策，只落在一个地方。
-- **认知负担**——开发者不该为了安全地改一处而把整个系统都装进脑子。深模块把复杂度藏在简单接口背后。
-- **未知的未知**——应该一眼看得出哪里需要改、需要知道什么。把依赖暴露出来，把契约写明确。
+- **Change amplification** — a simple change should not ripple through many places. Localize change: one decision lands in one place.
+- **Cognitive load** — a developer should not have to hold the whole system in their head just to change one spot safely. Deep modules hide complexity behind simple interfaces.
+- **Unknown unknowns** — it should be obvious at a glance where a change is needed and what you need to know. Expose dependencies, and make contracts explicit.
 
-心法：把复杂度往模块内部收，别甩给调用方。最好的接口是「让调用方不必知道内部怎么实现、就能完成目标」的那个最简单的接口。趁早把结构定对，因为每多一个写在有漏洞的接口之上的调用方，将来就多一处要返工。当某个具体判断（深度、隐藏、分层、命名）拿不准时，去翻 `principles/` 里对应的那篇。
+The mindset: pull complexity inward into modules, don't push it onto callers. The best interface is the simplest one that "lets a caller accomplish its goal without needing to know how the internals work." Get the structure right early, because every additional caller written on top of a leaky interface is one more place to rework later. When a specific judgment (depth, hiding, layering, naming) is unclear, consult the relevant file in `principles/`.
 
-## 这份产物要达到什么
+## What this artifact must achieve
 
-这是继需求之后、最主要面向人阅读的产物。发起人要能据此信任这套设计，规划者要能在它之上往下做、而不必去倒推代码。所以它必须讲清楚（用最能服务于设计的结构来组织即可）：
+After the requirements, this is the most human-facing artifact. The originator must be able to trust the design from it, and the planner must be able to build downstream on top of it without reverse-engineering the code. So it must make clear (organize it in whatever structure best serves the design):
 
-- 要解决的问题，以及这套设计背后的意图；
-- 关键决策，以及为什么这样定；
-- 每个组件各自拥有什么、又隐藏了什么；
-- 哪些接口和契约必须保持稳定；
-- 在影响边界的地方，数据或状态是怎么流动的；
-- 相关时，存储/表结构/API 契约及其兼容性行为；数据 table 与数据模型用 DDL、ORM、Pydantic/TypeScript schema 或贴近项目栈的伪代码块承载主体；
-- 它带来多少复杂度，以及这套结构如何把复杂度压住；
-- 还有风险、约束，以及任何对验证有影响的点。
+- the problem to solve, and the intent behind this design;
+- the key decisions, and why they are made this way;
+- what each component owns, and what it hides;
+- which interfaces and contracts must stay stable;
+- how data or state flows where it affects boundaries;
+- where relevant, the storage/table structure/API contracts and their compatibility behavior; carry the body of data tables and data models as DDL, ORM, Pydantic/TypeScript schema, or pseudocode blocks close to the project's stack;
+- how much complexity it introduces, and how this structure holds that complexity down;
+- plus the risks, constraints, and anything that affects verification.
 
-需要多少细节，就给多少能让人信任这套设计的细节；细节密的地方用代码块、表格或要点列举。图按 `references/mermaid.md` 的指引来用：凡是某个视图能比文字更清楚地表达结构、流程、状态、归属或前后变化的地方，就画一张。
+Give as much detail as it takes for someone to trust the design, no more; where detail is dense, use code blocks, tables, or bullet lists. Use diagrams per the guidance in `references/mermaid.md`: wherever a view expresses structure, flow, state, ownership, or a before/after change more clearly than prose, draw one — but keep the set to the smallest that conveys the design (usually 2–3), and don't decompose prose or branch-lists into separate flowcharts. When this is a change to existing code, prefer a single change-annotated diagram (mark new/changed parts) plus, when data crosses services, a data-flow sequence whose messages name the real function and payload type — see `references/mermaid.md`.
 
-如果需求或现有代码模糊到无法有把握地设计，就返回 `blocked`，并指明具体缺什么证据，而不是把它编出来。
+If the requirements or existing code are too vague to design with confidence, return `blocked` and name the specific evidence you are missing, rather than inventing it.
 
-## 输出
+## Output
 
-把产物写到 assignment 的 `output_path`（通常是 `design/architecture.md`），遵循 `design-artifact` demo 模板。输出与语言无关；做重构时跟随被改对象的语言。文中的契约示例只是用于说明设计的内容，不要去写实现文件。
+Write the artifact to the assignment's `output_path` (usually `design/architecture.md`), following the `design-artifact` demo template. The output is language-agnostic; when refactoring, follow the language of what is being changed. Contract examples in the text are only there to illustrate the design — do not write implementation files.
 
-如果是重构，简要说清原方案哪里有问题、本方案如何解决。
+If it is a refactor, briefly state what is wrong with the original approach and how this one resolves it.

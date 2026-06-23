@@ -1,40 +1,40 @@
-# 本地 Triage 引用
+# Local Triage Reference
 
-当 incoming 工作以 issue、bug 报告、用户反馈或模糊请求的形式到来、需要分派时，用这份引用。
+Use this reference when incoming work arrives as an issue, bug report, user feedback, or vague request that needs to be assigned out.
 
-## Intake 原则
+## Intake Principles
 
-先读完整批再分派任何一项。保留报告者的观察，添加分类元数据，而不是把报告改写成你自己的理论。按用户影响和技术 severity 分类，而不是按报告者的资历或新旧。分派前先合并 duplicate，避免产生互相冲突的实现工作。分派出去的 work item 要自包含，让下一个 agent 不必读无关线程就能开工。
+Read the whole batch before assigning any single item. Preserve the reporter's observations and add classification metadata, rather than rewriting the report into your own theory. Classify by user impact and technical severity, not by the reporter's seniority or by recency. Merge duplicates before assigning, to avoid producing conflicting implementation work. A work item that's assigned out must be self-contained, so the next agent can start without reading unrelated threads.
 
 ## Classification
 
-| Issue 信号 | Type | Paradigm |
+| Issue signal | Type | Paradigm |
 | --- | --- | --- |
-| 曾经能用、现在失效 | `bugfix` | `bugfix/hypothesis-driven` |
-| 与文档化或预期行为不符 | `bugfix` | `bugfix/hypothesis-driven` |
-| 崩溃、数据丢失或安全漏洞 | `bugfix` | `bugfix/hypothesis-driven` |
-| 用户想要一项尚不存在的能力 | `enhancement` | `enhancement/delta-design` |
-| 用户想让现有行为换一种方式工作 | `enhancement` | `enhancement/delta-design` |
-| 不改接口的小型孤立能力 | `addition` | `addition/simple` |
-| 全新系统或重要子系统 | `greenfield` | `dev/architecture-first` |
+| Used to work, now broken | `bugfix` | `bugfix/hypothesis-driven` |
+| Doesn't match documented or expected behavior | `bugfix` | `bugfix/hypothesis-driven` |
+| Crash, data loss, or security vulnerability | `bugfix` | `bugfix/hypothesis-driven` |
+| User wants a capability that doesn't yet exist | `enhancement` | `enhancement/delta-design` |
+| User wants existing behavior to work a different way | `enhancement` | `enhancement/delta-design` |
+| Small isolated capability that doesn't change interfaces | `addition` | `addition/simple` |
+| Brand-new system or significant subsystem | `greenfield` | `dev/architecture-first` |
 
-当 issue 是设计争议、一个问题，或依赖你不具备的领域专长时，升级上报而不是硬分类。
+When an issue is a design dispute, a question, or depends on domain expertise you don't have, escalate rather than force-classify it.
 
 ## Deduplication
 
-强 duplicate 信号：相同的复现步骤；相同的错误信息且发生在同一界面；同一页面、endpoint、命令或 workflow 上的同一失败；一份报告是另一份的子集。合并时保留最清晰的标题、最完整的复现、最高的 severity，以及所有 source issue ID。
+Strong duplicate signals: identical reproduction steps; the same error message occurring on the same surface; the same failure on the same page, endpoint, command, or workflow; one report being a subset of another. When merging, keep the clearest title, the most complete reproduction, the highest severity, and all source issue IDs.
 
 ## Priority
 
-| Priority | 含义 |
+| Priority | Meaning |
 | --- | --- |
-| P0 | 生产对大量用户不可用、数据丢失，或正在发生的安全入侵。需发起人确认。 |
-| P1 | 重大用户影响或无 workaround。需发起人确认。 |
-| P2 | 有 workaround 的真实问题，或有意义的功能缺口。 |
-| P3 | 轻微摩擦、外观问题，或 backlog 改进。 |
+| P0 | Production unusable for many users, data loss, or an active security breach. Requires sponsor confirmation. |
+| P1 | Major user impact or no workaround. Requires sponsor confirmation. |
+| P2 | A real problem with a workaround, or a meaningful functional gap. |
+| P3 | Minor friction, a cosmetic issue, or a backlog improvement. |
 
-回归、blocker、安全问题和数据丢失要上调 priority。每个 priority 都要一句话的理由。
+Raise priority for regressions, blockers, security issues, and data loss. Give a one-sentence rationale for every priority.
 
-## Work Item 形态
+## Work Item Shape
 
-遵循 `references/templates/work-item.demo.md`。
+Follow `references/templates/work-item.demo.md`.

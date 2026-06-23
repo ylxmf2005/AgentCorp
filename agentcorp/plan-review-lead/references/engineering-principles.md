@@ -1,31 +1,31 @@
-# 工程原则
+# Engineering principles
 
-计划评审、以及判断实现约束时，用这些原则衡量架构质量。
+When reviewing plans and judging implementation constraints, use these principles to gauge architecture quality.
 
-## 深模块
+## Deep modules
 
-优先选「对调用方简单、却把实质性实现复杂度藏在内部」的接口。把每个内部关切都暴露出来的浅封装只会徒增认知负担。
+Prefer interfaces that are "simple for the caller while hiding substantial implementation complexity inside." A shallow wrapper that exposes every internal concern only adds cognitive load.
 
-## 信息隐藏
+## Information hiding
 
-把易变的细节藏在稳定接口之后。一份要求调用方知道存储布局、时序、解析内部或环境怪癖的计划，是在泄漏设计。
+Hide the volatile details behind a stable interface. A plan that requires the caller to know storage layout, timing, parsing internals, or environment quirks is leaking its design.
 
-## 清晰分层
+## Clean layering
 
-每一层都该提供一种不同的抽象。直通层、UI/API/持久化逻辑混在一起、协议代码里掺着文件系统关切——都是边界模糊的信号。
+Each layer should provide a different abstraction. Pass-through layers, UI/API/persistence logic mixed together, and protocol code laced with filesystem concerns are all signals of blurred boundaries.
 
-## 内聚与拆分
+## Cohesion and decomposition
 
-一起变的东西放在一起；因不同原因而变的东西分开。别为了显得「模块化」就把一个概念拆散到许多文件里。
+Keep things that change together in one place; separate things that change for different reasons. Do not scatter a single concept across many files just to look "modular."
 
-## 错误处理
+## Error handling
 
-优先让非法状态根本不可能出现、或必须显式出现。避免那种「捕获后继续」、把失败粉饰成误导性成功的写法。
+Prefer making illegal states impossible, or forcing them to surface explicitly. Avoid the "catch and continue" style that dresses failure up as a misleading success.
 
-## 命名与文档
+## Naming and documentation
 
-命名要透出领域含义、单位和意图。注释该解释不显然的设计决策，而不是复述代码。
+Naming should convey domain meaning, units, and intent. Comments should explain the non-obvious design decisions, not restate the code.
 
-## 战略式设计
+## Strategic design
 
-小选择会累积。优先选那个能把变更局部化、降低认知负担、让未来改动易于发现的最简单设计。
+Small choices accumulate. Prefer the simplest design that localizes change, lowers cognitive load, and makes future changes easy to discover.

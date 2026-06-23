@@ -1,0 +1,4 @@
+interface:
+  display_name: "Authenticated Browser Session"
+  short_description: "Use logged-in browser state safely"
+  default_prompt: "Use $authenticated-browser-session to run a logged-in browser-session check without reading cookies."

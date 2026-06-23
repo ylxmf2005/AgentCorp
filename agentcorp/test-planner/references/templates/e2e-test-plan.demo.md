@@ -6,31 +6,31 @@ author_agent: test-planner
 parent: test/test-plan.md
 ---
 
-# E2E 测试手册：Example Title
+# E2E Test Manual: Example Title
 
-## 执行形态
+## Execution form
 
-- 默认：浏览器操作为主证（真实浏览器、已登录会话），截图与页面状态是主证据，API/DB/日志为辅证。
-- 降级：仅当此处显式声明；写明降级后哪些东西证明不了。
+- Default: browser operation as primary evidence (real browser, logged-in session); screenshots and page state are the primary evidence, API/DB/logs are supporting.
+- Downgrade: only when explicitly declared here; state what the downgrade can no longer prove.
 
-## 前置
+## Preconditions
 
-- 入口 URL、登录方式（凭据只给引用）、测试数据准备（具体到对象 ID；上下文文档查不到的在此补）。
+- Entry URL, login method (credentials by reference only), test-data preparation (down to object IDs; fill in here anything not found in the context document).
 
-## FLOW-1（P1）：用户目标名
+## FLOW-1 (P1): user goal name
 
-- Persona：Power user。覆盖：FR-x / AC-y。
+- Persona: Power user. Covers: FR-x / AC-y.
 
-| # | 页面/位置 | 操作（输入给原文） | 预期表现 | 取证 |
+| # | Page/location | Action (input given literally) | Expected behavior | Evidence |
 |---|---|---|---|---|
-| 1 | 任务列表页 `<URL>` | 点击「新建任务」 | 弹出创建对话框 | 截图 |
-| 2 | 创建对话框 | 在 prompt 输入框输入：`帮我把 README 翻译成英文` | 提交后跳转任务详情页 | 截图、记录 task_id |
-| 3 | 任务详情页 | 等待执行完成 | 状态变为成功，产物可下载 | 截图；辅证 `GET /api/task/<id>` |
+| 1 | Task list page `<URL>` | Click "New Task" | Create dialog pops up | Screenshot |
+| 2 | Create dialog | In the prompt input, enter: `Help me translate the README into English` | After submit, jump to the task detail page | Screenshot, record task_id |
+| 3 | Task detail page | Wait for execution to finish | Status turns success, artifact is downloadable | Screenshot; supporting evidence `GET /api/task/<id>` |
 
-- Error path（同样逐步写）：
+- Error path (written step by step too):
 
-| # | 页面/位置 | 操作 | 预期表现 | 取证 |
+| # | Page/location | Action | Expected behavior | Evidence |
 |---|---|---|---|---|
-| 1 | 创建对话框 | prompt 留空提交 | 行内报错，不发请求 | 截图、network 面板 |
+| 1 | Create dialog | Submit with the prompt left empty | Inline error, no request sent | Screenshot, network panel |
 
-- Blocked 条件：环境/路由/数据缺什么时，此 flow 标 blocked 并写明缺口。
+- Blocked condition: when the environment/routing/data is missing something, mark this flow blocked and state the gap.

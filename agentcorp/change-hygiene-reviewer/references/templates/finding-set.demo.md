@@ -7,55 +7,55 @@ source_artifacts:
   - path/to/reviewed-diff.md
 ---
 
-# Change Hygiene 评审发现
+# Change Hygiene Review Findings
 
-## 结论
+## Conclusion
 
-- 判定: clean | minor_noise | needs_cleanup | needs_human_intent
-- 摘要:
+- Verdict: clean | minor_noise | needs_cleanup | needs_human_intent
+- Summary:
 
-## 审查范围
+## Review scope
 
 - Diff:
 - Source artifacts:
-- 已加载 reference: diff-noise.md | scope-residue.md | 两者都未加载（说明原因）
+- Reference loaded: diff-noise.md | scope-residue.md | neither loaded (state why)
 
-## 机械扫描
+## Mechanical scan
 
-- 命令:
+- Command:
 - Verdict:
 - Noise ratio:
 - Categories:
 
-## 意图追溯
+## Intent trace
 
-| 改动 | Source artifact | 必要性 | 兼容性影响 | 判定 |
+| Change | Source artifact | Necessity | Compatibility impact | Verdict |
 | --- | --- | --- | --- | --- |
 | path/to/file:line | requirements / story / contract / review finding / tool-required / none | required / optional / unknown | none / changed / unknown | keep / remove / split / ask-human |
 
-## 发现
+## Findings
 
-### 发现 1：<title>
+### Finding 1: <title>
 
-- 严重程度:
-- 置信度:
-- 分类: diff-noise | scope-residue | intent-trace-gap | contract-drift | mixed
-- 证据:
-- 影响:
-- 建议:
+- Severity:
+- Confidence:
+- Category: diff-noise | scope-residue | intent-trace-gap | contract-drift | mixed
+- Evidence:
+- Impact:
+- Recommendation:
 
-## 可保留的机械改动
+## Mechanical changes worth keeping
 
-- 没有时写“无”。
+- Write "none" if there are none.
 
-## 需要发起人确认的意图
+## Intent needing originator confirmation
 
-- 没有时写“无”。
+- Write "none" if there are none.
 
-## 证据缺口
+## Evidence gaps
 
-- 没有时写“无”。
+- Write "none" if there are none.
 
-## 残余风险
+## Residual risk
 
-- 没有时写“无”。
+- Write "none" if there are none.

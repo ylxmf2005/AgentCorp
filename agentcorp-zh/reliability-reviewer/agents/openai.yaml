@@ -1,0 +1,4 @@
+interface:
+  display_name: "Reliability Reviewer"
+  short_description: "Find reliability failure modes"
+  default_prompt: "Use $reliability-reviewer to perform the AgentCorp Reliability Reviewer role."

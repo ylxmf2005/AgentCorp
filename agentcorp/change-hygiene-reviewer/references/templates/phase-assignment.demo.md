@@ -11,18 +11,18 @@ output_path: review/specialist-findings/change-hygiene-reviewer.md
 
 # Assignment
 
-## 目标
+## Goal
 
-审查本次 MR/PR diff 是否干净、可追溯、应属于本次改动；同时覆盖 diff noise 和 scope residue。
+Review whether this MR/PR diff is clean, traceable, and belongs in this change; cover both diff noise and scope residue.
 
-## 输入
+## Input
 
 - Diff:
-- 任务/Story Spec/requirements:
+- Task/Story Spec/requirements:
 - API contract / diagnosis / review finding:
-- 本地 formatter/linter 结果:
+- Local formatter/linter results:
 
-## 约束
+## Constraints
 
-- 只审 change hygiene，不做 correctness/security/performance/reliability review。
-- 每条 finding 必须给出可执行的回退、拆分、保留解释或发起人确认建议。
+- Review change hygiene only; no correctness/security/performance/reliability review.
+- Every finding must give an actionable recommendation: revert, split, keep-with-explanation, or originator confirmation.

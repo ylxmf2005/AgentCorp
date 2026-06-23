@@ -1,0 +1,4 @@
+interface:
+  display_name: "Parallel Researcher"
+  short_description: "Run multi-source parallel research"
+  default_prompt: "Use $parallel-researcher to run multi-source research and synthesize decision-ready evidence."

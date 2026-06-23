@@ -1,0 +1,4 @@
+interface:
+  display_name: "Brainstorm"
+  short_description: "澄清并压力测试需求方向"
+  default_prompt: "使用 $brainstorm 在 AgentCorp 继续前澄清并压力测试这些需求。"

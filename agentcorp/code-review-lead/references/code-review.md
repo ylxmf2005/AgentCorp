@@ -1,21 +1,21 @@
-# 本地代码评审参考
+# Local code review reference
 
-用于协调实现评审，并收敛成一个可被追责的决策。这里讲的是「怎么判断」——选谁来评、发现怎么分级、结论怎么定——而不是排版格式。
+For coordinating implementation review and converging it into a decision someone can be held to. This covers "how to judge" — who to bring in, how to grade findings, how to settle the conclusion — not the layout format.
 
-## 评审层面与选取
+## Review dimensions and selection
 
-总要考虑正确性（逻辑、状态、边界条件、错误传播）、标准（明确的仓库指令与本地约定）、简洁性（不必要的抽象、范围蔓延、可避免的复杂度）、change hygiene（diff 干净度、意图追溯、历史残留、需求外语义/契约变化）、project stewardship（项目方向、长期维护成本、公共 surface、模块边界与 owner 是否愿意长期拥有这次改动）这五层。其余层面按改动的实际风险追加，而不是一律全开：security 用于 auth、权限、对外端点、不可信输入、密钥；可靠性用于重试、超时、I/O、异步任务、健康检查与恢复；性能用于热点路径、查询、循环、内存、规模；API 契约用于路由、JSON-RPC/A2A、CLI、schema、对外接口；change hygiene reviewer 用于格式/折行/顺手重构噪音、多 commit 历史残留、需求中途变化、公共/共享契约被顺带改变、兼容入口/fallback/cache key/deprecation 行为变化；对抗性用于高风险、改动大、多角色、对时序敏感或易被滥用的变更；当实现改动了风险或覆盖假设时，引入 Test Planner 或测试评审。
+Always consider these five dimensions: correctness (logic, state, boundary conditions, error propagation), standards (explicit repo instructions and local conventions), simplicity (unnecessary abstractions, scope creep, avoidable complexity), change hygiene (diff cleanliness, intent traceability, history residue, out-of-scope semantic/contract changes), and project stewardship (project direction, long-term maintenance cost, public surface, module boundaries, and whether the owner is willing to own this change long-term). Add the other dimensions by the change's actual risk rather than turning them all on by default: security for auth, permissions, external endpoints, untrusted input, secrets; reliability for retries, timeouts, I/O, async tasks, health checks, and recovery; performance for hot paths, queries, loops, memory, scale; API contract for routes, JSON-RPC/A2A, CLI, schemas, external interfaces; change hygiene reviewer for formatting/wrapping/drive-by-refactor noise, multi-commit history residue, mid-flight requirement changes, public/shared contracts changed in passing, and changes to compatibility entry points / fallback / cache key / deprecation behavior; adversarial for changes that are high-risk, large, multi-role, timing-sensitive, or easy to abuse; bring in the Test Planner or test review when the implementation changes the risk or coverage assumptions.
 
-## 发现分级
+## Grading findings
 
-分级的依据是「有没有可操作的失败路径」，而不是发现来自几个 reviewer。
+The grading basis is "whether there is an actionable failure path," not how many reviewers a finding came from.
 
-必须修的，是可复现的行为 bug、security 或数据丢失风险、破坏契约的改动、对明确需求的违反、无法追溯到 approved source artifacts 的需求外语义/契约变化、会把错误长期承诺写入项目核心的 steward finding，以及任何会阻断有意义 verification 的评审拦路问题。建议修的，是有合理失败模式的可维护性、可靠性、性能、覆盖或长期维护风险，或合理但应拆出本 MR/PR 的 change hygiene finding。可选的，是不阻断交付的有用清理。该驳回的，是风格意见、重复项、与本次无关的既有问题，以及没有可操作路径的臆测。
+Must-fix are: reproducible behavior bugs, security or data-loss risks, contract-breaking changes, violations of explicit requirements, out-of-scope semantic/contract changes that cannot be traced to approved source artifacts, steward findings that would write a wrong long-term commitment into the project's core, and any review blocker that would prevent meaningful verification. Suggested fixes are: maintainability, reliability, performance, coverage, or long-term maintenance risks with a plausible failure mode, or a sound change hygiene finding that should be split out of this MR/PR. Optional are: useful cleanups that do not block delivery. To be overruled are: style opinions, duplicates, pre-existing problems unrelated to this change, and speculation with no actionable path.
 
-合并重复发现时，归到证据最强、文件/行号最精确的那一条之下。
+When merging duplicate findings, file them under the one with the strongest evidence and the most precise file/line.
 
-## 决策
+## Decision
 
-`approve`：已无必须修的发现，verification 可以继续。`request_changes`：仍有一个或多个必须修的发现。`needs_more_evidence`：因为 diff、需求、测试或设计上下文缺失，评审无法完成。
+`approve`: no must-fix findings remain, verification can proceed. `request_changes`: one or more must-fix findings remain. `needs_more_evidence`: the review cannot be completed because the diff, requirements, test, or design context is missing.
 
-绝不要声称某个 reviewer、命令或 test 跑过，除非有证据。
+Never claim a reviewer, command, or test ran without evidence.

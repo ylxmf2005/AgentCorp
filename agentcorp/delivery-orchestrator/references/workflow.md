@@ -1,125 +1,125 @@
-# 本地 AutoDev Workflow
+# Local AutoDev Workflow
 
-协调工作时渐进地用这份引用。它是 Delivery Orchestrator 的本地 workflow 契约，不依赖任何外部运行时目录。
+Use this reference progressively while coordinating work. It is the Delivery Orchestrator's local workflow contract, and depends on no external runtime directory.
 
-## 运作哲学
+## Operating Philosophy
 
-路由前先定义「完成」：什么必须能工作、什么绝对不能破坏、什么不在范围内。改动前先理解：为所选 phase 准备足够的代码、测试、需求、issue 或设计上下文。开工前先呈现 phase 序列，这就是流水线承诺。守住 author/reviewer 分离：产物的作者不审批自己的产物。把每个结果都当证据看——一条命令通过，只有当它证明了被改的行为时才有用。达到成功标准就停，不要把相邻范围吞进当前这一轮。每个 phase 只写它 owner 负责的部分，引用上游而非复述，只有当它改变某个决策或能避免实现/验证歧义时才加细节。所有 assignment、receipt、manifest 和 phase 产物都用带 YAML frontmatter 的 Markdown 文件。
+Define "done" before routing: what must work, what must never break, what is out of scope. Understand before changing: assemble enough code, test, requirement, issue, or design context for the chosen phase. Present the phase sequence before starting work — that is the pipeline commitment. Hold author/reviewer separation: the author of an artifact does not approve their own artifact. Treat every result as evidence — a command passing is useful only when it proves the behavior that was changed. Stop once the success criteria are met; don't swallow adjacent scope into the current round. Each phase writes only the part its owner is responsible for, cites upstream rather than restating it, and adds detail only when it changes a decision or avoids implementation/verification ambiguity. All assignments, receipts, manifests, and phase artifacts are Markdown files with YAML frontmatter.
 
 ## Workflow Modes
 
-每个任务在 phase 执行开始前选定一种 mode。三种 mode 按**委派程度**排列；phase 词汇、产物路径和 quality gate 在三种 mode 下都不变，变的只是每个 phase 的执行者和 review 的裁决者：
+Each task chooses a mode before phase execution begins. The three modes are ordered by **degree of delegation**; the phase vocabulary, artifact paths, and quality gates stay the same across all three — what changes is each phase's executor and the adjudicator of the reviews:
 
-| Mode | 默认？ | 如何运作 | 何时使用 |
+| Mode | Default? | How it works | When to use |
 | --- | --- | --- | --- |
-| `direct` | 否 | 不派任何 subagent。Delivery Orchestrator 亲自执行所有 phase；review 类 phase 由它按对应 review 视角产出 **draft** 结论，批准权在该 phase 的 human gate——发起人就是 reviewer。 | 小而低风险的改动、发起人要求快速通道，或宿主环境没有 subagent 能力。 |
-| `partial-delegation` | 是 | Delivery Orchestrator 直接执行非 review phase；review、review-research、fix 委派给独立角色。 | 常规任务、中小改动，或单个 agent 能保住足够上下文的工作。 |
-| `full-delegation` | 否 | 所有可委派的 phase 都通过 assignment/receipt 文件委派给各 stage owner，并校验每份返回的产物。 | 发起人要求、L/XL 工作、并行实现，或 review 之外还需独立 authorship 的 phase。 |
+| `direct` | No | Delegate to no subagent. The Delivery Orchestrator executes every phase itself; for review-type phases it produces a **draft** conclusion from the corresponding review perspective, with approval resting on that phase's human gate — the sponsor is the reviewer. | Small, low-risk changes, the sponsor wants a fast track, or the host environment has no subagent capability. |
+| `partial-delegation` | Yes | The Delivery Orchestrator executes the non-review phases directly; review, review-research, and fix are delegated to independent roles. | Routine tasks, small-to-medium changes, or work where a single agent can preserve enough context. |
+| `full-delegation` | No | Every delegable phase is delegated to its stage owner via assignment/receipt files, and each returned artifact is validated. | The sponsor requests it, L/XL work, parallel implementation, or phases that need independent authorship beyond review. |
 
-默认 `partial-delegation`。切换到 `full-delegation` 需要发起人明确选择，或一条记录在案的编排理由：高复杂度、相互独立的并行模块、专门的执行环境，或 review 之外强烈需要 author 分离。切换到 `direct` 必须由发起人明确选择或确认——它把独立 review 角色换成了发起人亲自裁决，发起人必须知情并愿意做 reviewer；绝不静默降级到 `direct`。
+The default is `partial-delegation`. Switching to `full-delegation` requires the sponsor's explicit choice, or a documented orchestration rationale: high complexity, mutually independent parallel modules, a dedicated execution environment, or a strong need for author separation beyond review. Switching to `direct` must be the sponsor's explicit choice or confirmation — it replaces independent review roles with the sponsor adjudicating personally, and the sponsor must be informed and willing to be the reviewer; never silently downgrade to `direct`.
 
-### 发起人工作路径菜单
+### Sponsor Work-Path Menu
 
-mode 是内部账本词；对发起人先用协作节奏表达，再映射到 mode：
+Mode is an internal ledger term; lead with the collaboration cadence to the sponsor, then map it to a mode:
 
-| 发起人看到的路径 | 内部 mode | 何时推荐 |
+| Path the sponsor sees | Internal mode | When to recommend |
 | --- | --- | --- |
-| 快速小改 | `direct` | 任务极小、低风险、发起人明确愿意亲自裁决 review gate；必须点明 review 只是 draft，批准权在发起人。 |
-| 标准交付 | `partial-delegation` | 默认推荐。适合大多数后端修复、增强和中小需求；保留独立 review/research/fix。 |
-| 深度编排 | `full-delegation` | 大改、高风险、需要并行 authorship、跨多个模块或发起人要求全角色编排。 |
+| Quick small change | `direct` | The task is tiny and low-risk, and the sponsor explicitly is willing to adjudicate the review gates personally; you must make clear that review is only a draft and approval rests with the sponsor. |
+| Standard delivery | `partial-delegation` | The default recommendation. Fits most backend fixes, enhancements, and small-to-medium requirements; keeps review/research/fix independent. |
+| Deep orchestration | `full-delegation` | Big changes, high risk, a need for parallel authorship, spanning multiple modules, or the sponsor requests full-role orchestration. |
 
-入口不要把三种路径机械展示给所有人。若信号清楚，直接说“我建议走标准交付”，并给 1-2 个可改选项；若任务很小，询问是否走快速小改；若任务明显复杂，推荐深度编排。用户已经给出明确模式时，直接采用并复述后果。
+Don't mechanically display all three paths to everyone at intake. If the signals are clear, just say "I recommend standard delivery," and offer 1-2 alternatives; if the task is tiny, ask whether to take the quick small-change route; if the task is clearly complex, recommend deep orchestration. When the user has already given an explicit mode, adopt it directly and restate the consequences.
 
-启动任务时的对话骨架：
+The conversation skeleton when starting a task:
 
 ```text
-我先把这当作 <paradigm> 处理。成功标准是 <1-3 条>，主要风险是 <1-3 条>。
-推荐走 <路径>（内部 mode: <mode>），因为 <理由>。
-接下来我会跑：<phase sequence 的人话摘要>。
-你可以：
-1. 按推荐继续
-2. 改成 <另一个合适路径>
-3. 先补充/修改成功标准
+I'll treat this as <paradigm> for now. The success criteria are <1-3 items>, and the main risks are <1-3 items>.
+I recommend the <path> route (internal mode: <mode>), because <reason>.
+Next I'll run: <plain-language summary of the phase sequence>.
+You can:
+1. Continue per recommendation
+2. Change to <another suitable path>
+3. First supplement/modify the success criteria
 ```
 
-只有当 LOW confidence、priority/范围/风险接受不清，或路径选择会改变 reviewer 独立性时，才停下等发起人选择；否则宣布推荐路线后继续执行。
+Stop and wait for the sponsor's choice only when confidence is LOW, priority/scope/risk-acceptance is unclear, or the path choice would change reviewer independence; otherwise announce the recommended route and continue executing.
 
-### Subagent 调用参数
+### Subagent Invocation Parameters
 
-调用 subagent 时默认沿用当前宿主/调用者自己的运行配置。Claude 自己发起 Claude subagent 时就用 Claude 当前默认；Codex 自己发起 Codex subagent/CLI/skill 时就用 Codex 当前默认。AgentCorp 的角色路由只决定「派给谁、给什么上下文、产出放哪里」，不负责把模型、推理强度、权限或其他运行参数写死。
+When invoking a subagent, default to inheriting the current host's/caller's own runtime configuration. When Claude itself spawns a Claude subagent, use Claude's current default; when Codex itself spawns a Codex subagent/CLI/skill, use Codex's current default. AgentCorp's role routing only decides "who to assign, what context to give, and where to put the output," and is not responsible for hardcoding the model, reasoning effort, permissions, or other runtime parameters.
 
-只有三种情况允许显式传参：发起人明确要求；assignment/manifest 里已有记录在案的覆盖值；目标工具 schema 要求必填。即便需要覆盖，也只传最小必要参数，并把原因记进 assignment 或 manifest。
+Only three cases permit passing parameters explicitly: the sponsor explicitly requires it; the assignment/manifest already has a documented override value; the target tool's schema requires it. Even when an override is needed, pass only the minimal necessary parameters and record the reason in the assignment or manifest.
 
-### 运行时路由
+### Runtime Routing
 
-按角色分两层运行时，两层都按上面的运行时继承原则调用、不额外指定模型参数：
+Roles split across two runtime layers, both invoked per the runtime-inheritance principle above without specifying extra model parameters:
 
-- **Claude（决策层）**：Delivery Orchestrator、Test Planner、Test Plan Reviewer、Solution Architect、Implementation Planner、Plan Review Lead、Code Review Lead、Test Leader、Review Researcher、Acceptance Review Lead、Adversarial Reviewer、Parallel Researcher、Simplicity Reviewer、Project Steward Reviewer——走当前 Claude 环境的原生 subagent/Agent 能力。
-- **Codex（执行层）**：Implementation Engineer、Review Fixer、Correctness Reviewer、Security Reviewer、Performance Reviewer、Reliability Reviewer、Standards Reviewer、API Contract Reviewer、API Contract Tester、E2E Tester、Regression Tester——走当前 Codex 环境的原生 subagent/CLI/skill 能力；宿主里没有 Codex 通道时，降级为本地 subagent 调用同一 skill，协议不变。
+- **Claude (decision layer)**: Delivery Orchestrator, Test Planner, Test Plan Reviewer, Solution Architect, Implementation Planner, Plan Review Lead, Code Review Lead, Test Leader, Review Researcher, Acceptance Review Lead, Adversarial Reviewer, Parallel Researcher, Simplicity Reviewer, Project Steward Reviewer — go through the native subagent/Agent capability of the current Claude environment.
+- **Codex (execution layer)**: Implementation Engineer, Review Fixer, Correctness Reviewer, Security Reviewer, Performance Reviewer, Reliability Reviewer, Standards Reviewer, API Contract Reviewer, API Contract Tester, E2E Tester, Regression Tester — go through the native subagent/CLI/skill capability of the current Codex environment; when no Codex channel is present in the host, degrade to a local subagent invocation of the same skill, with the protocol unchanged.
 
-review 独立性在三种 mode 下都不可让步，变的只是裁决者：`partial-delegation`/`full-delegation` 下，`test-plan-review`、`plan-review`、`code-review`、`acceptance-review` 永远派给它们的 review owner；`direct` 下这些 phase 由 Delivery Orchestrator 亲自产出 draft 结论，但 **draft 不等于批准**——每个 review phase 的 human gate 必须保持 active、由发起人裁决，且这些 gate 在 `direct` 下不可跳过。任何 mode 下，Delivery Orchestrator 都不审批自己的产物或证据。
+Review independence cannot be compromised in any of the three modes; only the adjudicator changes: under `partial-delegation`/`full-delegation`, `test-plan-review`, `plan-review`, `code-review`, and `acceptance-review` always go to their review owners; under `direct` these phases have the Delivery Orchestrator produce a draft conclusion itself, but **a draft is not approval** — each review phase's human gate must stay active and be adjudicated by the sponsor, and these gates cannot be skipped under `direct`. In any mode, the Delivery Orchestrator never approves its own artifacts or evidence.
 
-`review-research` 和 `fix` 这两个处理 code-review findings 的 phase，`partial-delegation`/`full-delegation` 下都**委派**出去，不由 Delivery Orchestrator 亲自核验或亲自写修复代码（`direct` 下由它亲自做，但保持同样的顺序与产物：先 research 产出逐 issue 判定、过发起人的 human gate、再 fix 落地）。分工：
+The two phases that handle code-review findings, `review-research` and `fix`, are both **delegated** out under `partial-delegation`/`full-delegation`; the Delivery Orchestrator does not verify or write fix code itself (under `direct` it does them itself, but keeps the same order and artifacts: research first, producing a per-issue verdict, then the sponsor's human gate, then fix lands). The division of labor:
 
-- `review-research` 整段委派给 `review-researcher`：它带对抗性地独立重查每条 finding，掐掉误报，产出 `review/research/`（判定 + 修法建议 + 逐 issue 解释）。这是错误传播的断路器，必须独立做透。
-- `fix` 由 **Delivery Orchestrator 编排并行**：Orchestrator 自己不写修复代码，而是把确认/部分成立的修复项**按文件归属切成互不重叠的组**，每组派一个 `review-fixer` 单 worker 并行落地（保证两组不碰同一文件），所有组返回后由 Orchestrator 跑一次合并校验、汇总成 `review/fix-result.md`。`review-fixer` 是单个修复 worker，不自己切分或派发。详见 Parallel Execution Protocol。
+- `review-research` is delegated as a whole to `review-researcher`: it adversarially re-checks each finding independently, kills the false positives, and produces `review/research/` (verdict + fix recommendation + per-issue explanation). This is the circuit breaker against error propagation and must be done independently and thoroughly.
+- `fix` is **orchestrated in parallel by the Delivery Orchestrator**: the Orchestrator does not write fix code itself, but **partitions the confirmed/partially-valid fix items into mutually non-overlapping groups by file ownership**, dispatches one `review-fixer` single worker per group to land them in parallel (ensuring two groups never touch the same file), and after all groups return, runs one merge validation and aggregates them into `review/fix-result.md`. A `review-fixer` is a single fix worker, and does not partition or dispatch on its own. See the Parallel Execution Protocol.
 
-两者有**顺序依赖**：`fix` 必须在 `review-research` 之后；`review-fixer` 只消费已核验的 `review/research/`，找不到就停、不在原始 findings 上自行核验。这保住了「独立核验」与「忠实落地」的作者分离。
+The two have a **sequential dependency**: `fix` must come after `review-research`; `review-fixer` consumes only the verified `review/research/`, and if it can't find it, it stops — it does not verify the raw findings itself. This preserves the author separation between "independent verification" and "faithful landing."
 
-`partial-delegation` 下保持相同的 phase 词汇和产物路径：Delivery Orchestrator 直接写非 review 产物、在 `manifest.md` 里把自己记为 owner，这些 phase 可省略 assignment/receipt 文件；被委派的 review phase 仍保留 assignment/receipt。`full-delegation` 下，每个被委派的 phase 都走完整的 handoff 纪律。`direct` 下没有任何 assignment/receipt：全部 phase 产物与 manifest 条目仍必需，review 类产物在 manifest 里记 owner 为 delivery-orchestrator 并标注 draft，gate 结果记发起人的裁决。
+Under `partial-delegation`, keep the same phase vocabulary and artifact paths: the Delivery Orchestrator writes the non-review artifacts directly and records itself as owner in `manifest.md`, and these phases may omit the assignment/receipt files; the delegated review phases still keep assignment/receipt. Under `full-delegation`, every delegated phase goes through the full handoff discipline. Under `direct` there are no assignment/receipt at all: all phase artifacts and manifest entries are still required, review-type artifacts record the owner in the manifest as delivery-orchestrator and are marked as draft, and the gate result records the sponsor's adjudication.
 
 ## Task Classification
 
-| 信号 | Paradigm |
+| Signal | Paradigm |
 | --- | --- |
-| 新项目/系统、新的重要子系统，或没有现成代码库 | `dev/architecture-first` |
-| 缺陷、回归、行为不正确、崩溃、数据丢失或安全 bug | `bugfix/hypothesis-driven` |
-| 单个函数/组件/endpoint，1-2 个模块，不改现有接口 | `addition/simple` |
-| 现有产品增强、行为扩展，或接口/数据流改动 | `enhancement/delta-design` |
+| New project/system, a new significant subsystem, or no existing codebase | `dev/architecture-first` |
+| Defect, regression, incorrect behavior, crash, data loss, or security bug | `bugfix/hypothesis-driven` |
+| A single function/component/endpoint, 1-2 modules, no change to existing interfaces | `addition/simple` |
+| Enhancement to an existing product, behavior extension, or interface/data-flow change | `enhancement/delta-design` |
 
-不确定时选 `enhancement/delta-design`。若某个 phase 的 quality gate 暴露出分类不符，先 reclassify 再继续。
+When in doubt, choose `enhancement/delta-design`. If a phase's quality gate exposes a classification mismatch, reclassify before continuing.
 
-## Human Gate 策略
+## Human Gate Policy
 
-Human gate 是发起人的检查点，不是 phase 的 quality gate。跳过 human gate 只是去掉发起人的暂停，并不削弱继续往下所需的证据。
+A human gate is the sponsor's checkpoint, not a phase's quality gate. Skipping a human gate only removes the sponsor's pause; it does not weaken the evidence required to move forward.
 
-默认 human gate：Requirements、TestPlan、Design 或 diagnosis、Implementation Story Spec、blocking 或有风险的 review/verification 决策、review-research 的判定与修法建议（`fix` 落地前）、Final delivery。
+Default human gates: Requirements, TestPlan, Design or diagnosis, Implementation Story Spec, blocking or risky review/verification decisions, the review-research verdict and fix recommendations (before `fix` lands), Final delivery.
 
-`review-research` 之后、`fix` 之前是一个自然的发起人检查点：发起人可以在这里确认哪些 finding 是真问题、哪些是误报、以及建议的修法是否可接受，再放行 `fix` 落地。小而低风险的改动可以征询发起人跳过这个 gate，但跳过不改变「`fix` 必须消费已核验的 `review/research/`」这条依赖。
+After `review-research` and before `fix` is a natural sponsor checkpoint: here the sponsor can confirm which findings are real problems, which are false positives, and whether the proposed fixes are acceptable, before clearing `fix` to land. For small, low-risk changes, you may consult the sponsor about skipping this gate, but skipping does not change the dependency that "`fix` must consume the verified `review/research/`."
 
-每个 human gate 允许的结果：
+Outcomes allowed at each human gate:
 
-| 结果 | 含义 |
+| Outcome | Meaning |
 | --- | --- |
-| `approved` | 发起人批准或说继续。 |
-| `skipped` | 发起人明确跳过此 gate。 |
-| `revised` | 发起人要求改动；继续前重跑或修订对应的 phase。 |
-| `blocked` | 需要发起人输入、凭据、环境或风险接受。 |
+| `approved` | The sponsor approves or says to continue. |
+| `skipped` | The sponsor explicitly skips this gate. |
+| `revised` | The sponsor requests changes; rerun or revise the corresponding phase before continuing. |
+| `blocked` | Needs sponsor input, credentials, environment, or risk acceptance. |
 
-### Gate 导航菜单
+### Gate Navigation Menu
 
-进入 human gate 时，不要只问“approved 吗”。先给发起人足够判断的摘要，再给短选项。默认格式：
+When entering a human gate, don't just ask "approved?" First give the sponsor enough of a summary to judge, then short options. Default format:
 
 ```text
-当前位置：<phase/gate> 已到 human gate；这一步决定 <后续影响>。
-证据：<产物路径 + 关键结论/缺口，不超过 4 条>。
-我建议：<approved/skipped/revised/blocked 之一>，因为 <一句理由>。
-可选：
-1. 批准，进入 <下一 phase>
-2. 要我按 <具体方向> 修订后再回来
-3. 补充信息/风险接受
-4. 跳过这个 human gate（仅当本 gate 允许跳过；说明 quality gate 不会放松）
+Where we are: <phase/gate> has reached the human gate; this step decides <downstream impact>.
+Evidence: <artifact paths + key conclusions/gaps, no more than 4 items>.
+I recommend: one of <approved/skipped/revised/blocked>, because <one-line reason>.
+Options:
+1. Approve, proceed to <next phase>
+2. Have me revise per <specific direction> and come back
+3. Supply information / risk acceptance
+4. Skip this human gate (only when this gate allows skipping; note that the quality gate is not relaxed)
 ```
 
-选项要随上下文裁剪：`direct` 下 review 类 gate 不给“跳过”；LOW confidence 或缺凭据时默认建议必须是 `blocked`；review owner 返回 `request_changes` 或 `needs_more_evidence` 时默认建议必须是修订/补证，而不是批准。发起人用自然语言回答时，映射到 `approved`、`skipped`、`revised`、`blocked` 并记账；映射不清才追问一句。
+Tailor the options to the context: under `direct`, review-type gates don't offer "skip"; when confidence is LOW or credentials are missing, the default recommendation must be `blocked`; when the review owner returns `request_changes` or `needs_more_evidence`, the default recommendation must be revise/supply-evidence, not approve. When the sponsor answers in natural language, map it to `approved`, `skipped`, `revised`, or `blocked` and record it; ask one follow-up only if the mapping is unclear.
 
-对小而低风险的改动，征询发起人要不要跳过即将到来的某些 gate——点名具体哪几个 gate，并保持 review 独立。例如：「这是个小而孤立的改动；要不要跳过 TestPlan 和 Design 的 human gate、保留 Code Review，并在 Final delivery 时汇报？」
+For small, low-risk changes, consult the sponsor about whether to skip some upcoming gates — name the specific gates, and keep review independent. For example: "This is a small, isolated change; want me to skip the human gates for TestPlan and Design, keep Code Review, and report at Final delivery?"
 
-绝不静默跳过 human gate。把跳过的 gate 记进 `task.md` 的 Gate History 和 `manifest.md`。
+Never silently skip a human gate. Record skipped gates in the Gate History of `task.md` and in `manifest.md`.
 
-无人值守（发起人不在场——自动化触发、定时任务、被其他流程调用）时，human gate 不能由任何 agent 代答。发起人可以在开跑前预批点名的 gate（记进 `task.md` 的 Gate History，视同 `approved`）；走到未预批的 gate 时，把待决问题和当前产物路径写进 `task.md`，停在那里结束本轮，等发起人回来裁决——「发起人大概会同意」不是继续的理由。
+When unattended (the sponsor is absent — automation-triggered, scheduled job, called by another process), no agent may answer a human gate. The sponsor may pre-approve named gates before the run starts (recorded in `task.md`'s Gate History, treated as `approved`); when reaching a gate that wasn't pre-approved, write the pending question and the current artifact paths into `task.md`, stop there and end the round, and wait for the sponsor to return and adjudicate — "the sponsor would probably agree" is not a reason to continue.
 
-即使 gate 被跳过或要求全自动，下列情况仍必须暂停：requirements 置信度为 LOW 或成功标准不清；priority、范围或风险接受不清；某个 review owner 返回 `request_changes` 或 `needs_more_evidence`；verification 失败或缺必要证据；缺凭据、环境或权限；需要汇报 Final delivery 状态。
+Even when a gate is skipped or full automation is required, the following still require a pause: requirements confidence is LOW or the success criteria are unclear; priority, scope, or risk acceptance is unclear; a review owner returns `request_changes` or `needs_more_evidence`; verification fails or lacks necessary evidence; credentials, environment, or permissions are missing; Final delivery status needs reporting.
 
 ## Paradigms
 
@@ -129,13 +129,13 @@ Human gate 是发起人的检查点，不是 phase 的 quality gate。跳过 hum
 2. `test-plan`
 3. `test-plan-review`
 4. `architecture`
-5. `api-contract`——除非是 S 复杂度、单一子模块、且无 public/shared 接口风险
+5. `api-contract` — unless it's S complexity, a single submodule, and has no public/shared interface risk
 6. `implementation-plan`
 7. `plan-review`
 8. `implement`
 9. `code-review`
-10. `review-research`——当 code-review 产出需处理的 findings 时；核验真伪、给修法建议、逐 issue 解释
-11. `fix`——落地 `review-research` 判定为确认/部分成立的修法；必跟在 `review-research` 之后
+10. `review-research` — when code-review produces findings that need handling; verify truth, give fix recommendations, explain per issue
+11. `fix` — land the fixes that `review-research` judged confirmed/partially-valid; must follow `review-research`
 12. `verify`
 13. `acceptance-review`
 14. `deliver`
@@ -145,104 +145,104 @@ Human gate 是发起人的检查点，不是 phase 的 quality gate。跳过 hum
 1. `validate-requirements`
 2. `test-plan`
 3. `test-plan-review`
-4. `impact-analysis`——用于说明现有代码 delta；当结构性决策也需要单独说明时，同时产出 `architecture`。
-5. `api-contract`——当 public/shared API、schema、protocol、跨模块边界或并行实现契约必须稳定下来时产出；它可与 `architecture` 或 `impact-analysis` 组合。
+4. `impact-analysis` — to describe the delta to existing code; when structural decisions also need separate description, produce `architecture` as well.
+5. `api-contract` — produce when a public/shared API, schema, protocol, cross-module boundary, or parallel-implementation contract must be stabilized; it can combine with `architecture` or `impact-analysis`.
 6. `implementation-plan`
 7. `plan-review`
 8. `implement`
 9. `code-review`
-10. `review-research`——当 code-review 产出需处理的 findings 时；核验真伪、给修法建议、逐 issue 解释
-11. `fix`——落地 `review-research` 判定为确认/部分成立的修法；必跟在 `review-research` 之后
+10. `review-research` — when code-review produces findings that need handling; verify truth, give fix recommendations, explain per issue
+11. `fix` — land the fixes that `review-research` judged confirmed/partially-valid; must follow `review-research`
 12. `verify`
 13. `acceptance-review`
 14. `deliver`
 
-设计产物归 Solution Architect 拥有。
+Design artifacts are owned by the Solution Architect.
 
 ### `bugfix/hypothesis-driven`
 
-1. `validate-requirements`——基于 bug 报告和复现置信度
+1. `validate-requirements` — based on the bug report and reproduction confidence
 2. `diagnose`
-   - 当修复跨多个模块、改变现有行为或需要明确落点/保留行为时，附加 `impact-analysis`。
-   - 当修复涉及 public/shared API、schema、protocol 或跨模块契约时，附加 `api-contract`。
+   - When the fix spans multiple modules, changes existing behavior, or needs an explicit landing spot/preserved behavior, append `impact-analysis`.
+   - When the fix involves a public/shared API, schema, protocol, or cross-module contract, append `api-contract`.
 3. `implementation-plan`
-4. `plan-review`——除非修复被明确收为极小且低风险
+4. `plan-review` — unless the fix is explicitly scoped as tiny and low-risk
 5. `implement`
 6. `code-review`
-7. `review-research`——当 code-review 产出需处理的 findings 时；核验真伪、给修法建议、逐 issue 解释
-8. `fix`——落地 `review-research` 判定为确认/部分成立的修法；必跟在 `review-research` 之后
+7. `review-research` — when code-review produces findings that need handling; verify truth, give fix recommendations, explain per issue
+8. `fix` — land the fixes that `review-research` judged confirmed/partially-valid; must follow `review-research`
 9. `verify`
 10. `acceptance-review`
 11. `deliver`
 
-Diagnosis 定义正确性与回归标准。若 bug 无法复现或无法圈定边界，就 block 去要更多信息，而不是猜。
+Diagnosis defines the correctness and regression criteria. If the bug can't be reproduced or its boundary can't be pinned down, block to ask for more information rather than guess.
 
 ### `addition/simple`
 
 1. `validate-requirements`
-2. `test-plan`——带 feature 级验收标准
+2. `test-plan` — with feature-level acceptance criteria
 3. `test-plan-review`
-4. `impact-analysis`——仅当目标模块、约束或需保留的行为不明显时
-5. `api-contract`——仅当某个 public/shared API、schema、protocol 或跨模块边界必须被稳定下来时
+4. `impact-analysis` — only when the target module, constraints, or behavior to preserve isn't obvious
+5. `api-contract` — only when some public/shared API, schema, protocol, or cross-module boundary must be stabilized
 6. `implementation-plan`
 7. `plan-review`
 8. `implement`
 9. `code-review`
-10. `review-research`——当 code-review 产出需处理的 findings 时；核验真伪、给修法建议、逐 issue 解释
-11. `fix`——落地 `review-research` 判定为确认/部分成立的修法；必跟在 `review-research` 之后
+10. `review-research` — when code-review produces findings that need handling; verify truth, give fix recommendations, explain per issue
+11. `fix` — land the fixes that `review-research` judged confirmed/partially-valid; must follow `review-research`
 12. `verify`
 13. `acceptance-review`
 14. `deliver`
 
-当影响到 3 个以上模块、或现有接口必须改动时，升级为 `enhancement/delta-design`。
+When it affects more than 3 modules, or an existing interface must change, escalate to `enhancement/delta-design`.
 
 ## Phase Catalog
 
 | Phase | Owner | Inputs | Outputs | Quality gate |
 | --- | --- | --- | --- | --- |
-| `validate-requirements` | Delivery Orchestrator（亲自写，见 `references/validate-requirements.md`） | 任务描述、issue 或需求草稿 | 带置信度、user journeys、约束的 validated requirements，能澄清意图时附流程图 | 置信度 MEDIUM/HIGH；无 blocker 问题；inputs/outputs/约束/成功标准已理解；user journeys 可观察；图在能让 journey、范围、状态或前后行为更易理解时纳入，数量不限，并校验语法与可读性 |
-| `test-plan` | Test Planner | validated requirements 或 diagnosis 标准、项目测试上下文（`teamspace/testing-context.md`，缺则先探索补齐） | TestPlan 文件组：总策略（风险排序检查、所需层级、环境需求、显式缺口）加 API/E2E/Regression 执行手册 | Must Haves 可观察；forbidden zones 具体；coverage 无无理由的缺口；手册可照做（E2E 执行形态显式、用户输入给原文） |
-| `test-plan-review` | Test Plan Reviewer | validated requirements、TestPlan 文件组、项目约束 | `approve`、`request_changes` 或 `needs_more_evidence` | test plan 可执行，覆盖需求/风险面且无 test theater |
-| `architecture` | Solution Architect | validated requirements 和已批准的 TestPlan | 面向读者的设计：背景、目标、关键决策、模块边界、接口、数据/状态流、兼容性、权衡、风险、与验证相关的约束 | 必需决策显式；设计详尽、易懂，足以让发起人和 Implementation Planner 据此工作；图在能让结构、时序、归属、数据/状态流或前后变化更易检视时纳入，数量不限并校验；每一步说清动作/产出/边界而非只点函数名 |
-| `impact-analysis` | Solution Architect | validated requirements、已批准的 TestPlan、现有代码上下文 | delta 记录：受影响模块、接口/数据改动、需保留行为、风险、复杂度，以及有用的 delta 图或流程说明 | 受影响模块和接口改动显式；当前与目标行为可理解；有风险评估；图或精确流程说明让 delta 可检视；仅当前后对比能直接解释改动时才用；复杂度 S/M 或已升级 |
-| `diagnose` | Solution Architect | bug 报告、复现步骤、观测到的失败 | 诊断：已验证的假设、证据、root cause、拟议修复、受影响文件、回归标准，以及有用的失败/修复图或流程说明 | root cause 因果链有证据；不猜；复现状态有记录；失败路径与修正后行为可理解；图为完整而非占位 |
-| `api-contract` | Solution Architect | 架构或影响文档加 API/接口需求 | Markdown API contract 产物：public/shared 接口、请求/响应 schema、auth/error 语义、兼容性行为、验证钩子 | 每个 public/shared/跨模块接口都有 contract，含签名、schema、protocol 形态、归属、兼容性、auth/error 语义；共享类型集中；API Contract Reviewer/Tester 无需猜即可验证 |
-| `implementation-plan` | Implementation Planner | validated requirements、已批准的 TestPlan、设计产物/contracts | Implementation Story Spec：目标、限定范围的 AC、有序任务、目标模块、约束、以引用方式给出的验证期望 | 第一个任务无歧义；目标路径/模块点名；无改变实现走向的悬而未决问题 |
-| `plan-review` | Plan Review Lead | Implementation Story Spec 加 requirements、TestPlan、设计产物/contracts | `approve`、`request_changes` 或 `needs_more_evidence` | Story Spec 给 Implementation Engineer 足够上下文，无需自行发明架构 |
-| `implement` | Implementation Engineer | 已批准的 Implementation Story Spec 和 Plan Review Lead 决策 | 可工作的代码、聚焦的测试、记录改动文件/命令/偏差/blocker 的 implementation result | 与已批准的 Story Spec/contracts 一致；聚焦的测试/检查已跑或 blocker 有记录 |
-| `code-review` | Code Review Lead | diff、改动文件、Story Spec、requirements、TestPlan、设计/诊断、本地规范 | 一个 review 决策加分级的 findings | review 完成；正确性、标准、简洁性、change hygiene 与 project stewardship 已被考虑；must-fix 经 `review-research`/`fix` 处理或决策为 request_changes |
-| `review-research` | Review Researcher（finding 多时 Delivery Orchestrator 按代码域并行编排、汇总索引） | code-review findings（必需）、diff、设计原则/约定 | `review/research/`：**每条 finding 一份** per-issue 文件（判定 + 根因级修法建议 + 面向不熟悉者的人类可读解释）+ `00-index.md` | 每条 finding 落到真实代码上有据判定、逐条成文（不 bundle）、含背景；误报/部分成立讲清原因；确认/部分成立给出优雅修法建议；缺仓库外上下文标待人确认而非硬下结论 |
-| `fix` | Delivery Orchestrator 协调并行 Review Fixer workers | `review/research/`（必需，含判定与修法建议）+ human 评论；改动文件清单 | 各组 `review/fix-records/<group>.md` + 汇总 `review/fix-result.md` + 后端代码改动（留工作区） | 找到并消费了 `review/research/`（缺则停并要求先跑 `review-research`）；确认/部分成立项按文件归属切成互不重叠的组、并行派 worker 落地、同文件不并发；各 worker 忠实落地、治本不打补丁；合并校验跑一次且通过；不提交、不碰前端 |
-| `verify` | Test Leader 协调 testers | implementation、TestPlan 或诊断标准、环境规格 | 按 capability/integration/E2E/regression 给出的验证结果 | 必需检查通过；需要时已跑 E2E；缺口显式；无伪造或臆测的成功 |
-| `acceptance-review` | Acceptance Review Lead | requirements、TestPlan、Story Spec、实现说明、code review 决策、验证证据、残余风险 | `accept`、`reject` 或 `needs_more_evidence` | 证据支撑每个 Must Have 与限定范围的风险；残余风险可接受 |
-| `deliver` | Delivery Orchestrator | 已验收的实现和证据 | delivery report | 报告含文件/产物、测试、偏差、后续事项和残余风险 |
+| `validate-requirements` | Delivery Orchestrator (writes personally, see `references/validate-requirements.md`) | task description, issue, or requirement draft | validated requirements with confidence, user journeys, and constraints, plus a flow diagram when it clarifies intent | confidence MEDIUM/HIGH; no blocker questions; inputs/outputs/constraints/success criteria understood; user journeys observable; if multiple solution paths were plausible, sponsor selected a path or authorized a hybrid; diagrams included whenever they make a journey, scope, state, or before/after behavior easier to understand, any number, with syntax and readability validated |
+| `test-plan` | Test Planner | validated requirements or diagnosis criteria, project testing context (`teamspace/testing-context.md`, explore to fill it in first if missing) | a TestPlan file set: the overall strategy (risk-ordered checks, required layers, environment needs, explicit gaps) plus the API/E2E/Regression playbooks | Must Haves observable; forbidden zones specific; no unjustified coverage gaps; playbooks runnable as written (E2E execution shape explicit, user input given verbatim) |
+| `test-plan-review` | Test Plan Reviewer | validated requirements, the TestPlan file set, project constraints | `approve`, `request_changes`, or `needs_more_evidence` | the test plan is executable, covers the requirements/risk surface, and has no test theater |
+| `architecture` | Solution Architect | validated requirements and the approved TestPlan | a reader-facing design: context, goals, key decisions, module boundaries, interfaces, data/state flows, compatibility, trade-offs, risks, verification-relevant constraints | required decisions explicit; the design is thorough and clear enough for the sponsor and Implementation Planner to work from; diagrams included whenever they make structure, sequencing, ownership, data/state flow, or before/after change easier to inspect, any number, validated; each step states the action/output/boundary, not just a function name |
+| `impact-analysis` | Solution Architect | validated requirements, the approved TestPlan, existing code context | a delta record: affected modules, interface/data changes, behavior to preserve, risks, complexity, plus a useful delta diagram or flow description | affected modules and interface changes explicit; current and target behavior understandable; risk assessment present; a diagram or precise flow description makes the delta inspectable; use a before/after comparison only when it directly explains the change; complexity S/M or escalated |
+| `diagnose` | Solution Architect | bug report, reproduction steps, observed failure | a diagnosis: verified hypotheses, evidence, root cause, proposed fix, affected files, regression criteria, plus a useful failure/fix diagram or flow description | the root cause's causal chain has evidence; no guessing; reproduction status recorded; the failure path and corrected behavior are understandable; diagrams are complete, not placeholders |
+| `api-contract` | Solution Architect | the architecture or impact document plus the API/interface requirements | a Markdown API contract artifact: public/shared interfaces, request/response schemas, auth/error semantics, compatibility behavior, verification hooks | every public/shared/cross-module interface has a contract with signature, schema, protocol shape, ownership, compatibility, and auth/error semantics; shared types centralized; the API Contract Reviewer/Tester can verify without guessing |
+| `implementation-plan` | Implementation Planner | validated requirements, the approved TestPlan, design artifacts/contracts | an Implementation Story Spec: goals, scoped ACs, ordered tasks, target modules, constraints, verification expectations given by reference | the first task is unambiguous; target paths/modules named; no open questions that change the implementation direction |
+| `plan-review` | Plan Review Lead | the Implementation Story Spec plus requirements, TestPlan, design artifacts/contracts | `approve`, `request_changes`, or `needs_more_evidence` | the Story Spec gives the Implementation Engineer enough context to not invent architecture itself |
+| `implement` | Implementation Engineer | the approved Implementation Story Spec and the Plan Review Lead decision | working code, focused tests, an implementation result recording changed files/commands/deviations/blockers | consistent with the approved Story Spec/contracts; focused tests/checks run or blockers recorded |
+| `code-review` | Code Review Lead | the diff, changed files, Story Spec, requirements, TestPlan, design/diagnosis, local standards | a review decision plus graded findings | review complete; correctness, standards, simplicity, change hygiene, and project stewardship considered; must-fix items handled via `review-research`/`fix` or decided as request_changes |
+| `review-research` | Review Researcher (when findings are many, the Delivery Orchestrator orchestrates in parallel by code domain and aggregates the index) | code-review findings (required), the diff, design principles/conventions | `review/research/`: **one per-issue file per finding** (verdict + root-cause-level fix recommendation + a human-readable explanation for someone unfamiliar) + `00-index.md` | each finding has an evidence-backed verdict landed on real code, written per item (not bundled), with context; false-positive/partially-valid items explain why; confirmed/partially-valid items get an elegant fix recommendation; missing out-of-repo context is marked for human confirmation rather than forced to a conclusion |
+| `fix` | Delivery Orchestrator coordinating parallel Review Fixer workers | `review/research/` (required, with verdicts and fix recommendations) + human comments; the changed-file list | per-group `review/fix-records/<group>.md` + the aggregate `review/fix-result.md` + backend code changes (left in the working tree) | `review/research/` found and consumed (if missing, stop and require `review-research` first); confirmed/partially-valid items partitioned into mutually non-overlapping groups by file ownership, parallel workers dispatched to land them, no concurrency on the same file; each worker lands faithfully, fixing the root cause rather than patching; merge validation run once and passing; no commits, no touching the frontend |
+| `verify` | Test Leader coordinating testers | the implementation, the TestPlan or diagnosis criteria, the environment spec | verification results given per capability/integration/E2E/regression | required checks pass; E2E run when needed; gaps explicit; no fabricated or assumed success |
+| `acceptance-review` | Acceptance Review Lead | requirements, TestPlan, Story Spec, implementation notes, the code review decision, verification evidence, residual risks | `accept`, `reject`, or `needs_more_evidence` | evidence supports every Must Have and the scoped risks; residual risk acceptable |
+| `deliver` | Delivery Orchestrator | the accepted implementation and evidence | a delivery report | the report includes files/artifacts, tests, deviations, follow-ups, and residual risks |
 
-### Phase 完成提示
+### Phase Completion Hint
 
-每个 phase 通过 quality gate 后，面向发起人只报会帮助其判断下一步的信息：
+After each phase passes its quality gate, report to the sponsor only what helps them judge the next step:
 
-- `完成了什么`：phase 名 + 人话含义。
-- `证据在哪里`：产物路径、关键测试/校验、receipt 或 review 决定。
-- `下一步`：下一个 phase 和 owner；若有 active human gate，转入 Gate 导航菜单。
-- `可选改向`：仅当新证据暴露出范围、风险或分类变化时提供；否则不要重复列全菜单。
+- `What was done`: the phase name + plain-language meaning.
+- `Where the evidence is`: artifact paths, key tests/checks, the receipt or review decision.
+- `Next step`: the next phase and owner; if there's an active human gate, switch to the Gate Navigation Menu.
+- `Optional redirect`: offer only when new evidence exposes a scope, risk, or classification change; otherwise don't re-list the full menu.
 
-退回 phase 时同样给导航：说明退回原因、你会改变什么再重派、是否需要发起人补输入。连续两次退回同一 phase 后，默认停下来重新评估切分或计划，并把可选路线交给发起人。
+When sending a phase back, give navigation too: state the reason for the send-back, what you'll change before re-dispatching, and whether you need sponsor input. After sending the same phase back twice in a row, default to stopping and re-evaluating the partition or plan, and offer the optional routes to the sponsor.
 
 ## Stage Owners
 
-- Delivery Orchestrator 三种 mode 下都拥有分类、mode 选择、gatekeeping 和最终交付。
-- Delivery Orchestrator 直接拥有 `validate-requirements`，亲自写产物——进入该 phase 时加载 `references/validate-requirements.md`（置信度、何时 block、gate 由发起人裁决；形态见 demo，门槛见 Phase Catalog）。
-- `partial-delegation` 下，Delivery Orchestrator 还亲自写 `test-plan`、需要时的设计/诊断/contracts、`implementation-plan`、`implement` 和 `verify` 产物。
-- `direct` 下，Delivery Orchestrator 亲自执行所有 phase；review 类 phase 它按对应 review 视角产出 draft，批准权在发起人的 human gate。
-- `full-delegation` 下，Test Planner 拥有 `test-plan`；Solution Architect 拥有设计/分析产物；Implementation Planner 拥有 Implementation Story Spec；Implementation Engineer 拥有 `implement`；Test Leader 拥有验证协调；API Contract Tester、E2E Tester、Regression Tester 执行被指派的验证。
-- `test-plan-review` 归 Test Plan Reviewer、`plan-review` 归 Plan Review Lead、`code-review` 归 Code Review Lead、`acceptance-review` 归 Acceptance Review Lead——`partial-delegation`/`full-delegation` 下都如此；`direct` 下这些 review 的批准权归发起人的 human gate。
-- `review-research` 委派给 Review Researcher。finding 多时 Delivery Orchestrator 按代码域去重切簇、并行派多个 Review Researcher，每个对它那簇**逐条**写 per-issue 文件，Orchestrator 再汇总 `00-index.md`；worker 不写 bundle 文件、不自己 fan out。`fix` 同理由 Delivery Orchestrator 编排并行：切分文件分组、并行派多个 Review Fixer 单 worker、跑合并校验、汇总 `fix-result.md`；Review Fixer 只落地分到的那一组，不自己切分或派发。`partial-delegation`/`full-delegation` 下都如此，以保住「独立核验」与「忠实落地」的作者分离；`direct` 下 research 与 fix 由 Orchestrator 亲自串行完成，作者分离由 research 判定先过发起人 human gate 来保证。`fix` 永远排在 `review-research` 之后，且只消费已核验的 `review/research/`。
+- The Delivery Orchestrator owns classification, mode selection, gatekeeping, and final delivery in all three modes.
+- The Delivery Orchestrator directly owns `validate-requirements` and writes the artifact personally — on entering that phase, load `references/validate-requirements.md` (confidence, when to block, the gate adjudicated by the sponsor; shape per the demo, bar per the Phase Catalog).
+- Under `partial-delegation`, the Delivery Orchestrator also personally writes `test-plan`, the design/diagnosis/contracts when needed, `implementation-plan`, `implement`, and `verify` artifacts.
+- Under `direct`, the Delivery Orchestrator executes every phase itself; for review-type phases it produces a draft from the corresponding review perspective, with approval resting on the sponsor's human gate.
+- Under `full-delegation`, the Test Planner owns `test-plan`; the Solution Architect owns the design/analysis artifacts; the Implementation Planner owns the Implementation Story Spec; the Implementation Engineer owns `implement`; the Test Leader owns verification coordination; the API Contract Tester, E2E Tester, and Regression Tester execute their assigned verification.
+- `test-plan-review` belongs to the Test Plan Reviewer, `plan-review` to the Plan Review Lead, `code-review` to the Code Review Lead, and `acceptance-review` to the Acceptance Review Lead — this holds under both `partial-delegation` and `full-delegation`; under `direct`, the approval of these reviews belongs to the sponsor's human gate.
+- `review-research` is delegated to the Review Researcher. When findings are many, the Delivery Orchestrator dedups and clusters by code domain and dispatches multiple Review Researchers in parallel, each writing **per-issue** files for its cluster, and the Orchestrator then aggregates `00-index.md`; workers don't write bundle files and don't fan out themselves. `fix` is likewise orchestrated in parallel by the Delivery Orchestrator: partition the files into groups, dispatch multiple Review Fixer single workers in parallel, run merge validation, and aggregate `fix-result.md`; a Review Fixer only lands the group it was assigned, and does not partition or dispatch itself. This holds under both `partial-delegation` and `full-delegation`, to preserve the author separation between "independent verification" and "faithful landing"; under `direct`, the Orchestrator does research and fix itself in sequence, and the author separation is preserved by having the research verdict pass the sponsor's human gate first. `fix` always comes after `review-research`, and consumes only the verified `review/research/`.
 
 ## Artifact Organization
 
-没有现成任务时，把 `task_id` 定为 `<YYYYMMDD-HHMMSS>-<desc-slug>`（时间戳前置，便于目录按名称排序时按时间浏览），`task_root` 定为相对 `workdir` 的 `teamspace/tasks/<task_id>/`，再据 demo 创建 `task.md` 和 `manifest.md`。
+When there's no existing task, set `task_id` to `<YYYYMMDD-HHMMSS>-<desc-slug>` (timestamp first, so a directory listing by name browses in time order), set `task_root` to `teamspace/tasks/<task_id>/` relative to `workdir`, and then create `task.md` and `manifest.md` per the demos.
 
-任务产生可持久的笔记、设计、prompts、screenshots、logs、reviews、验证证据或 handoff 时，写之前先定位产物位置。所有可持久的协作产物都在 `<workdir>/teamspace/` 下；当存在独立的 `code_worktree`/`code_location` 时，必须同步到 `<code_worktree>/teamspace/` 的同一相对路径——创建或更新某个产物时先写当前这一侧，报告完成前把同一相对路径复制到另一侧。产物路径相对 `workdir` 记录，不要把 `<workdir>` 改写成机器相关的 Location 路径。默认任务运行布局：
+When a task produces persistent notes, designs, prompts, screenshots, logs, reviews, verification evidence, or handoffs, locate the artifact's place before writing. All persistent collaboration artifacts live under `<workdir>/teamspace/`; when a separate `code_worktree`/`code_location` exists, they must be synced to the same relative path under `<code_worktree>/teamspace/` — when creating or updating an artifact, write the current side first, and before reporting completion, copy the same relative path to the other side. Record artifact paths relative to `workdir`; don't rewrite `<workdir>` into a machine-specific Location path. The default task runtime layout:
 
 ```text
 teamspace/tasks/<task_id>/
@@ -254,7 +254,7 @@ teamspace/tasks/<task_id>/
   requirements/
     validated-requirements.md
   test/
-    test-plan.md                    # 总策略；执行手册按需并列
+    test-plan.md                    # overall strategy; execution playbooks alongside as needed
     api-test-plan.md
     e2e-test-plan.md
     regression-test-plan.md
@@ -273,7 +273,7 @@ teamspace/tasks/<task_id>/
     specialist-findings/
     research/
       00-index.md
-      <编号>-<slug>.md
+      <number>-<slug>.md
     fix-result.md
     fix-records/
   verification/
@@ -287,107 +287,107 @@ teamspace/tasks/<task_id>/
     delivery-report.md
 ```
 
-只用任务需要的文件/子目录。产物和 handoff 内部的路径保持相对。任务目录之外，`teamspace/testing-context.md` 是项目级的测试上下文（test-plan phase 的依据，跨任务复用、增量维护），`teamspace/learnings/` 是学习沉淀。`teamspace/` 是本地协调状态：若它出现在 git status 里，就为该本地仓库或 worktree 把 `teamspace/` 加进 `.git/info/exclude`；绝不要 stage 或 commit 它。
+Use only the files/subdirectories the task needs. Keep paths inside artifacts and handoffs relative. Outside the task directory, `teamspace/testing-context.md` is the project-level testing context (the basis for the test-plan phase, reused across tasks and maintained incrementally), and `teamspace/learnings/` is the learnings layer. `teamspace/` is local coordination state: if it shows up in git status, add `teamspace/` to `.git/info/exclude` for that local repo or worktree; never stage or commit it.
 
-## Orchestrator 产物 demo
+## Orchestrator Artifact Demos
 
-用本地 demo，而不是复述形态：
+Use the local demos rather than restating the shape:
 
-- `references/templates/task-record.demo.md` 对应 `task.md`
-- `references/templates/task-manifest.demo.md` 对应 `manifest.md`
-- `references/templates/phase-assignment.demo.md` 对应委派 phase 的 assignment
-- `references/templates/phase-receipt.demo.md` 对应委派 phase 的 receipt
-- `references/templates/acceptance-package.demo.md` 对应 `acceptance/acceptance-package.md`
+- `references/templates/task-record.demo.md` corresponds to `task.md`
+- `references/templates/task-manifest.demo.md` corresponds to `manifest.md`
+- `references/templates/phase-assignment.demo.md` corresponds to a delegated phase's assignment
+- `references/templates/phase-receipt.demo.md` corresponds to a delegated phase's receipt
+- `references/templates/acceptance-package.demo.md` corresponds to `acceptance/acceptance-package.md`
 
-照搬形态，再把示例值替换成当前任务的 phase、owner、status 和路径。
+Copy the shape, then replace the example values with the current task's phases, owners, statuses, and paths.
 
-`artifact_type` 取值：Orchestrator 产出的为 `TaskRecord`、`TaskManifest`、`PhaseAssignment`、`AcceptancePackage`，`author_agent: delivery-orchestrator`；委派 phase 的 receipt 由其 owner 写回，`from_agent` 为该 owner、`phase` 为 assignment 的 phase。最终交付时写 `delivery/delivery-report.md`，讲清 Status、Code/Artifact Location、交付了什么、验证结果、缺口、后续事项，以及关键产物路径。
+`artifact_type` values: what the Orchestrator produces is `TaskRecord`, `TaskManifest`, `PhaseAssignment`, or `AcceptancePackage`, with `author_agent: delivery-orchestrator`; a delegated phase's receipt is written back by its owner, with `from_agent` being that owner and `phase` being the assignment's phase. At final delivery, write `delivery/delivery-report.md`, covering Status, Code/Artifact Location, what was delivered, the verification results, gaps, follow-ups, and the key artifact paths.
 
-## Phase Handoff 纪律
+## Phase Handoff Discipline
 
-委派的 phase，Delivery Orchestrator 在 phase 开始前先写 assignment 文件。每份委派 assignment 都带 `task_root`（相对 `workdir` 的 `teamspace/tasks/<task_id>/`）和相对该 task root 的 `output_path`；Location 与 Workspace 不同时，同一 task root 也必须存在于 `<code_worktree>/teamspace/tasks/<task_id>/`。被委派的 owner 在 assignment 的 `output_path` 写 phase 产物，并写回一份命名了产物路径和 status 的 Markdown receipt。
+For a delegated phase, the Delivery Orchestrator writes the assignment file before the phase begins. Every delegated assignment carries a `task_root` (`teamspace/tasks/<task_id>/` relative to `workdir`) and an `output_path` relative to that task root; when Location and Workspace differ, the same task root must also exist at `<code_worktree>/teamspace/tasks/<task_id>/`. The delegated owner writes the phase artifact at the assignment's `output_path` and writes back a Markdown receipt that names the artifact path and the status.
 
-每收到一份 receipt，Delivery Orchestrator 先跑机械校验，再做质量判断——两者分开：
+For each receipt received, the Delivery Orchestrator runs the mechanical validation first, then makes the quality judgment — the two are separate:
 
-- **机械校验（envelope 一致性）**：跑 `scripts/validate-handoff.py --pair <assignment> <receipt> --task-root <task_root>`（或处理完一批后 `--sweep --task-root <task_root>`）。它检查 receipt 的 `artifact_path` 真的存在、与 assignment 的 `output_path` 一致、`from_agent`/`phase`/`task_id` 与 assignment 对得上、产物的 `author_agent` 与 owner 一致、status 非空。这一步堵的是「receipt 说做完了但产物不在 / 张冠李戴 / 字段缺失」这类自由文本契约最容易放过的失败（receipt 措辞 ≠ 实际产物）。**校验非 0 退出就当作 handoff 未完成**，按 `needs_more_evidence` 退回 owner，不进入下一步，也不计入 gate 通过。
-- **质量判断（phase gate）**：机械校验过了之后，Orchestrator 才判断 status 是否满足该 phase 的 quality gate、证据是否够强。机械校验过不代表 gate 过。receipt 里带偏差、concern 或 blocker 说明时，先把说明读完再做 gate 判断，不要只看 status 字段。
+- **Mechanical validation (envelope consistency)**: run `scripts/validate-handoff.py --pair <assignment> <receipt> --task-root <task_root>` (or `--sweep --task-root <task_root>` after processing a batch). It checks that the receipt's `artifact_path` truly exists, matches the assignment's `output_path`, that `from_agent`/`phase`/`task_id` line up with the assignment, that the artifact's `author_agent` matches the owner, and that status is non-empty. This step plugs the failures that a free-text contract most easily lets through — "the receipt says it's done but the artifact isn't there / wrong artifact / missing field" (receipt wording ≠ actual artifact). **A non-zero validation exit is treated as the handoff being incomplete**: send it back to the owner as `needs_more_evidence`, don't proceed to the next step, and don't count it as a gate pass.
+- **Quality judgment (phase gate)**: only after the mechanical validation passes does the Orchestrator judge whether the status satisfies that phase's quality gate and whether the evidence is strong enough. Passing the mechanical validation does not mean the gate passes. When a receipt carries notes on deviations, concerns, or blockers, read the notes through before making the gate judgment; don't look only at the status field.
 
-退回不是原样重试。一个 phase 被退回（机械校验失败、`request_changes`、`needs_more_evidence` 或 owner 报 blocked）后重派时，必须先改变某样东西：补齐它点名缺失的上下文、缩小或拆分任务、换执行通道，或上报发起人——什么都不变就重派，只会拿到同样的失败。同一 phase 连续两次退回，停下来重新评估切分或计划本身是不是错了，而不是第三次重试。
+A send-back is not a verbatim retry. After a phase is sent back (mechanical validation failed, `request_changes`, `needs_more_evidence`, or the owner reports blocked), you must change something before re-dispatching: supply the missing context it named, narrow or split the task, switch the execution channel, or escalate to the sponsor — re-dispatching with nothing changed only earns the same failure. After sending the same phase back twice in a row, stop and re-evaluate whether the partition or the plan itself is wrong, rather than retrying a third time.
 
-校验通过后，把 assignment、产物、receipt、human gate 结果和 phase quality 结果记进 `manifest.md`，再在 Workspace 与 Location 之间同步更新后的产物集。Delivery Orchestrator 在 active human gate 处停下，直到发起人明确批准、跳过或改向。
+After validation passes, record the assignment, the artifact, the receipt, the human gate result, and the phase quality result in `manifest.md`, then sync the updated artifact set between Workspace and Location. The Delivery Orchestrator stops at an active human gate until the sponsor explicitly approves, skips, or redirects.
 
-`partial-delegation` 下，由 Delivery Orchestrator 亲自写的 phase 可省略 assignment/receipt 文件，但 phase 产物和 manifest 条目仍是必需的；review phase 仍用 assignment/receipt，因为它们仍是委派出去的。`full-delegation` 下，被委派的 phase 必须有 assignment/receipt。`direct` 下没有 assignment/receipt，全部 phase 产物与 manifest 条目仍必需。任何 mode 下，validated requirements 产物都由 Delivery Orchestrator 亲自写（见 `references/validate-requirements.md`）。委派验证期间，Test Leader 可在 `verification/assignments/` 下写 tester assignment，testers 在 `verification/test-results/` 下写结果文件，Test Leader 写最终的 `verification/verification-report.md`。
+Under `partial-delegation`, a phase the Delivery Orchestrator writes personally may omit the assignment/receipt files, but the phase artifact and manifest entry are still required; review phases still use assignment/receipt because they remain delegated. Under `full-delegation`, a delegated phase must have an assignment/receipt. Under `direct` there are no assignment/receipt, and all phase artifacts and manifest entries are still required. In any mode, the validated requirements artifact is written personally by the Delivery Orchestrator (see `references/validate-requirements.md`). During delegated verification, the Test Leader may write tester assignments under `verification/assignments/`, testers write result files under `verification/test-results/`, and the Test Leader writes the final `verification/verification-report.md`.
 
-### Handoff 的两类上下文保真（coupled vs independent）
+### The Two Kinds of Context Fidelity in a Handoff (coupled vs independent)
 
-「上游产物名字和路径即视为足够、引用而非复述」这条默认原则，只适用于一类 handoff，不能一刀切。写 assignment、决定喂多少上下文时，先分清这是哪一类：
+The default principle that "an upstream artifact's name and path are enough, cite rather than restate" applies to one kind of handoff only, not all. When writing an assignment and deciding how much context to feed, first identify which kind it is:
 
-- **independent（独立/审查类）**：`test-plan-review`、`plan-review`、`code-review`、各专项 review、`review-research`、`acceptance-review`、验证类。下游要的是**独立判断**，看到上游过多的结论反而会被带偏（conformity）。这里坚持默认原则：传**指针/路径**，让下游自己去读、自己判断；下游回传**蒸馏后的结论**（findings/decision），不回灌原始上下文。这保住了独立性，也省 context。
+- **independent (independent/review type)**: `test-plan-review`, `plan-review`, `code-review`, the specialist reviews, `review-research`, `acceptance-review`, the verification types. What the downstream needs is an **independent judgment**, and seeing too many upstream conclusions actually biases it (conformity). Here, hold the default principle: pass **pointers/paths**, let the downstream read and judge for itself; the downstream returns **distilled conclusions** (findings/decision), not re-injected raw context. This preserves independence and saves context.
 
-- **coupled（耦合/承接类）**：`implement`、`fix`、`code-review → review-research → fix` 这条修复脊柱、以及任何「下游要在上游决策之上继续做、做错就连锁错」的 handoff。这里**反过来**：assignment 必须带上**完整的上游产物与既往决策**（不是摘要、不是指针），因为 action 携带隐含决策，隐含决策不随手传递就会产生冲突和返工。典型必带项：`fix` 要带 `review-research` 对该 issue 的**完整判定 + 根因 + 修法建议**(而非「见 review/research/」一句带过)；`implement` 要带已批准的 Story Spec 全文与相关 contract，而非只给路径。
+- **coupled (coupled/continuation type)**: `implement`, `fix`, the `code-review → review-research → fix` repair spine, and any handoff where "the downstream builds on the upstream decision and getting it wrong cascades." Here it's **the reverse**: the assignment must carry the **full upstream artifact and prior decisions** (not a summary, not a pointer), because actions carry implicit decisions, and an implicit decision not passed along produces conflicts and rework. Typical must-include items: `fix` must carry `review-research`'s **full verdict + root cause + fix recommendation** for that issue (not a one-liner "see review/research/"); `implement` must carry the full text of the approved Story Spec and the relevant contract, not just a path.
 
-判断准则一句话：**下游是要「独立地另判一次」还是「在上游结论之上接着做」**——前者传指针保独立，后者喂全文保连贯。拿不准时按 coupled 处理（宁可多喂，不可丢决策）。
+The one-line criterion: **does the downstream "judge it again independently" or "build on the upstream conclusion"** — the former passes pointers to preserve independence, the latter feeds the full text to preserve coherence. When unsure, treat it as coupled (better to over-feed than to drop a decision).
 
 ## Verification Hierarchy
 
-1. Capability：每个 per-module Must Have 和失败/边界情况都被直接检查。
-2. Integration/API：每条跨模块或 public contract 流程都有成功与错误传播检查。
-3. E2E：每个面向用户的能力都至少出现在一条完整的用户目标里，含 happy 与 error path。
-4. 涉及 UI 改动时做前端视觉/交互检查。
+1. Capability: every per-module Must Have and failure/edge case is checked directly.
+2. Integration/API: every cross-module or public-contract flow has both success and error-propagation checks.
+3. E2E: every user-facing capability appears in at least one complete user goal, with both happy and error paths.
+4. When a change involves UI, do a frontend visual/interaction check.
 
-在必需的低层检查仍失败时，不要推进到更高层。某个场景无法运行时，记录原因并当作缺口，除非被明确接受。
+Don't advance to a higher layer while a required lower-layer check still fails. When a scenario can't be run, record the reason and treat it as a gap, unless explicitly accepted.
 
 ## Parallel Execution Protocol
 
-并行实现是 `implement` phase 的一种协议，不是单独的 phase。仅当下列全部成立时才并行：复杂度为 M/L/XL；至少两个子模块能独立构建；子模块共享接口但不共享实现；架构或影响文档已存在；涉及 public/shared API、schema、protocol 或跨模块 contract 时 `api-contract` 已完成；Implementation Story Spec 按 contract 切分任务、只保留各子模块所需的集成上下文；TestPlan 按子模块限定 Must Haves、Need Haves、Failure/Edge Cases 和 Forbidden Zones。
+Parallel implementation is a protocol within the `implement` phase, not a separate phase. Parallelize only when all of the following hold: complexity is M/L/XL; at least two submodules can be built independently; the submodules share interfaces but not implementation; an architecture or impact document already exists; `api-contract` is complete when public/shared API, schema, protocol, or cross-module contracts are involved; the Implementation Story Spec partitions tasks per the contracts and keeps only the integration context each submodule needs; the TestPlan scopes Must Haves, Need Haves, Failure/Edge Cases, and Forbidden Zones per submodule.
 
-每个并行实现 session 恰好收到这些输入：
+Each parallel implementation session receives exactly these inputs:
 
-1. `STORY_SPEC_PATH`：已批准的 Implementation Story Spec 的相对路径。
-2. `DESIGN_DOC_PATH`：架构、影响、诊断或 API contract 的相对路径。
-3. `OWN_CONTRACT`：本 session 实现的 contract stub。
-4. `DEP_CONTRACTS`：本 session 调用但不修改的只读 contract。
-5. `TESTPLAN_SCOPE`：本子模块的 capability、边界、Must Have、Need Have、Failure/Edge Cases。
-6. `FORBIDDEN_ZONE`：本子模块的明确红线。
-7. `COMPLETION_SIGNAL`：协调者期望的确切完成信号。
-8. `INTEGRATION_CONTEXT`：涉及本子模块的集成测试和跨边界期望。
+1. `STORY_SPEC_PATH`: the relative path to the approved Implementation Story Spec.
+2. `DESIGN_DOC_PATH`: the relative path to the architecture, impact, diagnosis, or API contract.
+3. `OWN_CONTRACT`: the contract stub this session implements.
+4. `DEP_CONTRACTS`: the read-only contracts this session calls but does not modify.
+5. `TESTPLAN_SCOPE`: this submodule's capability, boundary, Must Have, Need Have, Failure/Edge Cases.
+6. `FORBIDDEN_ZONE`: this submodule's explicit red lines.
+7. `COMPLETION_SIGNAL`: the exact completion signal the coordinator expects.
+8. `INTEGRATION_CONTEXT`: the integration tests and cross-boundary expectations involving this submodule.
 
-### `review-research` 的并行（按代码域去重切分，输出仍逐条成文）
+### Parallelizing `review-research` (dedup-partition by code domain, output still written per item)
 
-`review-research` 在 finding 多时也由 Delivery Orchestrator 并行编排。这里有个必须守住的区分：**调查单元可以聚类，输出单元永远是逐条。** 聚类只为「同一批代码不被重复读」，绝不能让产出粒度塌成 cluster 文件。
+`review-research`, when findings are many, is also orchestrated in parallel by the Delivery Orchestrator. There's a distinction that must be held here: **the investigation unit may be clustered, but the output unit is always per item.** Clustering exists only so "the same batch of code isn't read repeatedly," and must never collapse the output granularity into a cluster file.
 
-1. **取 finding**：从 code-review 的 findings 取全部待核验 finding。
-2. **按代码域去重归并成簇**：多条跨 reviewer 指向同一文件 / 同一调用链的，归到一簇（如「convert 轮询」「asset clone 锁」「batch status 契约」）。簇是为了让一个 worker 把那批共享代码读一遍就覆盖多条，而不是 33 条各开一个 agent 重复读同一批文件。
-3. **并行派 `review-researcher`**：每簇一个 assignment，给 `FINDINGS`（本簇每条 finding 的全文 + reviewer 证据，仅作线索）、`CODE_SCOPE`（本簇相关代码范围）、`DESIGN_PRINCIPLES`（记录在案的设计原则）、独立对抗式重查的纪律，以及 `OUTPUT_DIR=review/research/`。**硬约束写进 assignment：worker 对它那簇里的每条 finding 各写一份 per-issue 文件 `review/research/<编号>-<slug>.md`，不许写 bundle/cluster 文件。** 遵守 harness 并发上限；不支持并行就串行，协议不变。
-4. **汇总索引**：各 worker 写完自己那几条的 per-issue 文件并回 receipt。全部返回后，**Orchestrator 从所有 per-issue 文件汇总写 `review/research/00-index.md`**（照 `templates`/研究骨架的索引形态：按 P0→P1→P2 列出每条 + 判定 + 链接）。Orchestrator 不自造合并式 `SUMMARY.md`，也不给索引安自定义 `artifact_type`——索引就是 `00-index.md`。
-5. **人审 gate 后才进 fix**：默认停在 review-research 的 human gate，让发起人确认判定与修法，再进 `fix`；不要从 research 直接链到 fix。
+1. **Take the findings**: take all findings to verify from the code-review findings.
+2. **Dedup and merge into clusters by code domain**: when multiple findings across reviewers point at the same file / the same call chain, group them into one cluster (e.g. "convert polling," "asset clone lock," "batch status contract"). A cluster exists so that one worker reads that shared batch of code once and covers multiple findings, rather than 33 findings each spawning an agent that re-reads the same files.
+3. **Dispatch `review-researcher` in parallel**: one assignment per cluster, giving `FINDINGS` (the full text of each finding in this cluster + reviewer evidence, as leads only), `CODE_SCOPE` (the relevant code range for this cluster), `DESIGN_PRINCIPLES` (the documented design principles), the discipline of independent adversarial re-checking, and `OUTPUT_DIR=review/research/`. **Write the hard constraint into the assignment: the worker writes one per-issue file `review/research/<number>-<slug>.md` for each finding in its cluster, and is not allowed to write a bundle/cluster file.** Respect the harness concurrency limit; if parallelism isn't supported, go serial, with the protocol unchanged.
+4. **Aggregate the index**: each worker writes the per-issue files for its few findings and returns a receipt. After all return, **the Orchestrator aggregates `review/research/00-index.md` from all per-issue files** (per the `templates`/research-skeleton index shape: list each item by P0→P1→P2 + verdict + link). The Orchestrator does not invent a merged `SUMMARY.md`, nor assign a custom `artifact_type` to the index — the index is `00-index.md`.
+5. **Only proceed to fix after the human-review gate**: by default, stop at the review-research human gate to let the sponsor confirm the verdicts and fixes, then proceed to `fix`; don't chain straight from research to fix.
 
-收 receipt 时照常 `scripts/validate-handoff.py` 校验（worker receipt 的 `artifact_path` 指向其产出的某份 per-issue 文件或 `review/research/`），index 汇总后再 `--sweep` 全量过一遍。
+When receiving receipts, validate as usual with `scripts/validate-handoff.py` (a worker receipt's `artifact_path` points to one of the per-issue files it produced or to `review/research/`), and after the index is aggregated, run a full `--sweep` pass.
 
-### `fix` 的并行（同一协议，按文件归属切分）
+### Parallelizing `fix` (same protocol, partitioned by file ownership)
 
-`fix` 也是由 Delivery Orchestrator 编排的并行协议，不是单独 phase 之外的特例。前置：`review-research` 已产出 `review/research/`，其中有判定为**确认/部分成立**的修复项。Orchestrator 按下面做：
+`fix` is also a parallel protocol orchestrated by the Delivery Orchestrator, not a special case outside a separate phase. Precondition: `review-research` has produced `review/research/`, in which there are fix items judged **confirmed/partially-valid**. The Orchestrator does the following:
 
-1. **取待修项**：从 `review/research/` 取出所有确认/部分成立项及其修法建议（叠加 human 评论；误报、待人确认不修）。找不到 `review/research/` 就停，先跑 `review-research`。
-2. **按文件归属切分互不重叠的组**：把每个待修项的主改文件（及可预见的外溢文件）列出来；**涉及同一文件的项归进同一组**，由同一个 worker 串行处理。两组的文件占用集必须不相交。
-3. **并行派 `review-fixer` 单 worker**：每组一个 assignment，恰好给这些输入——`GROUP_SLUG`、`FIX_ITEMS`（本组确认/部分成立项及 research 修法建议）、`OWNED_FILES`（本组授权编辑、其他组不会碰的文件集）、`REPO_CONVENTIONS`、`FOCUSED_VALIDATION`（本组该跑的聚焦校验）、`OUTPUT_PATH`（`review/fix-records/<group-slug>.md`）。遵守 harness 并发上限：超限就排队、有空位再补；harness 不支持并行就串行，协议不变。
-4. **回收 + 合并校验**：各 worker 写本组 `fix-records/<group>.md` 并回 receipt。全部返回后，Orchestrator 对合并后的改动**跑一次**仓库全量校验（语法/import/类型/相关测试），抓跨组相互影响。失败且落在改过的文件 → 退回相关组重做或升级；失败只落在没人改的文件 → 记为既有失败。
-5. **汇总**：Orchestrator 写 `review/fix-result.md`：按 P0→P1→P2 汇总各组处置（落地/needs-research 退回/needs-human/误报引用）、合并校验结果、残余风险。这份汇总归 Orchestrator，不归任何单个 worker。
+1. **Take the items to fix**: take all confirmed/partially-valid items and their fix recommendations from `review/research/` (overlaid with human comments; false positives and "needs human confirmation" are not fixed). If `review/research/` can't be found, stop and run `review-research` first.
+2. **Partition into mutually non-overlapping groups by file ownership**: list each item's primary file to change (and the foreseeable spill-over files); **items touching the same file go into the same group**, handled serially by the same worker. The file-occupancy sets of two groups must be disjoint.
+3. **Dispatch `review-fixer` single workers in parallel**: one assignment per group, giving exactly these inputs — `GROUP_SLUG`, `FIX_ITEMS` (this group's confirmed/partially-valid items and the research fix recommendations), `OWNED_FILES` (the file set this group is authorized to edit and no other group will touch), `REPO_CONVENTIONS`, `FOCUSED_VALIDATION` (the focused checks this group should run), `OUTPUT_PATH` (`review/fix-records/<group-slug>.md`). Respect the harness concurrency limit: queue when over the limit and fill as slots free up; if the harness doesn't support parallelism, go serial, with the protocol unchanged.
+4. **Collect + merge validation**: each worker writes its group's `fix-records/<group>.md` and returns a receipt. After all return, the Orchestrator **runs one** full-repo validation over the merged changes (syntax/import/types/relevant tests) to catch cross-group interactions. A failure that lands on a changed file → send the relevant group back to redo, or escalate; a failure that lands only on a file no one changed → record it as a pre-existing failure.
+5. **Aggregate**: the Orchestrator writes `review/fix-result.md`: aggregate each group's disposition by P0→P1→P2 (landed/sent back as needs-research/needs-human/false-positive reference), the merge validation result, and the residual risks. This aggregate belongs to the Orchestrator, not to any single worker.
 
-worker 之间因占用集不相交而不会撞文件；万一某 worker 的修复外溢出 `OWNED_FILES`，它必须停下来上报而不是越界，由 Orchestrator 重新分组或串行重跑。
+Workers don't collide on files because their occupancy sets are disjoint; if some worker's fix spills out of `OWNED_FILES`, it must stop and report rather than cross the boundary, and the Orchestrator re-partitions or reruns serially.
 
-## 学习沉淀（Learnings）
+## Learnings
 
-流水线在 `deliver` 终止，但教训跨任务存活于 `teamspace/learnings/`——这是 Delivery Orchestrator 的内置能力，不是 phase、不设 gate、不改 Phase Catalog。两个动作：`intake`/`validate-requirements` 开始时按任务关键词**检索**既往教训、把相关条目以路径喂进下游 assignment；deliver 收尾或任务中途出现过门槛的教训（意外根因、反复返工、仓库陷阱）时**沉淀**。门槛、形态、查重与回流规则见 `references/learnings.md`。
+The pipeline terminates at `deliver`, but lessons survive across tasks in `teamspace/learnings/` — this is a built-in capability of the Delivery Orchestrator, not a phase, has no gate, and doesn't change the Phase Catalog. Two actions: at the start of `intake`/`validate-requirements`, **search** prior lessons by task keyword and feed relevant entries by path into the downstream assignment; at deliver wrap-up or when a qualifying lesson surfaces mid-task (an unexpected root cause, repeated rework, a repo trap), **capture** it. The bar, shape, dedup, and reflux rules are in `references/learnings.md`.
 
-## 收尾导航
+## Wrap-Up Navigation
 
-`deliver` 不是只宣布完成。最终回复和 `delivery/delivery-report.md` 都要让发起人知道任务能否收口、证据在哪里、还有哪些自然后续。默认结构：
+`deliver` is not just announcing completion. Both the final reply and `delivery/delivery-report.md` must let the sponsor know whether the task can be closed out, where the evidence is, and what natural follow-ups remain. Default structure:
 
-1. 状态：delivered / delivered-with-risk / blocked / rejected。
-2. 交付内容：代码位置、关键产物路径、关键验证。
-3. 偏差与残余风险：没有就写无；有则给 owner 或接受条件。
-4. 推荐下一步：一个明确建议。
-5. 可选后续：按需列出 2-4 项，例如结束任务、创建 follow-up、运行 `change-detailed-walker`、补一轮验证、沉淀/查看 learnings、回到某个 gate 修订。
+1. Status: delivered / delivered-with-risk / blocked / rejected.
+2. What was delivered: code location, key artifact paths, key verification.
+3. Deviations and residual risks: write none if there are none; otherwise give an owner or acceptance condition.
+4. Recommended next step: one clear recommendation.
+5. Optional follow-ups: list 2-4 as needed, e.g. close the task, create a follow-up, run `change-detailed-walker`, do another round of verification, capture/review learnings, return to a gate to revise.
 
-如果验收未通过或证据不足，推荐下一步不能是“结束”；必须指向补证、修订、重新 review 或发起人风险接受。
+If acceptance didn't pass or evidence is insufficient, the recommended next step cannot be "close out"; it must point to supplying evidence, revising, re-reviewing, or sponsor risk acceptance.

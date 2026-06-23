@@ -1,0 +1,4 @@
+interface:
+  display_name: "Test Planner"
+  short_description: "Create risk-ranked test plans"
+  default_prompt: "Use $test-planner to perform the AgentCorp Test Planner role."

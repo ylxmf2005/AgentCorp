@@ -1,0 +1,4 @@
+interface:
+  display_name: "Test Leader"
+  short_description: "Coordinate verification evidence"
+  default_prompt: "Use $test-leader to perform the AgentCorp Test Leader role."

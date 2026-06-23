@@ -7,12 +7,12 @@ status: completed
 artifact_path: review/fix-records/<group-slug>.md
 ---
 
-# 回执：fix（单组）
+# Receipt: fix (single group)
 
-## 说明
+## Summary
 
-- 一句话完成说明（例：本组 3 项——2 项按 research 修法落地、1 项 needs-research 退回；聚焦校验通过）。
+- One-line completion summary (e.g., this group had 3 items — 2 landed per research's fix approach, 1 sent back as needs-research; focused validation passed).
 
-## 阻塞项
+## Blockers
 
-- 没有时写“无”。
+- Write "None" if there are none.

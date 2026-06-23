@@ -1,34 +1,34 @@
-# 单组落地执行细节
+# Single-group landing: execution details
 
-本文件是 `review-fixer` 的本地 reference：作为单个修复 worker，怎么把指派给你的**一组**已核验修复项落地。切分、并行、合并校验、跨组汇总都不在这里——那是 Delivery Orchestrator 的事。
+This file is the local reference for `review-fixer`: as a single fix worker, how to land the **one group** of verified fix items assigned to you. Slicing, parallelism, merge checks, and the cross-group rollup are not here — those belong to the Delivery Orchestrator.
 
-## 你的边界
+## Your boundary
 
-- 只处理 assignment 给的 `FIX_ITEMS`，只编辑 `OWNED_FILES`。`OWNED_FILES` 是 Orchestrator 用来保证「两个并行 worker 不碰同一文件」的契约：越界编辑会破坏这个保证，所以需要外溢时**停下来上报**，不要擅自改别的文件。
-- 只修判定为 **确认（confirmed）/ 部分成立（partial）** 的项。误报、待人确认不该被派给你；若混进来，标 `not-applicable`、不修。
+- Handle only the `FIX_ITEMS` the assignment gives you, and edit only `OWNED_FILES`. `OWNED_FILES` is the contract the Orchestrator uses to guarantee that "two parallel workers never touch the same file": editing out of bounds breaks that guarantee, so when you need to spill over, **stop and escalate**; do not unilaterally edit other files.
+- Fix only items whose verdict is **confirmed / partial**. False positives and items pending human confirmation should not be assigned to you; if one slips in, mark it `not-applicable` and do not fix it.
 
-## 每个 item 的步骤
+## Steps for each item
 
-1. **抗漂移核对（不是重做核验）**：读 `OWNED_FILES` 里相关代码，确认 research 的修法建议仍对得上当前代码。
-   - 对得上 → 进入实现。
-   - 代码已变 / 建议在当前上下文落不下去 / 会与现有代码冲突 → **不要自行改方案硬上**：`needs-research` 退回让 `review-researcher` 复核，或 `needs-human` 上报。
-   - 注意：这一步只核对「建议还能不能落地」，**不重新判断 bug 真伪**——真伪 research 已经独立核验过。
-2. **忠实落地**：按修法建议改 root cause，聚焦、贴合仓库约定。
-   - **不把建议降格成局部补丁**，不加它没要求的防御代码或兜底，不顺手重构邻居，不回退别人的改动。
-   - partial 项按 research **修正后**的修法改，不按原 finding 的描述。
-3. **补回归检查**：行为/契约/数据/auth/公共接口有变时，补一个「修复前会失败、修复后通过」的检查。
-4. **跑聚焦校验**：跑 assignment 指定的聚焦校验（具体测试文件/用例、语法或类型检查）确认本组改动；纯文档/注释类可跳过。**不要**跑全量 suite——全量由 Orchestrator 在所有组返回后跑一次。
-5. 本组多个 item 串行处理，处理完汇成本组记录。
+1. **Drift check (not re-verification)**: read the relevant code in `OWNED_FILES` and confirm that research's fix approach still matches the current code.
+   - Matches → proceed to implementation.
+   - Code has changed / suggestion is not applicable in the current context / would conflict with existing code → **do not patch your own alternative on top**: send it back as `needs-research` for `review-researcher` to re-check, or escalate as `needs-human`.
+   - Note: this step only checks "whether the suggestion can still be landed"; it does **not** re-judge the bug's validity — research has already verified validity independently.
+2. **Land faithfully**: change the root cause per the fix approach, stay focused, and follow the repo's conventions.
+   - **Do not** downgrade the suggestion into a local patch, do not add defensive code or fallbacks it did not ask for, do not refactor the neighbors along the way, do not revert other people's changes.
+   - For partial items, change per research's **corrected** fix approach, not per the original finding's description.
+3. **Add a regression check**: when behavior/contract/data/auth/public interfaces change, add a check that "fails before the fix, passes after it."
+4. **Run the focused validation**: run the focused validation specified by the assignment (specific test files/cases, syntax or type checks) to confirm your group's changes; pure documentation/comment items may skip it. **Do not** run the full suite — the Orchestrator runs that once after all groups return.
+5. Process the group's items serially, then roll them up into this group's record.
 
-## 返回契约
+## Return contract
 
-写 `review/fix-records/<group-slug>.md`，逐条记录，每条：
+Write `review/fix-records/<group-slug>.md`, recording item by item. For each:
 
-- `verdict`：`fixed-as-suggested`（按 research 修法忠实落地）| `needs-research`（建议对不上当前代码，请复核）| `needs-human`（外溢出 `OWNED_FILES` / 需决策 / 三次修不动）| `not-applicable`（被误派的误报或待人确认项）
-- `fix_item_id`、`severity`
-- `files_changed`：本条改动的文件（都应在 `OWNED_FILES` 内）
-- `regression_check`：补了什么「修复前会失败」的检查（没补就说明原因）
-- `notes`：抗漂移核对结论 + 按哪条建议改的 + 有无偏离及原因
-- `escalation`：仅 needs-research / needs-human 时——说清对不上在哪、或需要谁决定什么
+- `verdict`: `fixed-as-suggested` (landed faithfully per research's fix approach) | `needs-research` (suggestion does not match the current code, please re-check) | `needs-human` (spilled out of `OWNED_FILES` / needs a decision / could not fix after three tries) | `not-applicable` (a misassigned false positive or item pending human confirmation)
+- `fix_item_id`, `severity`
+- `files_changed`: the files this item changed (all should be within `OWNED_FILES`)
+- `regression_check`: what "fails before the fix" check you added (if none, explain why)
+- `notes`: the drift-check conclusion + which suggestion you followed + any deviation and why
+- `escalation`: only for needs-research / needs-human — state where the mismatch is, or who needs to decide what
 
-把这份记录交回 Orchestrator；它收齐各组后跑合并校验、汇总成 `review/fix-result.md`。
+Hand this record back to the Orchestrator; once it has collected all groups, it runs the merge check and rolls them up into `review/fix-result.md`.

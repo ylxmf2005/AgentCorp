@@ -1,27 +1,27 @@
-# 本地 Handoff 协议
+# Local Handoff Protocol
 
-本协议属于 `delivery-orchestrator` skill 自己的 reference。assignment、receipt 和本角色产物的形态，都从本目录的 `templates/` demo 取用。
+This protocol is the `delivery-orchestrator` skill's own reference. The shape of assignments, receipts, and this role's artifacts is taken from the demos in this directory's `templates/`.
 
-协议字段、`artifact_type`、`status` 枚举、路径、代码标识符和 API/接口契约字段保持原值；面向人阅读的说明正文使用 zh-CN。
+Keep protocol fields, `artifact_type`, the `status` enum, paths, code identifiers, and API/interface contract fields at their original values; use zh-CN for the human-readable explanatory prose.
 
-## 读取 Assignment
+## Reading an Assignment
 
-- 被 Delivery Orchestrator 指派时，把 assignment 文件当作任务输入。
-- 将 `output_path` 相对 `task_root` 解析。
-- 如果 assignment 没有 `task_root`，从 assignment 文件位置推导：找到父级 `handoffs/` 目录，并把它的父目录作为 task root。
-- 在 `output_path` 写入本 phase 的主要持久产物；除非本角色说明需要创建 tester assignment、子结果或 acceptance package，否则不要额外散落产物。
-- 返回一份 receipt；receipt 的 `artifact_path` 必须与主要产物路径一致，或在本角色明确产生多个产物时指向最终汇总产物。
+- When the Delivery Orchestrator assigns you, treat the assignment file as the task input.
+- Resolve `output_path` relative to `task_root`.
+- If the assignment has no `task_root`, derive it from the assignment file's location: find the enclosing `handoffs/` directory and take its parent as the task root.
+- Write this phase's primary persistent artifact at `output_path`; don't scatter extra artifacts unless this role's instructions call for creating a tester assignment, sub-results, or an acceptance package.
+- Return a receipt; the receipt's `artifact_path` must match the primary artifact path, or point to the final aggregate artifact when this role explicitly produces multiple artifacts.
 
-## 校验 receipt（机械,先于质量判断）
+## Validating the Receipt (mechanical, before the quality judgment)
 
-收到每份 receipt 后，跑 `scripts/validate-handoff.py` 做 envelope 一致性校验，再做 phase 质量判断：
+After receiving each receipt, run `scripts/validate-handoff.py` for envelope-consistency validation, then make the phase quality judgment:
 
-- 单对：`python3 scripts/validate-handoff.py --pair <assignment> <receipt> --task-root <task_root>`
-- 全 task：`python3 scripts/validate-handoff.py --sweep --task-root <task_root>`
+- Single pair: `python3 scripts/validate-handoff.py --pair <assignment> <receipt> --task-root <task_root>`
+- Whole task: `python3 scripts/validate-handoff.py --sweep --task-root <task_root>`
 
-它校验 `artifact_path` 真的存在、与 assignment 的 `output_path` 一致、`from_agent`/`phase`/`task_id` 对得上、产物 `author_agent` 与 owner 一致、status 非空。**非 0 退出 = handoff 未完成**，按 `needs_more_evidence` 退回，不计入 gate。机械校验过 ≠ 质量 gate 过。
+It verifies that `artifact_path` truly exists, matches the assignment's `output_path`, that `from_agent`/`phase`/`task_id` line up, that the artifact's `author_agent` matches the owner, and that status is non-empty. **A non-zero exit = the handoff is not complete**: send it back as `needs_more_evidence`, and don't count it toward the gate. Passing the mechanical check ≠ passing the quality gate.
 
-## 本角色可用模板
+## Templates Available to This Role
 
 - `templates/acceptance-package.demo.md`
 - `templates/api-contract.demo.md`

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Implementation Engineer"
+  short_description: "Implement approved story specs"
+  default_prompt: "Use $implementation-engineer to perform the AgentCorp Implementation Engineer role."

@@ -9,10 +9,10 @@ artifact_path: review/specialist-findings/change-hygiene-reviewer.md
 
 # Receipt
 
-## 完成情况
+## Completion
 
-- 已审查 change hygiene。
+- Change hygiene reviewed.
 
-## 主要产物
+## Main artifact
 
 - `review/specialist-findings/change-hygiene-reviewer.md`

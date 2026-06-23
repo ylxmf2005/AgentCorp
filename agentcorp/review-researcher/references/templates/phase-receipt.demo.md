@@ -7,12 +7,12 @@ status: completed
 artifact_path: review/research/00-index.md
 ---
 
-# 回执：review-research
+# Receipt: review-research
 
-## 说明
+## Notes
 
-- 一句话完成说明（例：研究了 12 个 issue——确认 7、部分成立 2、误报 2、待人确认 1，已给出修法建议）。
+- One-sentence completion note (e.g.: researched 12 issues — 7 confirmed, 2 partial, 2 false positives, 1 needs-human, fix suggestions given).
 
-## 阻塞项
+## Blockers
 
-- 没有时写“无”。
+- Write "none" when there are none.

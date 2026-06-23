@@ -1,93 +1,93 @@
 # Stewardship Rubric
 
-这份 rubric 把 Project Steward Reviewer 的“owner 品味”落成可复核的问题。它不是通用最佳实践清单；只在能说明当前改动会影响项目长期健康时使用。
+This rubric turns the Project Steward Reviewer's "owner taste" into checkable questions. It is not a generic best-practices checklist; use it only when you can show the current change affects the project's long-term health.
 
-## 外部锚点
+## External anchors
 
-- Google Engineering Practices 把 code review 的目标定义为让整体 code health 随时间变好，并明确允许 reviewer 拒绝不想纳入系统的功能；同时强调设计、复杂度、测试、文档与系统上下文。
-- Google 的 ownership 模型把 peer review、code owner approval、readability 分开；code owner 关注改动是否适合其代码区、是否增加技术债、团队是否有能力维护。
-- Apache Project Maturity Model 可作为成熟项目参照：代码可构建和可追溯；强依赖 license 不应增加限制；发布过程可重复；质量状态透明；安全、向后兼容和迁移说明优先；重要决策要有书面记录。
-- Open Source Guides 强调 maintainer 可以友善但坚定地说 no：贡献可能有价值，但若不匹配项目 scope、vision 或实现质量，就不应该接受。
+- Google Engineering Practices defines the goal of code review as making overall code health improve over time, and explicitly allows a reviewer to reject a feature they do not want admitted into the system; it likewise emphasizes design, complexity, tests, documentation, and system context.
+- Google's ownership model separates peer review, code owner approval, and readability; the code owner focuses on whether a change fits their code area, whether it adds technical debt, and whether the team is able to maintain it.
+- The Apache Project Maturity Model is a reference for mature projects: code is buildable and traceable; strong-dependency licenses should not add restrictions; the release process is repeatable; quality status is transparent; security, backward compatibility, and migration notes are prioritized; and important decisions are recorded in writing.
+- Open Source Guides emphasize that a maintainer can say no kindly but firmly: a contribution may be valuable, but if it does not fit the project's scope, vision, or implementation quality, it should not be accepted.
 
-参考来源：
+References:
 - https://google.github.io/eng-practices/review/reviewer/standard.html
 - https://google.github.io/eng-practices/review/reviewer/looking-for.html
 - https://abseil.io/resources/swe-book/html/ch09.html
 - https://community.apache.org/apache-way/apache-project-maturity-model.html
 - https://opensource.guide/best-practices/
 
-## 审查维度
+## Review dimensions
 
 ### 1. Project Fit
 
-问：这个能力是否属于项目核心职责，还是只是某个调用方、团队、客户或短期场景需要？
+Ask: does this capability belong to the project's core responsibility, or is it only needed by some caller, team, customer, or short-term scenario?
 
-强信号：
-- 新能力需要项目长期拥有新的产品概念，但 requirements 没证明它属于项目 identity。
-- 代码为了单个业务场景加入通用入口、全局配置或跨模块概念。
-- 可通过插件、调用方组合、独立服务或局部扩展解决，却被塞进核心。
+Strong signals:
+- The new capability requires the project to own a new product concept long-term, but the requirements do not prove it belongs to the project's identity.
+- The code adds a generic entry point, global config, or cross-module concept for a single business scenario.
+- It could be solved via a plugin, caller composition, a standalone service, or a local extension, yet is stuffed into the core.
 
 ### 2. Ownership And Maintenance
 
-问：谁将维护这部分？团队是否有专业知识、监控、升级、回滚和故障处理路径？
+Ask: who will maintain this part? Does the team have the expertise, monitoring, upgrade, rollback, and incident-handling path?
 
-强信号：
-- 新增依赖、外部系统、运行时、定时任务、数据迁移或发布步骤，但没有 owner。
-- 改动引入需要持续更新的 compatibility shim、mapping 表、特例列表或双写路径。
-- 关键知识只存在于实现者脑中，没有落到设计记录、注释、contract 或 runbook。
+Strong signals:
+- A new dependency, external system, runtime, scheduled job, data migration, or release step is added, but has no owner.
+- The change introduces a compatibility shim, mapping table, special-case list, or dual-write path that needs ongoing updates.
+- Critical knowledge lives only in the implementer's head, never captured in a design record, comment, contract, or runbook.
 
 ### 3. Architectural Boundary
 
-问：改动是否尊重既有模块边界和信息隐藏，还是把内部细节泄漏成长期 coupling？
+Ask: does the change respect existing module boundaries and information hiding, or does it leak internal details into long-term coupling?
 
-强信号：
-- 调用方开始依赖内部状态、内部命名、存储细节或临时协议。
-- 本该局部的概念被提升为全局 abstraction，导致更多模块需要知道它。
-- 为绕过当前限制增加 backdoor、global flag、隐式 fallback 或跨层调用。
+Strong signals:
+- Callers begin to depend on internal state, internal naming, storage details, or a stopgap protocol.
+- A concept that should stay local is promoted to a global abstraction, forcing more modules to know about it.
+- A backdoor, global flag, implicit fallback, or cross-layer call is added to work around a current limitation.
 
 ### 4. Public Surface And Compatibility
 
-问：新增或修改的 public/shared surface 是否值得被长期承诺？
+Ask: is the added or modified public/shared surface worth committing to long-term?
 
-强信号：
-- 新 endpoint、schema 字段、CLI 参数、配置项、exported type、event 或 JSON/RPC method 没有兼容策略。
-- breaking change 没有 versioning、deprecation、迁移说明或调用方影响分析。
-- “临时” public option 没有删除条件，实际会被用户或其他模块依赖。
+Strong signals:
+- A new endpoint, schema field, CLI argument, config option, exported type, event, or JSON/RPC method has no compatibility strategy.
+- A breaking change has no versioning, deprecation, migration notes, or caller-impact analysis.
+- A "temporary" public option has no removal condition and will in fact be depended on by users or other modules.
 
 ### 5. Change Shape And Reviewability
 
-问：这次 diff 是否让维护者能清楚看出真实语义改动？
+Ask: does this diff let a maintainer clearly see the real semantic change?
 
-强信号：
-- 功能改动混入大规模重排、格式化、顺手重构、命名迁移或测试重写。
-- 单个改动跨太多模块，无法按一个可审查的故事解释。
-- 关键决策没有对应 issue、design artifact、comment 或 commit context。
+Strong signals:
+- A functional change is mixed with large-scale reordering, formatting, drive-by refactors, naming migrations, or test rewrites.
+- A single change spans too many modules to explain as one reviewable story.
+- Key decisions have no corresponding issue, design artifact, comment, or commit context.
 
 ### 6. Debt Ledger
 
-问：如果接受债务，它是否被记录、限界并有退出路径？
+Ask: if debt is accepted, is it recorded, bounded, and given an exit path?
 
-强信号：
-- TODO/FIXME/HACK 只描述“以后清理”，没有触发条件、owner 或验证方式。
-- 兼容 shim、双写、fallback、特殊分支没有 sunset plan。
-- 为赶进度牺牲结构，但没有说明为什么这是唯一可接受的临时选择。
+Strong signals:
+- A TODO/FIXME/HACK only describes "clean up later," with no trigger condition, owner, or verification method.
+- A compatibility shim, dual write, fallback, or special-case branch has no sunset plan.
+- Structure is sacrificed to hit a deadline, but with no explanation of why this is the only acceptable temporary choice.
 
 ### 7. Test And Documentation As Assets
 
-问：测试和文档是否帮助未来维护者安全演进，而不只是让本轮通过？
+Ask: do the tests and docs help a future maintainer evolve safely, rather than just getting this round to pass?
 
-强信号：
-- 测试依赖过度 mock、只测调用次数、不会在核心行为破坏时失败。
-- 新公共行为、配置、迁移、发布步骤或故障处理没有文档。
-- 文档只复述怎么用，没有记录为什么这样设计、边界是什么、何时不能用。
+Strong signals:
+- Tests rely on excessive mocking, only assert call counts, and would not fail when core behavior breaks.
+- New public behavior, config, migrations, release steps, or incident handling have no documentation.
+- Docs only restate how to use it, without recording why it was designed this way, what the boundaries are, and when it must not be used.
 
-## 输出建议
+## Output guidance
 
-每条 finding 按这个结构写：
+Write each finding to this structure:
 
-- 长期健康影响：未来谁会承担什么维护成本。
-- 证据：代码/计划/设计/文档路径和行号，必要时附实际搜索结果。
-- 建议动作：收窄范围、移到插件/调用方、补 contract、拆 PR、补 design record、加 sunset plan、要求 human owner 接受风险等。
-- 路由：`review-fixer`、`implementation-planner`、`solution-architect`、`release owner`、`human owner`。
+- Long-term health impact: who will bear what maintenance cost in the future.
+- Evidence: code/plan/design/doc path and line number, with actual search results when needed.
+- Recommended action: narrow scope, move to a plugin/caller, add a contract, split the PR, add a design record, add a sunset plan, ask the human owner to accept the risk, etc.
+- Routing: `review-fixer`, `implementation-planner`, `solution-architect`, `release owner`, `human owner`.
 
-当问题本质是项目方向或 owner tradeoff，不要假装工具能裁决；把选项写清楚，路由给 human owner。
+When the issue is fundamentally a project-direction or owner tradeoff, do not pretend a tool can rule on it; lay out the options clearly and route to the human owner.

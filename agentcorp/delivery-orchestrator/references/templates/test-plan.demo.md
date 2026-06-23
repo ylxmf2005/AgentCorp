@@ -13,60 +13,60 @@ plan_files:
 confidence: HIGH
 ---
 
-# 测试计划：Example Title
+# Test Plan: Example Title
 
-## 覆盖的需求
+## Requirements Covered
 
-- FR-1 / AC-1：由下列检查覆盖。
+- FR-1 / AC-1: covered by the checks below.
 
-## Must-Have 检查
+## Must-Have Checks
 
-- MH-1（P0）：要证明的行为、验证层级和证据。
+- MH-1 (P0): the behavior to prove, the verification level, and the evidence.
 
-## 禁区
+## Forbidden Zones
 
-- 绝对不能改变的区域。
+- Areas that must never change.
 
-## 风险排序与执行顺序
+## Risk Ranking and Execution Order
 
-- 哪条 P0 是 gate、不过则哪些检查直接 blocked；各检查的执行先后。
+- Which P0 is the gate and which checks are immediately blocked if it fails; the order in which checks run.
 
-## Capability 检查
+## Capability Checks
 
-- CAP-1（P1）：场景、执行命令、预期结果。
+- CAP-1 (P1): scenario, command to run, expected result.
 
-## 失败与边界情况
+## Failure and Edge Cases
 
-- EDGE-1：跨手册的 failure mode 与判定规则。
+- EDGE-1: a failure mode spanning manuals and its decision rule.
 
-## 审计与日志
+## Audit and Logging
 
-- 必需的日志/审计信号，以及禁止输出的敏感信息。
+- Required logging/audit signals, and the sensitive information that must not be emitted.
 
-## 安全与 Token 约束
+## Security and Token Constraints
 
-- Auth、permission、sandbox、token 或 rate-limit 检查。
+- Auth, permission, sandbox, token, or rate-limit checks.
 
-## 覆盖度汇总
+## Coverage Summary
 
-- requirement/capability：check id、验证层级、所在计划文件、E2E 目标（user-facing 能力没有 E2E 目标时，此列写省略理由）。
+- requirement/capability: check id, verification level, the plan file it lives in, and the E2E target (when a user-facing capability has no E2E target, state the omission reason in this column).
 
-## 环境说明
+## Environment Notes
 
-- 环境类型、workdir、命令、URL、端口、凭据引用和 blockers。
+- Environment type, workdir, commands, URL, port, credential references, and blockers.
 
-## 测试上下文
+## Testing Context
 
-- 依据的 `teamspace/testing-context.md` 状态（日期/版本）；本次为它补充了什么；省略某份执行手册时在此说明理由。
+- The `teamspace/testing-context.md` state it relies on (date/version); what this plan adds to it; and the reason for omitting any execution manual.
 
-## 推荐 Tester 与分派
+## Recommended Testers and Assignment
 
-- API Contract Tester → `test/api-test-plan.md`；E2E Tester → `test/e2e-test-plan.md`；Regression Tester → `test/regression-test-plan.md`；需要时加 specialist 角色。
+- API Contract Tester → `test/api-test-plan.md`; E2E Tester → `test/e2e-test-plan.md`; Regression Tester → `test/regression-test-plan.md`; add specialist roles as needed.
 
-## 残余风险
+## Residual Risks
 
-- 没有时写“无”。
+- Write "None" if there are none.
 
-## 开放问题
+## Open Questions
 
-- 没有时写“无”。
+- Write "None" if there are none.

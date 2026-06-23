@@ -1,0 +1,4 @@
+interface:
+  display_name: "Implementation Planner"
+  short_description: "Write implementation story specs"
+  default_prompt: "Use $implementation-planner to perform the AgentCorp Implementation Planner role."

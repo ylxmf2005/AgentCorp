@@ -6,30 +6,30 @@ outputs: [diagnosis design artifact]
 optional: false
 ---
 
-# 缺陷诊断（Bug Diagnosis）
+# Bug Diagnosis
 
-在设计任何修复之前，先用证据把缺陷的根因坐实。关键在于这条纪律：每一步排查都从一个明确、可验证的假设出发，并以一份能证实或证伪它的证据收尾。一旦发现自己在没有假设的情况下乱试，就停下来，先立一个假设。
+Before designing any fix, nail down the defect's root cause with evidence. The crux is this discipline: every investigation step starts from a clear, testable hypothesis and ends with evidence that either confirms or refutes it. The moment you catch yourself poking around without a hypothesis, stop and set one first.
 
-## 你要做的
+## What you do
 
-把假设提到「具体得足以被证伪」的程度——比如「改密码后会话 token 没有刷新，导致旧 token 仍然有效」，而不是「auth 那块有点问题」。拿它去对照真实代码和真实行为验证。成立，根因就有了；不成立，这个结果本身也是证据——再多收集线索（线索见底了就给代码加埋点），然后立下一个假设。
+Sharpen the hypothesis until it is "specific enough to be falsified" — for example, "after a password change the session token is not refreshed, so the old token stays valid," not "something's off in auth." Validate it against real code and real behavior. If it holds, you have the root cause; if it does not, that result is itself evidence — gather more clues (and when clues run out, add instrumentation to the code), then set the next hypothesis.
 
-让验证又便宜又真实：用能真正证实或证伪的最小手段去跑，绝不要用假返回值或 mock 去替代你正想解释的真实行为。区分近因（这一行写错了）和根因（数据模型没考虑这种情况）——修复要针对根因。
+Keep validation cheap and real: use the smallest means that can genuinely confirm or refute, and never substitute a fake return value or a mock for the very real behavior you are trying to explain. Distinguish the proximate cause (this line is wrong) from the root cause (the data model never accounted for this case) — the fix targets the root cause.
 
-## 这份产物要达到什么
+## What this artifact must achieve
 
-读者读完，应当相信你找到的是真正的根因，而且修复方案是针对它的最小改动。要讲清楚：
+After reading it, the reader should believe you found the true root cause and that the fix is the minimal change targeting it. It must make clear:
 
-- 缺陷是什么；
-- 你验证过哪些假设，每个假设对应的证据和结论；
-- 根因——与表象症状区分开，并有证据支撑；
-- 能修好它的最小改动，以及会动到哪些文件；
-- 回归风险——这次修复可能扰动到什么。
+- what the defect is;
+- which hypotheses you validated, with the evidence and conclusion for each;
+- the root cause — distinguished from the surface symptom and backed by evidence;
+- the minimal change that fixes it, and which files it touches;
+- regression risk — what this fix might perturb.
 
-只在某个视图能比文字更便于推敲「出错路径与修正后路径」时，才画图。
+Draw a diagram only where a view makes the "faulty path vs. corrected path" easier to reason about than prose.
 
-如果修复最后需要动好几个模块、改变既有行为或改接口，不要让 diagnosis 承担全部设计：保留 diagnosis 里的根因和回归判据，再附加 `impact-analysis.md` 说明落点与保留行为；涉及 public/shared 或跨模块边界时，再附加 `api-contract.md`。
+If the fix ends up touching several modules, changing existing behavior, or altering an interface, don't make the diagnosis carry the whole design: keep the root cause and regression criteria in the diagnosis, then attach `impact-analysis.md` for where it lands and what behavior is preserved; when public/shared or cross-module boundaries are involved, also attach `api-contract.md`.
 
-## 输出
+## Output
 
-把产物写到 assignment 的 `output_path`（通常是 `design/diagnosis.md`），遵循 `design-artifact` demo 模板。
+Write the artifact to the assignment's `output_path` (usually `design/diagnosis.md`), following the `design-artifact` demo template.

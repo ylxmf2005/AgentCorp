@@ -1,0 +1,4 @@
+interface:
+  display_name: "Solution Architect"
+  short_description: "Design architecture and contracts"
+  default_prompt: "Use $solution-architect to perform the AgentCorp Solution Architect role."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Correctness Reviewer"
+  short_description: "Find functional correctness bugs"
+  default_prompt: "Use $correctness-reviewer to perform the AgentCorp Correctness Reviewer role."

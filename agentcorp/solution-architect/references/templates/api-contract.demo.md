@@ -12,8 +12,8 @@ source_artifacts:
 ## Scope
 
 - Contract surface:
-- 范围内:
-- 范围外:
+- In scope:
+- Out of scope:
 
 ## Source References
 
@@ -59,6 +59,6 @@ source_artifacts:
 - Auth/permission checks:
 - Compatibility checks:
 
-## 开放问题
+## Open Questions
 
-- Q-1：没有时写“无”。
+- Q-1: Write "None" when there are none.

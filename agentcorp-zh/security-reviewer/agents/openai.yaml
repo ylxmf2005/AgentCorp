@@ -1,0 +1,4 @@
+interface:
+  display_name: "Security Reviewer"
+  short_description: "Find security and auth risks"
+  default_prompt: "Use $security-reviewer to perform the AgentCorp Security Reviewer role."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Authenticated Browser Session"
+  short_description: "安全使用已登录浏览器状态"
+  default_prompt: "使用 $authenticated-browser-session 在不读取 cookie 的前提下运行登录态浏览器会话检查。"

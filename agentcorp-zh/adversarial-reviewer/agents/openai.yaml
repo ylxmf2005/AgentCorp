@@ -1,0 +1,4 @@
+interface:
+  display_name: "Adversarial Reviewer"
+  short_description: "Challenge risky assumptions"
+  default_prompt: "Use $adversarial-reviewer to perform the AgentCorp Adversarial Reviewer role."

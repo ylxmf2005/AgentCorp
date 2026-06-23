@@ -7,43 +7,43 @@ source_artifacts:
   - requirements/validated-requirements.md
 ---
 
-# 设计产物
+# Design Artifact
 
 <!--
-上面的 frontmatter 是产物契约。下面的章节是起步骨架，不是固定表单：
-保留服务于设计的部分，删掉无用部分，补上缺失部分。
-当图比文字更清楚地说明结构、流程、状态或前后变化时使用 Mermaid；
-图必须诚实，使用真实组件，并让标签说明每一步做什么。
+The frontmatter above is the artifact contract. The sections below are a starting skeleton, not a fixed form:
+keep the parts that serve the design, delete the ones that don't, and add whatever is missing.
+Use Mermaid when a diagram explains structure, flow, state, or before/after changes more clearly than prose;
+diagrams must be honest, use real components, and let labels say what each step does.
 -->
 
-## 设计意图
+## Design Intent
 
-## 来源引用
+## Source References
 
-## 当前上下文
+## Current Context
 
-## 组件或受影响模块
+## Components or Affected Modules
 
-## 接口与契约
+## Interfaces and Contracts
 
-## 数据表与数据模型
+## Tables and Data Model
 
-## 数据或状态流
+## Data or State Flow
 
-## 必须保留的既有行为
+## Existing Behavior That Must Be Preserved
 
-## 技术方案
+## Technical Approach
 
-## 复杂度
+## Complexity
 
-## 风险
+## Risks
 
-## 与验证相关的说明
+## Notes for Verification
 
-## 实现约束
+## Implementation Constraints
 
-## 建议的专项评审
+## Recommended Specialized Reviews
 
-## 开放问题
+## Open Questions
 
-## 交给 Implementation Planner 的交接
+## Handoff to the Implementation Planner

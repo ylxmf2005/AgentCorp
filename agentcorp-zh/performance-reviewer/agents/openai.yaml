@@ -1,0 +1,4 @@
+interface:
+  display_name: "Performance Reviewer"
+  short_description: "Find performance regressions"
+  default_prompt: "Use $performance-reviewer to perform the AgentCorp Performance Reviewer role."

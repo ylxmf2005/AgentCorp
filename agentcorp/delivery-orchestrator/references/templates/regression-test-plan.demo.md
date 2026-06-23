@@ -6,28 +6,28 @@ author_agent: test-planner
 parent: test/test-plan.md
 ---
 
-# 回归测试手册：Example Title
+# Regression Test Manual: Example Title
 
 ## Blast radius
 
-- 这次改动影响哪些模块与契约，为什么。
+- Which modules and contracts this change affects, and why.
 
-## 要跑的既有 suite
+## Existing suites to run
 
-- 命令原文与通过标准：
+- Verbatim commands and pass criteria:
 
   ```bash
   pytest tests/example -k "affected_area"
   ```
 
-## 相邻检查
+## Adjacent checks
 
-- REG-1（P1）：从受影响模块挑出的既有行为，入选理由、执行方式、通过标准。
+- REG-1 (P1): existing behavior selected from an affected module, why it was selected, how to run it, and the pass criteria.
 
-## 新增回归检查
+## New regression checks
 
-- 理想形态「改前失败、改后通过」；写明怎么构造、跑在哪。
+- Ideally shaped as "fails before the change, passes after"; state how to construct it and where to run it.
 
-## 证据
+## Evidence
 
-- 输出、exit code、产物路径。
+- Output, exit code, artifact paths.

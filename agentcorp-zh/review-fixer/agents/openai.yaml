@@ -1,0 +1,4 @@
+interface:
+  display_name: "Review Fixer"
+  short_description: "Apply one group of verified fixes"
+  default_prompt: "Use $review-fixer to perform the AgentCorp Review Fixer role."

@@ -6,74 +6,86 @@ outputs: [TestPlan artifact set]
 optional: false
 ---
 
-# 测试计划（TestPlan）
+# Test Plan (TestPlan)
 
-在实现开始之前先把验证策略定好。目的是趁还没有代码、改动还便宜的时候，就讲清这份任务该如何被证明是对的——让实现者知道什么必须保持可测、让 tester 知道怎么去证那些有风险的行为。
+Settle the verification strategy before implementation begins. The point is to spell out how this task should be proven correct while there is still no code and changes are still cheap — so the implementer knows what must stay testable, and the tester knows how to prove the risky behaviors.
 
-## 你在对抗的是什么
+## What you are fighting against
 
-漏掉风险，和验错地方，是两头敌人。覆盖度要跟风险走：把力气压在真正要紧的关键路径、边界、failure mode 和 regression 上，而不是平摊。同时让计划证明的是行为，而不是某种内部实现写法——脆弱的、随实现细节漂移的断言要挡在外面，否则测试会在重构里成片地假阳性。
+Missing a risk, and verifying the wrong place, are the two enemies. Coverage must follow risk: concentrate effort on the critical paths, boundaries, failure modes, and regressions that genuinely matter, rather than spreading it evenly. At the same time, make the plan prove behavior rather than some internal implementation style — keep out brittle assertions that drift with implementation details, or the tests will go false-positive in sheets during refactors.
 
-还有第三个敌人：写得出「测什么」、却写不出「怎么测」的计划。一条检查只有意图没有步骤，tester 到了现场就得自己发明操作——发明出来的操作，和你评估过的风险未必是同一回事。所以这份产物的及格线是**可照做**：tester 不需要发明任何步骤，照着写的就能跑。
+There is a third enemy: a plan that can write "what to test" but not "how to test". A check with intent but no steps forces the tester to invent operations on the spot — and the invented operations are not necessarily the same as the risk you assessed. So this artifact's passing line is **followable verbatim**: the tester can run what is written without inventing any step.
 
-## 工作顺序
+## Work order
 
-1. **读输入**——validated requirements（或诊断判据）、约束、环境说明、既有测试产物。
-2. **查上下文**——读 `teamspace/testing-context.md`；不存在，或覆盖不到本任务要测的面，先按 `references/testing-context.md` 的 Step 0–5 探索补齐，再往下走。
-3. **排风险**——定 Must-Have、禁区、P0 gate 与执行顺序。
-4. **写三份执行手册**——具体度标准见下文。E2E 手册里引用的入口、页面、控件文案，出处必须是页面地图里**已实走**的条目；只有代码推断出处的页面步骤，要么回到探索把它实地核对掉，要么在该 flow 显式标「页面入口未核实」并列进总策略的开放问题——不许把核对默默留给 tester。
-5. **写总策略**——覆盖度汇总把每条需求映射到 check id 与所在文件。
-6. **交付前自检**——每条 AC 有归属；E2E 执行形态显式；三份手册过得了「可照做」标准；环境如实交代；每处省略和缺口都写了理由。
+1. **Read the inputs** — validated requirements (or diagnosis criteria), constraints, environment notes, existing test artifacts.
+2. **Check the context** — read `teamspace/testing-context.md`; if it does not exist, or does not cover the surface this task needs to test, first explore and fill the gaps per Step 0–5 of `references/testing-context.md`, then proceed.
+3. **Rank risk** — set the Must-Haves, the forbidden zones, the P0 gates, and the execution order.
+4. **Write the three execution manuals** — specificity standard below. The entry points, pages, and control text the E2E manual references must trace to entries in the page map that are **actually walked**; any page step whose provenance is only code-inferred must either be sent back to exploration and verified on the ground, or be explicitly marked "page entry unverified" in that flow and listed in the overall strategy's open questions — the verification may not be silently left to the tester.
+5. **Specify result reporting** — each manual states what the tester must write down after every check: exact actions/inputs, exact requests/responses when relevant, observation surface, evidence paths, cleanup, and evidence limits.
+6. **Write the overall strategy** — the coverage summary maps each requirement to a check id and the file it lives in.
+7. **Self-check before delivery** — every AC has an owner; the E2E execution form is explicit; the three manuals pass the "followable verbatim" standard; the result-recording expectations are explicit; the environment is described faithfully; every omission and gap has its reason written down.
 
-## 先有上下文，再有计划
+## Context first, then the plan
 
-「怎么测」写不具体，根因几乎都是缺项目的运行时上下文：系统从哪进、怎么登录、页面长什么样、测试数据有什么惯例。这些不该在每条用例里现场猜，而是沉在项目级的测试上下文文档 `teamspace/testing-context.md` 里，跨任务复用、增量维护。
+When "how to test" is not specific enough, the root cause is almost always the missing project runtime context: where the system is entered, how to log in, what the pages look like, what conventions the test data follows. These should not be guessed on the spot in each case; they sit in the project-level testing-context document `teamspace/testing-context.md`, reused across tasks and maintained incrementally.
 
-动笔规划之前先读它。文档不存在，或覆盖不到本任务要测的面（比如新页面、新接口），就先按 `references/testing-context.md` 的探索指导把缺口补上，再开始规划。计划里凡是引用入口、页面、数据的地方，都应当能在上下文文档里找到出处；本任务特有的补充（专门造的数据、临时配置）写进对应的执行手册，不要回灌项目级文档——那里只收跨任务稳定的事实。
+Read it before you start planning. If the document does not exist, or does not cover the surface this task needs to test (e.g. a new page, a new interface), first fill the gaps per the exploration guidance in `references/testing-context.md`, then start planning. Wherever the plan references an entry point, page, or data, it should trace back to a source in the context document; supplements specific to this task (data created on purpose, temporary config) go into the corresponding execution manual, not back-fed into the project-level document — that one collects only facts that are stable across tasks.
 
-## 产物形态：一组文件，不是一个文件
+## Artifact shape: a set of files, not one file
 
-TestPlan 是一组文件，总策略加三份执行手册，写在 assignment `output_path` 所在的 `test/` 目录：
+The TestPlan is a set of files — an overall strategy plus three execution manuals — written into the `test/` directory that holds the assignment's `output_path`:
 
-- `test/test-plan.md`——总策略：风险排序与执行顺序、Must-Have、禁区、覆盖度映射、环境、分派、残余风险。给 human gate、Test Plan Reviewer 和 Test Leader 看的全局视图，不堆用例细节。
-- `test/api-test-plan.md`——API Contract Tester 的执行手册：契约检查与数据/迁移核验。
-- `test/e2e-test-plan.md`——E2E Tester 的执行手册：完整用户流程，逐步操作。
-- `test/regression-test-plan.md`——Regression Tester 的执行手册：blast radius、要跑的既有 suite、相邻检查。
+- `test/test-plan.md` — the overall strategy: risk ranking and execution order, Must-Haves, forbidden zones, coverage mapping, environment, assignment, residual risk. The global view for the human gate, the Test Plan Reviewer, and the Test Leader; no piling-up of case detail.
+- `test/api-test-plan.md` — the API Contract Tester's execution manual: contract checks and data/migration verification.
+- `test/e2e-test-plan.md` — the E2E Tester's execution manual: complete user flows, step by step.
+- `test/regression-test-plan.md` — the Regression Tester's execution manual: blast radius, the existing suites to run, adjacent checks.
 
-某份手册确实超出本任务范围时（比如纯后端任务没有用户流程），在总策略里说明省略理由，不要创建空文件。各文件的章节形态以 `references/templates/` 里对应的 demo 为准。
+When a given manual is genuinely out of scope for this task (e.g. a backend-only task has no user flows), explain the omission reason in the overall strategy; do not create an empty file. The section shape of each file follows the corresponding demo under `references/templates/`.
 
-## 三份手册各自要写到什么程度
+## How detailed each of the three manuals must be
 
-判断具体度只有一个标准：**指定的 tester 拿着这份手册和测试上下文文档，不需要发明任何步骤就能开跑。**
+There is only one standard for judging specificity: **the designated tester, holding this manual and the testing-context document, can start running without inventing any step.**
 
-- **API 手册**——每条检查给出能直接执行的请求或 SQL 原文（方法、路径、参数、body），预期的 status、响应形态和断言，需要的前置数据，以及失败时怎么处理（停止、标 blocked 还是继续）。「调用列表接口验证返回」不及格；及格的样子是手册里就有那条 curl 或 SQL。
-- **E2E 手册**——先声明执行形态（默认浏览器操作为主证，见下节），再把每条 flow 写成编号步骤：这一步在哪个页面、做什么动作；凡要用户输入内容的（搜索词、表单值，尤其是发给系统的 prompt），给**原文**，不要留「输入一个合适的 prompt」这种空白；每一步的预期页面表现和截图点；辅证（API/DB/日志）查什么。步骤里指认控件用可见文本加位置消歧（「提交（个人信息区）」），不写 css/xpath。每条 flow 的最后一步必须是确认结果（页面上看到什么、数据查到什么），不能停在「操作做完了」。error path 同样写成步骤，不要一句话带过。
-- **Regression 手册**——这次改动的 blast radius 落在哪些模块和契约上；要跑的既有 suite 给出命令原文；从受影响面挑出的相邻检查，各自为什么入选；要新增的回归检查（理想形态是「改前失败、改后通过」）；通过标准。
+- **API manual** — each check gives the directly executable request or SQL verbatim (method, path, params, body), the expected status, response shape, and assertions, the prerequisite data it needs, and how to handle failure (stop, mark blocked, or continue). "Call the list interface and verify the return" does not pass; the passing form is that the curl or SQL is right there in the manual.
+- **E2E manual** — first declare the execution form (browser operation as primary evidence by default, see the next section), then write each flow as numbered steps: which page this step is on, what action to take; wherever the user inputs content (search terms, form values, especially the prompt sent to the system), give the **literal text**, leaving no blank like "enter a suitable prompt"; the expected page behavior and screenshot point for each step; what the supporting evidence (API/DB/logs) checks. Identify controls in steps by visible text plus position to disambiguate ("Submit (personal-info section)"), not css/xpath. The last step of each flow must be a confirmation of the result (what is seen on the page, what is found in the data); it cannot stop at "the action is done". Write the error path as steps too; do not gloss it over in one sentence.
+- **Regression manual** — which modules and contracts this change's blast radius lands on; the literal command for the existing suites to run; the adjacent checks picked out of the affected surface, each with why it was selected; the regression checks to add (the ideal form is "fails before the change, passes after"); the pass criteria.
 
-## E2E 的执行形态：浏览器为主证
+## Result-recording standard
 
-有 user-facing 界面的任务，E2E 默认以浏览器操作为主证——tester 驱动真实浏览器照步骤走 flow，截图和页面状态是主证据，API/DB/日志是辅证。环境不具备（服务没起、路由没切、数据没备）就把对应 flow 标 blocked 并写明缺什么，**不要把 API 驱动的检查写成 E2E**：那种检查证明不了用户真正看到的东西，归 API 手册。确实只能 API 驱动时（纯接口产品、无 UI），在 E2E 手册里显式声明，并说明这层证据的边界。
+Every execution manual must say how the tester records the result. Use the same bar for API-driven, browser-driven, CLI-driven, and hybrid live checks:
 
-任务输入与本标准冲突时（比如 task 写明「本轮前端仅作可选入口、以 API/日志为主证据」），不要静默二选一：E2E 手册仍按本标准写出浏览器版本的步骤，在总策略的开放问题里点名这处冲突、说明两种形态各能证明什么、各缺什么，留给 human gate 裁决按哪种执行。
+- Start each check record with the background/user goal, environment, entry point, and writes it may perform.
+- Include the concrete action before the conclusion. For API or page-console checks, include method, path, payload, credentials/session mode, status, key response body fields, and trace/request IDs.
+- Record the observation surface that proves the user-visible or runtime outcome: UI state, screenshot, DB read-back, log line, audit event, notification content, or manual user confirmation.
+- For async or external outcomes, name the observation window and who/what confirms it. A trigger request returning success is not enough to prove email/chat/push/scheduler behavior.
+- For negative checks, state what source was watched and what matching signal was absent. If absence cannot be observed reliably, the expected result should be `needs_more_evidence` or `blocked`, not pass.
+- End each check with cleanup/restore evidence and an evidence boundary: what this check proves and what it cannot prove.
 
-## 验证分层与风险排序
+## E2E execution form: browser as primary evidence
 
-验证天然有层次，安排检查时让它们各归其位：
+For tasks with a user-facing interface, E2E defaults to browser operation as primary evidence — the tester drives a real browser through the flow step by step, with screenshots and page state as the primary evidence and API/DB/logs as supporting. When the environment is not in place (service not up, routing not switched, data not prepared), mark the corresponding flow blocked and state what is missing; **do not write an API-driven check as E2E**: such a check cannot prove what the user actually sees, and belongs in the API manual. When it truly can only be API-driven (a pure-interface product, no UI), declare so explicitly in the E2E manual and state the boundary of this layer's evidence.
 
-- **能力层**——每个 Must-Have、每个 failure/edge case，都该有一条直接的检查去证。
-- **integration/API 层**——每一对相互通信的模块、每一个公共契约，至少有一条成功路径检查和一条错误传播检查。
-- **e2e 层**——每个面向用户的能力，至少出现在一条完整的用户目标里，每条目标都走 happy path 与 error path，并在每一步留下验证。
+When the task input conflicts with this standard (e.g. the task states "this round the frontend is only an optional entry point, with API/logs as the primary evidence"), do not silently pick one: the E2E manual still writes out the browser-version steps per this standard, names this conflict in the overall strategy's open questions, states what each form can and cannot prove, and leaves it to the human gate to decide which to execute.
 
-当较低层还有未解决的失败时，不要急着往上层堆——底层不稳，上层的证据也立不住。整套检查按风险排序（P0/P1/P2），让最要紧的先被看到，并在总策略里写明执行顺序和 gate：哪条 P0 不过，后续哪些检查直接 blocked。
+## Verification layering and risk ranking
 
-另外两类风险有专门的归属：bugfix 和高风险的既有行为要有 regression 检查兜住；涉及迁移、持久化、回填、回滚、留存或隐私敏感存储时，要有明确的数据验证，必要时覆盖审计/日志信号与安全/令牌约束。
+Verification is naturally layered; when arranging checks, let each sit where it belongs:
 
-## 环境
+- **Capability layer** — every Must-Have and every failure/edge case should have a direct check proving it.
+- **Integration/API layer** — every pair of modules that communicate, and every public contract, has at least one success-path check and one error-propagation check.
+- **E2E layer** — every user-facing capability appears in at least one complete user goal, every goal walks the happy path and the error path, and leaves verification at each step.
 
-把运行环境在总策略里用普通 Markdown 交代清楚，让 tester 能照着把环境跑起来：环境类型（local、docker、ssh、hosted 或其他）；命令的执行方式；相关时给出工作目录、端口、服务 URL；环境变量只给名字（除非确需某个非密值）；凭据只给引用、不打印密文；以及环境当前是否就绪、还是需要现场搭建。若根本没有环境可用，就把 e2e 标成 blocked 或 local-only，并列出哪些证据会因此变弱。
+When a lower layer still has unresolved failures, do not rush to pile checks onto the upper layer — if the bottom is unstable, the upper layer's evidence cannot stand either. Rank the whole set of checks by risk (P0/P1/P2) so the most important ones are seen first, and state the execution order and gates in the overall strategy: which P0 failing makes which later checks directly blocked.
 
-## 输出
+Two other classes of risk have dedicated owners: bugfixes and high-risk existing behavior must be backstopped by regression checks; anything involving migration, persistence, backfill, rollback, retention, or privacy-sensitive storage must have explicit data verification, covering audit/log signals and security/token constraints when needed.
 
-把产物组写到 assignment 的 `output_path` 所在的 `test/` 目录，形态遵循 `references/templates/` 里的各份 demo。只有当 Must-Have 都可观测、forbidden zone 划得具体、integration 检查覆盖到真实边界、e2e 没有无理由的缺口、三份手册都过得了「可照做」标准、且给 Test Leader 的 tester 角色推荐确实可落地时，这份计划才算到位。
+## Environment
 
-如果需求或诊断判据模糊到无法有把握地排风险、设计验证，就返回 `blocked`，并指明具体缺什么证据，而不是把它编出来。
+Describe the runtime environment clearly in plain Markdown in the overall strategy, so a tester can bring the environment up by following it: environment type (local, docker, ssh, hosted, or other); how commands are run; the working directory, ports, and service URLs where relevant; environment variables by name only (unless a particular non-secret value is genuinely needed); credentials by reference only, never printing secrets; and whether the environment is currently ready or needs to be set up on the spot. If no environment is available at all, mark e2e as blocked or local-only and list which evidence is thereby weakened.
+
+## Output
+
+Write the artifact set into the `test/` directory that holds the assignment's `output_path`, with the shape following each demo under `references/templates/`. This plan is only in place when the Must-Haves are all observable, the forbidden zones are drawn concretely, the integration checks cover the real boundaries, the e2e has no unreasoned gaps, all three manuals pass the "followable verbatim" standard, and the tester-role recommendations for the Test Leader are genuinely actionable.
+
+If the requirements or diagnosis criteria are too vague to rank risk and design verification with confidence, return `blocked` and state specifically what evidence is missing, rather than making it up.

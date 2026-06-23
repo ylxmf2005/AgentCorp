@@ -15,20 +15,20 @@ source_artifacts:
   - verification/verification-report.md
 ---
 
-# 验收包
+# Acceptance Package
 
-## 产物索引
+## Artifact Index
 
-- source/path.md：一句话说明状态。
+- source/path.md: one-line status note.
 
-## 验收依据
+## Acceptance Basis
 
-- 成功标准和直接证据。
+- Success criteria and direct evidence.
 
-## 证据缺口
+## Evidence Gaps
 
-- 只列可能影响验收的缺口。
+- List only gaps that could affect acceptance.
 
-## 残余风险
+## Residual Risks
 
-- 已接受或仍未解决的交付风险。
+- Delivery risks that are accepted or still unresolved.

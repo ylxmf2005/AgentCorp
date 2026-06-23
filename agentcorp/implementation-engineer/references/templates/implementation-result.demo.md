@@ -8,44 +8,44 @@ source_artifacts:
   - review/plan-review.md
 ---
 
-# 实现结果
+# Implementation Result
 
-## 来源 Story Spec
+## Source Story Spec
 
 implementation/implementation-story.md
 
-## 已完成任务
+## Completed tasks
 
-- 任务和证据。
+- Tasks and evidence.
 
-## 未完成任务
+## Unfinished tasks
 
-- 没有时写“无”。
+- Write "None" when there are none.
 
-## 改动文件
+## Changed files
 
 - path/to/file
 
-## 新增或更新的测试
+## Tests added or updated
 
-- 测试文件或场景。
+- Test files or scenarios.
 
-## 运行过的命令
+## Commands run
 
-- 命令和结果。
+- Commands and results.
 
-## 实现说明
+## Implementation notes
 
-- 只写 review 需要知道的说明。
+- Only the notes review needs to know.
 
-## 相对计划的偏差
+## Deviations from the plan
 
-- 没有时写“无”。
+- Write "None" when there are none.
 
-## 阻塞项
+## Blockers
 
-- 没有时写“无”。
+- Write "None" when there are none.
 
-## 交给代码评审的交接
+## Handoff to code review
 
-- 改动行为和需要重点关注的风险。
+- Changed behavior and the risks worth focusing on.

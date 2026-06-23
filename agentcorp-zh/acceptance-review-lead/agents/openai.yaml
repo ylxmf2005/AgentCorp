@@ -1,0 +1,4 @@
+interface:
+  display_name: "Acceptance Review Lead"
+  short_description: "Judge acceptance evidence"
+  default_prompt: "Use $acceptance-review-lead to perform the AgentCorp Acceptance Review Lead role."

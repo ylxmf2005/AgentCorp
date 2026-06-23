@@ -1,30 +1,44 @@
-# User Flow Testing 参考
+# User Flow Testing Reference
 
-跑完整 user-facing flow 时取用这一份。
+Pull this in when running complete user-facing flows.
 
-## 测试姿态
+## Testing posture
 
-把自己当成一个带着目标的真实用户：从外部驱动产品，报告你亲身经历到的行为，而不是拿源码「看上去对」来当作 flow 通过的证据。
+Treat yourself as a real user with a goal: drive the product from the outside and report the behavior you personally experienced, not source code that "looks right" as evidence that a flow passed.
 
-## 执行形态
+## Execution mode
 
-有 user-facing 界面就用浏览器为主证：真实浏览器、已登录会话，照 E2E 手册（通常是 `test/e2e-test-plan.md`）的步骤走，每一步对照手册写的预期表现，在手册标的截图点留证。API/DB/日志只做辅证。环境不具备（服务没起、路由没切、数据没备）就把对应 flow 标 blocked 并写明缺口；改用 API 驱动只在手册显式声明降级时允许，且结果里要写明这层证据证明不了什么。
+When there is a user-facing interface, use the browser as primary evidence: a real browser, a logged-in session, following the steps in the E2E manual (typically `test/e2e-test-plan.md`), checking each step against the expected behavior the manual specifies and capturing evidence at the screenshot points it marks. API/DB/logs are only supporting evidence. When the environment is not in place (service not started, routing not switched, data not seeded), mark the corresponding flow blocked and state the gap; switching to API-driven execution is allowed only when the manual explicitly declares a fallback, and the result must state what this layer of evidence cannot prove.
 
-## 怎么跑一条 flow
+## How to run a flow
 
-对每条指派的 flow，先把前提坐实——入口、persona、环境、凭据、数据准备；手册没写明的前提（比如要用的对象 ID）不要现场编造，按 gap 报出来。然后让它在「观察—动作—再观察」的节奏里推进：先看清起始状态，做一个用户动作，等结果稳定下来再做下一个，每一步都记下「期望 vs 实际」，直到目标达成、被 block，或按场景判定该放弃为止。关键在于验证流程里的每一步，而不是只看最终结果。手册要求输入原文的步骤（比如发给系统的 prompt），用原文，不要自行改写——改写过的输入测出来的不是计划评估过的那条路径。
+For each assigned flow, first nail down the preconditions — entry point, persona, environment, credentials, data setup; do not make up on the spot any precondition the manual leaves unspecified (such as an object ID to use) — report it as a gap. Then let it proceed in an "observe — act — observe again" rhythm: first see the starting state clearly, take one user action, wait for the result to settle before taking the next, and record "expected vs actual" at every step, until the goal is reached, you are blocked, or the scenario warrants giving up. The key is to verify every step of the flow, not just the final result. For steps where the manual requires verbatim input (such as the prompt sent to the system), use the verbatim text and do not rewrite it — rewritten input tests something other than the path the plan evaluated.
 
-## 按 surface 取证
+## Evidence by surface
 
-- Web：URL、可访问的页面状态、状态变化或失败时的截图、相关的 console/network 错误。
-- CLI：命令、stdout、stderr、exit code，必要时记时延。
-- API 当作 user flow：请求序列、响应、status code、可持久的结果。
-- Desktop：在支持的前提下记截图/窗口状态。
+- Web: URL, the reachable page state, screenshots on state change or failure, relevant console/network errors.
+- CLI: command, stdout, stderr, exit code, and latency when relevant.
+- API as a user flow: the request sequence, responses, status codes, persistent results.
+- Desktop: screenshots/window state where supported.
+
+## Human-tester execution log
+
+Write one record per completed or blocked scenario. Put the concrete execution before the conclusion:
+
+- Background: persona, user goal, environment, page or entry point, and why this scenario matters.
+- Preconditions: data chosen, account/credential reference, feature flags, config backup, and what writes are allowed.
+- Actions: exact user steps, literal inputs, command lines, or script paths. If page-context API is part of the flow, include method, path, body, credentials mode, and timestamp.
+- Responses: status code, response message, key body fields, trace/request IDs, and persisted state read-back. Large bodies may be summarized, but the exact request that produced them must remain visible.
+- Observation: what the tester personally saw in the page, log, audit, email/chat/push, or other notification surface. For manual observations, record who confirmed it and the timestamp/content summary.
+- Cleanup: what was restored, the request or UI action used to restore it, and the read-back proving final state.
+- Evidence boundary: what this record proves, and what it does not prove.
+
+For negative checks, state the observation window and source (for example "watched chat notifications from 15:00 to 15:05 and saw no message matching X"). If there is no reliable observation surface, report `needs_more_evidence` or `blocked`; do not call the negative path passed.
 
 ## Persona
 
-- Novice：跟着可见的标签走，耐心低，会报告困惑和缺失的可供性（affordance）。
-- Power user：翻文档/设置/快捷键，尝试 workaround，对性能和不一致敏感。
-- Adversarial：试探边界——重复动作、非法输入、authorization、信息泄露。
+- Novice: follows visible labels, has low patience, reports confusion and missing affordances.
+- Power user: digs through docs/settings/shortcuts, tries workarounds, is sensitive to performance and inconsistency.
+- Adversarial: probes boundaries — repeated actions, invalid input, authorization, information leakage.
 
-用 TestPlan 指派的 persona；没有指派时，选最贴合 user-facing 风险的那个，并说明为什么这么选。
+Use the persona assigned by the TestPlan; when none is assigned, pick the one that best fits the user-facing risk and explain why.

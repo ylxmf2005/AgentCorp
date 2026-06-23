@@ -1,0 +1,160 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">AgentCorp product demo overview</title>
+  <desc id="desc">A README product-demo style image showing how a developer request moves through AgentCorp, with phase status, review research, verification, and teamspace artifacts.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8.5" refY="5" orient="auto">
+      <path d="M1,1 L8.5,5 L1,9 Z" fill="#263244"/>
+    </marker>
+    <style>
+      .bg { fill: #f7f6f2; }
+      .panel { fill: #ffffff; stroke: #d4d9e2; stroke-width: 1.4; rx: 16; }
+      .dark { fill: #172033; rx: 16; }
+      .dark2 { fill: #202a3d; rx: 10; }
+      .title { font: 700 34px Arial, Helvetica, sans-serif; fill: #111827; }
+      .subtitle { font: 400 16px Arial, Helvetica, sans-serif; fill: #4b5563; }
+      .h1 { font: 700 22px Arial, Helvetica, sans-serif; fill: #111827; }
+      .h2 { font: 700 16px Arial, Helvetica, sans-serif; fill: #111827; }
+      .body { font: 400 14px Arial, Helvetica, sans-serif; fill: #273244; }
+      .small { font: 400 12px Arial, Helvetica, sans-serif; fill: #4b5563; }
+      .tiny { font: 400 11px Arial, Helvetica, sans-serif; fill: #64748b; }
+      .mono { font: 400 12px "SFMono-Regular", Consolas, "Liberation Mono", monospace; fill: #dbeafe; }
+      .mono-dark { font: 400 12px "SFMono-Regular", Consolas, "Liberation Mono", monospace; fill: #1f2937; }
+      .mono-small { font: 400 10.8px "SFMono-Regular", Consolas, "Liberation Mono", monospace; fill: #334155; }
+      .muted { fill: #f1f5f9; stroke: #d4d9e2; stroke-width: 1; rx: 10; }
+      .blue { fill: #eaf3ff; stroke: #6c8ebf; stroke-width: 1.4; rx: 10; }
+      .amber { fill: #fff7e6; stroke: #d79b00; stroke-width: 1.4; rx: 10; }
+      .red { fill: #fff1f0; stroke: #b85450; stroke-width: 1.4; rx: 10; }
+      .green { fill: #edf7ed; stroke: #82b366; stroke-width: 1.4; rx: 10; }
+      .teal { fill: #e9fbfb; stroke: #51a7a8; stroke-width: 1.4; rx: 10; }
+      .line { stroke: #263244; stroke-width: 2; fill: none; marker-end: url(#arrow); }
+      .thin { stroke: #94a3b8; stroke-width: 1.2; fill: none; }
+      .dash { stroke: #94a3b8; stroke-width: 1.2; fill: none; stroke-dasharray: 5 5; }
+      .ok { font: 700 12px Arial, Helvetica, sans-serif; fill: #1f7a45; }
+      .wait { font: 700 12px Arial, Helvetica, sans-serif; fill: #8a5a00; }
+      .risk { font: 700 12px Arial, Helvetica, sans-serif; fill: #9b2c2c; }
+    </style>
+  </defs>
+
+  <rect class="bg" width="1600" height="900"/>
+  <text class="title" x="50" y="56">AgentCorp product demo: from request to delivery evidence</text>
+  <text class="subtitle" x="50" y="84">What a developer sees: one task, one orchestrated run, independent review, verification, and concrete Markdown artifacts.</text>
+
+  <!-- Left: developer interaction -->
+  <rect class="dark" x="50" y="120" width="405" height="650"/>
+  <text x="78" y="156" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="700" fill="#ffffff">Developer request</text>
+  <rect class="dark2" x="78" y="180" width="349" height="176"/>
+  <text class="mono" x="98" y="210">$ use AgentCorp to deliver this</text>
+  <text class="mono" x="98" y="238">task end to end</text>
+  <text class="mono" x="98" y="276">Goal: add audit logging to</text>
+  <text class="mono" x="98" y="304">an existing API endpoint.</text>
+  <text class="mono" x="98" y="332">Keep API compatibility.</text>
+
+  <text x="78" y="398" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700" fill="#ffffff">AgentCorp chooses</text>
+  <rect x="78" y="418" width="349" height="58" rx="10" fill="#253149" stroke="#3b4a66"/>
+  <text class="mono" x="98" y="443">paradigm: enhancement/delta-design</text>
+  <text class="mono" x="98" y="465">mode: partial-delegation</text>
+
+  <text x="78" y="520" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700" fill="#ffffff">Run contract</text>
+  <rect x="78" y="540" width="349" height="154" rx="10" fill="#253149" stroke="#3b4a66"/>
+  <text class="mono" x="98" y="568">authors do not approve themselves</text>
+  <text class="mono" x="98" y="596">review findings are rechecked</text>
+  <text class="mono" x="98" y="624">fixes are grouped by file</text>
+  <text class="mono" x="98" y="652">tests must prove behavior</text>
+  <text class="mono" x="98" y="680">artifacts stay in teamspace/</text>
+
+  <path class="line" d="M455 445 H510"/>
+
+  <!-- Center: run board -->
+  <rect class="panel" x="510" y="120" width="640" height="650"/>
+  <text class="h1" x="540" y="158">AgentCorp run board</text>
+  <text class="small" x="540" y="184">Delivery Orchestrator routes phases; independent roles return decisions and evidence.</text>
+
+  <!-- phase columns -->
+  <rect class="blue" x="540" y="220" width="178" height="104"/>
+  <text class="h2" x="562" y="250">Requirements</text>
+  <text class="small" x="562" y="276">scope, constraints, AC</text>
+  <text class="ok" x="562" y="303">APPROVED</text>
+
+  <rect class="blue" x="748" y="220" width="178" height="104"/>
+  <text class="h2" x="770" y="250">TestPlan</text>
+  <text class="small" x="770" y="276">API / E2E / regression</text>
+  <text class="ok" x="770" y="303">APPROVED</text>
+
+  <rect class="blue" x="956" y="220" width="164" height="104"/>
+  <text class="h2" x="978" y="250">Design</text>
+  <text class="small" x="978" y="276">impact + contract</text>
+  <text class="ok" x="978" y="303">APPROVED</text>
+
+  <path class="line" d="M718 272 H748"/>
+  <path class="line" d="M926 272 H956"/>
+
+  <rect class="teal" x="540" y="370" width="178" height="112"/>
+  <text class="h2" x="562" y="400">Implement</text>
+  <text class="small" x="562" y="426">code + focused checks</text>
+  <text class="ok" x="562" y="454">DONE</text>
+
+  <rect class="red" x="748" y="370" width="178" height="112"/>
+  <text class="h2" x="770" y="400">Code review</text>
+  <text class="small" x="770" y="426">lead + specialists</text>
+  <text class="risk" x="770" y="454">2 FINDINGS</text>
+
+  <rect class="red" x="956" y="370" width="164" height="112"/>
+  <text class="h2" x="978" y="400">Research + fix</text>
+  <text class="small" x="978" y="426">verify, then patch</text>
+  <text class="ok" x="978" y="454">MERGED CHECK PASS</text>
+
+  <path class="line" d="M1038 324 C1038 348, 629 346, 629 370"/>
+  <path class="line" d="M718 426 H748"/>
+  <path class="line" d="M926 426 H956"/>
+
+  <rect class="green" x="612" y="530" width="210" height="114"/>
+  <text class="h2" x="634" y="560">Verification</text>
+  <text class="small" x="634" y="586">API contract checks</text>
+  <text class="small" x="634" y="608">regression suite</text>
+  <text class="ok" x="634" y="632">PASS</text>
+
+  <rect class="green" x="862" y="530" width="210" height="114"/>
+  <text class="h2" x="884" y="560">Acceptance</text>
+  <text class="small" x="884" y="586">Must Haves covered</text>
+  <text class="small" x="884" y="608">risk explicit</text>
+  <text class="ok" x="884" y="632">ACCEPT</text>
+
+  <path class="line" d="M1038 482 C1038 510, 717 502, 717 530"/>
+  <path class="line" d="M822 587 H862"/>
+
+  <rect class="amber" x="540" y="682" width="580" height="54"/>
+  <text class="h2" x="562" y="715">Delivery report</text>
+  <text class="body" x="700" y="715">what changed · what passed · residual risk · next action</text>
+  <path class="line" d="M967 644 C967 664, 830 662, 830 682"/>
+
+  <!-- Right: artifact output -->
+  <rect class="panel" x="1190" y="120" width="360" height="650"/>
+  <text class="h1" x="1220" y="158">Concrete outputs</text>
+  <text class="small" x="1220" y="184">AgentCorp does not just chat; it writes a task record.</text>
+
+  <rect class="muted" x="1220" y="220" width="300" height="82"/>
+  <text class="h2" x="1242" y="250">teamspace/tasks/&lt;task_id&gt;/</text>
+  <text class="mono-dark" x="1242" y="278">task.md · manifest.md</text>
+
+  <rect class="muted" x="1220" y="324" width="300" height="178"/>
+  <text class="h2" x="1242" y="354">Phase artifacts</text>
+  <text class="mono-dark" x="1242" y="382">requirements/validated-requirements.md</text>
+  <text class="mono-dark" x="1242" y="410">test/test-plan.md</text>
+  <text class="mono-dark" x="1242" y="438">design/impact-analysis.md</text>
+  <text class="mono-dark" x="1242" y="466">implementation/implementation-result.md</text>
+
+  <rect class="muted" x="1220" y="524" width="300" height="108"/>
+  <text class="h2" x="1242" y="554">Review and verification</text>
+  <text class="mono-dark" x="1242" y="582">review/research/00-index.md</text>
+  <text class="mono-dark" x="1242" y="610">verification/verification-report.md</text>
+
+  <rect class="green" x="1220" y="654" width="300" height="82"/>
+  <text class="h2" x="1242" y="684">Final handoff</text>
+  <text class="mono-dark" x="1242" y="712">delivery/delivery-report.md</text>
+
+  <path class="line" d="M1150 445 H1190"/>
+  <path class="line" d="M1150 710 H1190"/>
+
+  <!-- Footer -->
+  <text class="tiny" x="50" y="830">Figure style: product demo, not architecture internals. It shows the visible run and artifacts a developer gets from AgentCorp.</text>
+</svg>
