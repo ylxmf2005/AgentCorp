@@ -26,9 +26,9 @@ AgentCorp exists to break that loop. It is a
 software delivery: it turns agent work from an uncontrollable, unreadable,
 untraceable black-box chain into a **controllable, understandable, verifiable**
 delivery loop. It includes **31 skills** drawn from enterprise-grade software
-delivery practice, covering orchestration, planning, implementation, review,
-verification, acceptance, browser workflows, plain-language explanation, and
-code-comment hygiene. It works with both **Claude Code** and **Codex**.
+delivery practice, covering the full delivery loop and the supporting practices
+needed to run it in real projects. It works with both **Claude Code** and
+**Codex**.
 
 - **Controllable** -- The process scales itself to the size of the task. A
   one-line change does not pay the cost of an architecture review, while a new
