@@ -1,12 +1,12 @@
 ---
-id: api-contract
-name: API Contract
-inputs: [architecture doc, impact analysis, API/interface requirements]
-outputs: [API contract design artifact]
+id: interface-contract
+name: Interface Contract
+inputs: [architecture doc, impact analysis, interface requirements]
+outputs: [interface contract design artifact]
 optional: true
 ---
 
-# API Contract
+# Interface Contract
 
 Pin down a public, shared, or cross-module interface before implementation, so callers, implementers, reviewers, and testers all agree on the same boundary. It applies to HTTP/RPC APIs, SDK/CLI contracts, shared schemas, payload and event shapes, auth/permission contracts, error semantics, or any boundary where parallel development needs the convention settled first. It is a contract, not an implementation plan, and not source code.
 
@@ -28,4 +28,4 @@ No public, shared, or cross-module boundary changes; or it is a single-module ta
 
 ## Output
 
-Write the artifact to the assignment's `output_path` (usually `design/api-contract.md`), following the `api-contract` demo template.
+Write the artifact to the assignment's `output_path` (usually `design/interface-contract.md`), following the `interface-contract` demo template.

@@ -89,7 +89,7 @@ teamspace/
     │   ├── architecture.md               # 新系统/子系统架构：组件、数据/状态流、接口、取舍
     │   ├── impact-analysis.md            # 增量设计：受影响模块、当前/目标行为、风险、需保留行为
     │   ├── diagnosis.md                  # Bug 诊断：复现、假设、根因、建议修复、回归标准
-    │   └── api-contract.md               # 公共/共享契约：schema、认证、错误、兼容性、验证钩子
+    │   └── interface-contract.md         # 公共/共享契约：schema、认证、错误、兼容性、验证钩子
     │
     ├── test/
     │   ├── test-plan.md                  # 风险排序的总策略、必测层级、显式缺口、禁区

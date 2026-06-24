@@ -27,7 +27,7 @@ After reading it, the reader should understand: what the current behavior is, wh
 
 Draw a diagram only where a view makes the "current path, target path, or preserved behavior" easier to reason about than prose. Diagrams must be honest and concrete — real modules and outcomes, not placeholder boxes.
 
-If this change ripples through many modules or brings structural interface changes, don't strain the impact analysis to cover everything: put the structural decisions in `architecture.md`, put public/shared or cross-module boundaries in `api-contract.md`, and keep the impact analysis focused on the delta and the behavior that must be preserved.
+If this change ripples through many modules or brings structural interface changes, don't strain the impact analysis to cover everything: put the structural decisions in `architecture.md`, put public/shared or cross-module boundaries in `interface-contract.md`, and keep the impact analysis focused on the delta and the behavior that must be preserved.
 
 ## Output
 

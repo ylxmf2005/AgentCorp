@@ -29,7 +29,7 @@ Build a one-line trace for each semantic change:
 
 `change -> source artifact -> why required -> compatibility impact -> action`
 
-Here the source artifact can be requirements, a Story Spec, an api-contract, a diagnosis, a review finding, a test failure, or an explicit user instruction. Being unable to find a source artifact is not a minor matter; this is exactly the gap this role hunts for.
+Here the source artifact can be requirements, a Story Spec, an interface-contract, a diagnosis, a review finding, a test failure, or an explicit user instruction. Being unable to find a source artifact is not a minor matter; this is exactly the gap this role hunts for.
 
 ## Judgment questions
 

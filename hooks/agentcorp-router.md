@@ -17,7 +17,7 @@ After loading `delivery-orchestrator`, read `references/workflow.md` before choo
 | `validate-requirements`, `validated-requirements.md`, requirements confidence, user journeys, success criteria | `delivery-orchestrator` |
 | `test-plan`, TestPlan, test strategy, `test/test-plan.md` | `test-planner` |
 | `test-plan-review`, `test/test-plan-review.md`, reviewing a test plan | `test-plan-reviewer` |
-| `architecture.md`, `impact-analysis.md`, `diagnosis.md`, `api-contract.md`, design docs, architecture, impact, diagnosis, API/interface contract before implementation | `solution-architect` |
+| `architecture.md`, `impact-analysis.md`, `diagnosis.md`, `interface-contract.md`, design docs, architecture, impact, diagnosis, interface contract before implementation | `solution-architect` |
 | `implementation-plan`, `implementation-story.md`, Story Spec, Implementation Story Spec | `implementation-planner` |
 | `plan-review`, review a Story Spec before coding | `plan-review-lead` |
 | `implement`, `implementation-result.md`, implement an approved Story Spec | `implementation-engineer` |
@@ -35,7 +35,7 @@ After loading `delivery-orchestrator`, read `references/workflow.md` before choo
 | `fix`, `review/fix-records/`, `review/fix-result.md`, apply verified review fixes | `review-fixer`; use `delivery-orchestrator` first if grouping or parallel coordination is needed |
 | `verify`, `verification-report.md`, coordinate validation evidence | `test-leader` |
 | E2E, end-to-end, user-facing flow validation | `e2e-tester` |
-| API contract test, request/response/status/auth/error/schema behavior | `api-contract-tester` |
+| interface contract test, request/response/status/auth/error/schema behavior | `api-contract-tester` |
 | regression test, blast radius, existing behavior still works | `regression-tester` |
 | `acceptance-review`, `acceptance-decision.md`, release acceptance evidence | `acceptance-review-lead` |
 | `deliver`, `delivery-report.md`, final delivery summary | `delivery-orchestrator` |
@@ -45,7 +45,7 @@ After loading `delivery-orchestrator`, read `references/workflow.md` before choo
 
 ## Reference Loading Rules
 
-- For `solution-architect` work on `api-contract`, read `references/api-contract.md`.
+- For `solution-architect` work on `interface-contract`, read `references/interface-contract.md`.
 - For `solution-architect` diagrams, read `references/mermaid.md` before writing Mermaid.
 - For `delivery-orchestrator` handoffs, read `references/handoff-protocol.md` and the relevant template under `references/templates/`.
 - For `delivery-orchestrator` requirement validation, read `references/validate-requirements.md`.

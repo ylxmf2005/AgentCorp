@@ -2,7 +2,7 @@
 
 This protocol is the `delivery-orchestrator` skill's own reference. The shape of assignments, receipts, and this role's artifacts is taken from the demos in this directory's `templates/`.
 
-Keep protocol fields, `artifact_type`, the `status` enum, paths, code identifiers, and API/interface contract fields at their original values; use zh-CN for the human-readable explanatory prose.
+Keep protocol fields, `artifact_type`, the `status` enum, paths, code identifiers, and interface contract fields at their original values; use zh-CN for the human-readable explanatory prose.
 
 ## Reading an Assignment
 
@@ -24,7 +24,7 @@ It verifies that `artifact_path` truly exists, matches the assignment's `output_
 ## Templates Available to This Role
 
 - `templates/acceptance-package.demo.md`
-- `templates/api-contract.demo.md`
+- `templates/interface-contract.demo.md`
 - `templates/decision-artifact.demo.md`
 - `templates/design-artifact.demo.md`
 - `templates/finding-set.demo.md`

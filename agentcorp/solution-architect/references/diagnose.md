@@ -28,7 +28,7 @@ After reading it, the reader should believe you found the true root cause and th
 
 Draw a diagram only where a view makes the "faulty path vs. corrected path" easier to reason about than prose.
 
-If the fix ends up touching several modules, changing existing behavior, or altering an interface, don't make the diagnosis carry the whole design: keep the root cause and regression criteria in the diagnosis, then attach `impact-analysis.md` for where it lands and what behavior is preserved; when public/shared or cross-module boundaries are involved, also attach `api-contract.md`.
+If the fix ends up touching several modules, changing existing behavior, or altering an interface, don't make the diagnosis carry the whole design: keep the root cause and regression criteria in the diagnosis, then attach `impact-analysis.md` for where it lands and what behavior is preserved; when public/shared or cross-module boundaries are involved, also attach `interface-contract.md`.
 
 ## Output
 

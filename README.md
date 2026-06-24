@@ -131,7 +131,7 @@ teamspace/
     │   ├── architecture.md               # Greenfield/subsystem design: components, data/state flow, interfaces, trade-offs
     │   ├── impact-analysis.md            # Delta design: affected modules, current/target behavior, risks, preserved behavior
     │   ├── diagnosis.md                  # Bugfix diagnosis: reproduction, hypotheses, root cause, proposed fix, regression criteria
-    │   └── api-contract.md               # Public/shared contracts: schemas, auth, errors, compatibility, verification hooks
+    │   └── interface-contract.md         # Public/shared contracts: schemas, auth, errors, compatibility, verification hooks
     │
     ├── test/
     │   ├── test-plan.md                  # Overall risk-ordered strategy, required layers, explicit gaps, forbidden zones

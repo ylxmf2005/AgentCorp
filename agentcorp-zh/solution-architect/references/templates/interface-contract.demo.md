@@ -1,5 +1,5 @@
 ---
-artifact_type: APIContract
+artifact_type: InterfaceContract
 task_id: example-task-20260603-120000
 author_agent: solution-architect
 status: completed
@@ -7,7 +7,7 @@ source_artifacts:
   - design/architecture.md
 ---
 
-# API Contract: 示例标题
+# Interface Contract: 示例标题
 
 ## 范围
 
@@ -54,7 +54,7 @@ source_artifacts:
 
 ## 验证 Hooks
 
-- API contract 检查:
+- 接口契约检查:
 - 负面/error 场景:
 - Auth/permission 检查:
 - Compatibility 检查:

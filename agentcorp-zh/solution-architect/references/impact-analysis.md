@@ -27,7 +27,7 @@ optional: false
 
 只有当图比文字更容易让人理清"当前路径、目标路径或必须保留的行为"时，才画图。图必须实在、具体——用真实的 module 和结果，不要画占位框。
 
-如果变更波及很多 module，或者涉及结构性的 interface 调整，别硬把 impact analysis 撑成百科全书：结构性决策写进 `architecture.md`，public/shared 或跨 module 的边界写进 `api-contract.md`，impact analysis 只盯紧 delta 和那些必须保住的现有行为。
+如果变更波及很多 module，或者涉及结构性的 interface 调整，别硬把 impact analysis 撑成百科全书：结构性决策写进 `architecture.md`，public/shared 或跨 module 的边界写进 `interface-contract.md`，impact analysis 只盯紧 delta 和那些必须保住的现有行为。
 
 ## Output
 

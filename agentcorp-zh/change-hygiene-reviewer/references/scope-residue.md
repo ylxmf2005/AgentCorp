@@ -29,7 +29,7 @@
 
 `change -> source artifact -> why required -> compatibility impact -> action`
 
-这里的 source artifact 可以是需求文档、Story Spec、api-contract、诊断结论、review finding、test failure，或明确的用户指令。找不到 source artifact 不是小事；这正是该角色要捕捉的缺口。
+这里的 source artifact 可以是需求文档、Story Spec、interface-contract、诊断结论、review finding、test failure，或明确的用户指令。找不到 source artifact 不是小事；这正是该角色要捕捉的缺口。
 
 ## 判断问题
 

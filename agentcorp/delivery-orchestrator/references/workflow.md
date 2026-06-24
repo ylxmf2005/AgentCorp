@@ -129,7 +129,7 @@ Even when a gate is skipped or full automation is required, the following still 
 2. `test-plan`
 3. `test-plan-review`
 4. `architecture`
-5. `api-contract` — unless it's S complexity, a single submodule, and has no public/shared interface risk
+5. `interface-contract` — unless it's S complexity, a single submodule, and has no public/shared interface risk
 6. `implementation-plan`
 7. `plan-review`
 8. `implement`
@@ -146,7 +146,7 @@ Even when a gate is skipped or full automation is required, the following still 
 2. `test-plan`
 3. `test-plan-review`
 4. `impact-analysis` — to describe the delta to existing code; when structural decisions also need separate description, produce `architecture` as well.
-5. `api-contract` — produce when a public/shared API, schema, protocol, cross-module boundary, or parallel-implementation contract must be stabilized; it can combine with `architecture` or `impact-analysis`.
+5. `interface-contract` — produce when a public/shared API, schema, protocol, cross-module boundary, or parallel-implementation contract must be stabilized; it can combine with `architecture` or `impact-analysis`.
 6. `implementation-plan`
 7. `plan-review`
 8. `implement`
@@ -164,7 +164,7 @@ Design artifacts are owned by the Solution Architect.
 1. `validate-requirements` — based on the bug report and reproduction confidence
 2. `diagnose`
    - When the fix spans multiple modules, changes existing behavior, or needs an explicit landing spot/preserved behavior, append `impact-analysis`.
-   - When the fix involves a public/shared API, schema, protocol, or cross-module contract, append `api-contract`.
+   - When the fix involves a public/shared API, schema, protocol, or cross-module contract, append `interface-contract`.
 3. `implementation-plan`
 4. `plan-review` — unless the fix is explicitly scoped as tiny and low-risk
 5. `implement`
@@ -183,7 +183,7 @@ Diagnosis defines the correctness and regression criteria. If the bug can't be r
 2. `test-plan` — with feature-level acceptance criteria
 3. `test-plan-review`
 4. `impact-analysis` — only when the target module, constraints, or behavior to preserve isn't obvious
-5. `api-contract` — only when some public/shared API, schema, protocol, or cross-module boundary must be stabilized
+5. `interface-contract` — only when some public/shared API, schema, protocol, or cross-module boundary must be stabilized
 6. `implementation-plan`
 7. `plan-review`
 8. `implement`
@@ -206,7 +206,7 @@ When it affects more than 3 modules, or an existing interface must change, escal
 | `architecture` | Solution Architect | validated requirements and the approved TestPlan | a reader-facing design: context, goals, key decisions, module boundaries, interfaces, data/state flows, compatibility, trade-offs, risks, verification-relevant constraints | required decisions explicit; the design is thorough and clear enough for the sponsor and Implementation Planner to work from; diagrams included whenever they make structure, sequencing, ownership, data/state flow, or before/after change easier to inspect, any number, validated; each step states the action/output/boundary, not just a function name |
 | `impact-analysis` | Solution Architect | validated requirements, the approved TestPlan, existing code context | a delta record: affected modules, interface/data changes, behavior to preserve, risks, complexity, plus a useful delta diagram or flow description | affected modules and interface changes explicit; current and target behavior understandable; risk assessment present; a diagram or precise flow description makes the delta inspectable; use a before/after comparison only when it directly explains the change; complexity S/M or escalated |
 | `diagnose` | Solution Architect | bug report, reproduction steps, observed failure | a diagnosis: verified hypotheses, evidence, root cause, proposed fix, affected files, regression criteria, plus a useful failure/fix diagram or flow description | the root cause's causal chain has evidence; no guessing; reproduction status recorded; the failure path and corrected behavior are understandable; diagrams are complete, not placeholders |
-| `api-contract` | Solution Architect | the architecture or impact document plus the API/interface requirements | a Markdown API contract artifact: public/shared interfaces, request/response schemas, auth/error semantics, compatibility behavior, verification hooks | every public/shared/cross-module interface has a contract with signature, schema, protocol shape, ownership, compatibility, and auth/error semantics; shared types centralized; the API Contract Reviewer/Tester can verify without guessing |
+| `interface-contract` | Solution Architect | the architecture or impact document plus the interface requirements | a Markdown interface contract artifact: public/shared interfaces, request/response schemas, auth/error semantics, compatibility behavior, verification hooks | every public/shared/cross-module interface has a contract with signature, schema, protocol shape, ownership, compatibility, and auth/error semantics; shared types centralized; the API Contract Reviewer/Tester can verify without guessing |
 | `implementation-plan` | Implementation Planner | validated requirements, the approved TestPlan, design artifacts/contracts | an Implementation Story Spec: goals, scoped ACs, ordered tasks, target modules, constraints, verification expectations given by reference | the first task is unambiguous; target paths/modules named; no open questions that change the implementation direction |
 | `plan-review` | Plan Review Lead | the Implementation Story Spec plus requirements, TestPlan, design artifacts/contracts | `approve`, `request_changes`, or `needs_more_evidence` | the Story Spec gives the Implementation Engineer enough context to not invent architecture itself |
 | `implement` | Implementation Engineer | the approved Implementation Story Spec and the Plan Review Lead decision | working code, focused tests, an implementation result recording changed files/commands/deviations/blockers | consistent with the approved Story Spec/contracts; focused tests/checks run or blockers recorded |
@@ -263,7 +263,7 @@ teamspace/tasks/<task_id>/
     architecture.md
     impact-analysis.md
     diagnosis.md
-    api-contract.md
+    interface-contract.md
   implementation/
     implementation-story.md
     implementation-result.md
@@ -339,12 +339,12 @@ Don't advance to a higher layer while a required lower-layer check still fails. 
 
 ## Parallel Execution Protocol
 
-Parallel implementation is a protocol within the `implement` phase, not a separate phase. Parallelize only when all of the following hold: complexity is M/L/XL; at least two submodules can be built independently; the submodules share interfaces but not implementation; an architecture or impact document already exists; `api-contract` is complete when public/shared API, schema, protocol, or cross-module contracts are involved; the Implementation Story Spec partitions tasks per the contracts and keeps only the integration context each submodule needs; the TestPlan scopes Must Haves, Need Haves, Failure/Edge Cases, and Forbidden Zones per submodule.
+Parallel implementation is a protocol within the `implement` phase, not a separate phase. Parallelize only when all of the following hold: complexity is M/L/XL; at least two submodules can be built independently; the submodules share interfaces but not implementation; an architecture or impact document already exists; `interface-contract` is complete when public/shared API, schema, protocol, or cross-module contracts are involved; the Implementation Story Spec partitions tasks per the contracts and keeps only the integration context each submodule needs; the TestPlan scopes Must Haves, Need Haves, Failure/Edge Cases, and Forbidden Zones per submodule.
 
 Each parallel implementation session receives exactly these inputs:
 
 1. `STORY_SPEC_PATH`: the relative path to the approved Implementation Story Spec.
-2. `DESIGN_DOC_PATH`: the relative path to the architecture, impact, diagnosis, or API contract.
+2. `DESIGN_DOC_PATH`: the relative path to the architecture, impact, diagnosis, or interface contract.
 3. `OWN_CONTRACT`: the contract stub this session implements.
 4. `DEP_CONTRACTS`: the read-only contracts this session calls but does not modify.
 5. `TESTPLAN_SCOPE`: this submodule's capability, boundary, Must Have, Need Have, Failure/Edge Cases.

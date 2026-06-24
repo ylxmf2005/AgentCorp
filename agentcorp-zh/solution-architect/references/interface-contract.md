@@ -1,12 +1,12 @@
 ---
-id: api-contract
-name: API Contract
-inputs: [architecture doc, impact analysis, API/interface requirements]
-outputs: [API contract design artifact]
+id: interface-contract
+name: Interface Contract
+inputs: [architecture doc, impact analysis, interface requirements]
+outputs: [interface contract design artifact]
 optional: true
 ---
 
-# API Contract
+# Interface Contract
 
 在动手实现之前，先把 public、shared 或跨模块的 interface 敲定，让调用方、实现方、reviewer 和 tester 都对同一条边界达成共识。它适用于 HTTP/RPC API、SDK/CLI contract、共享 schema、payload 与 event 形态、鉴权/权限约定、错误语义，或者任何需要先把规矩立好才能并行开发的边界。它是 contract，不是实现方案，也不是源码。
 
@@ -28,4 +28,4 @@ optional: true
 
 ## 输出
 
-将 artifact 写入 assignment 的 `output_path`（通常是 `design/api-contract.md`），并遵循 `api-contract` demo template。
+将 artifact 写入 assignment 的 `output_path`（通常是 `design/interface-contract.md`），并遵循 `interface-contract` demo template。
