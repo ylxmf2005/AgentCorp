@@ -46,13 +46,13 @@ codex plugin marketplace add ylxmf2005/AgentCorp
 在 Claude Code 里，用 slash command 调技能：
 
 ```
-/agentcorp:plain-explain output_mode=artifact explain review/code-review.md for a sponsor
+/agentcorp:explain output_mode=artifact explain review/code-review.md for a sponsor
 ```
 
 在 Codex 里，用技能名或 `$skill-name` 说明要用哪个技能：
 
 ```
-Use $plain-explain with output_mode=artifact to explain review/code-review.md for a sponsor.
+Use $explain with output_mode=artifact to explain review/code-review.md for a sponsor.
 ```
 
 如果不写 `output_mode` 这类参数，技能按默认行为处理。
@@ -74,7 +74,7 @@ Use $plain-explain with output_mode=artifact to explain review/code-review.md fo
 - **代码评审** — `code-review-lead` + `correctness-reviewer`、`security-reviewer`、`performance-reviewer`、`reliability-reviewer`、`simplicity-reviewer`、`change-hygiene-reviewer`、`standards-reviewer`、`project-steward-reviewer`、`api-contract-reviewer`
 - **验证** — `test-leader`、`e2e-tester`、`api-contract-tester`、`regression-tester`
 - **复核与验收** — `review-researcher`、`acceptance-review-lead`
-- **支撑** — `change-detailed-walker`、`brainstorm`、`authenticated-browser-session`、`plain-explain`、`concise-code-comments`
+- **支撑** — `change-detailed-walker`、`brainstorm`、`authenticated-browser-session`、`explain`、`concise-code-comments`
 
 ## 产物一览
 

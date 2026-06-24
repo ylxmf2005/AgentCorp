@@ -1,9 +1,9 @@
 ---
-name: plain-explain
+name: explain
 description: "Use when AgentCorp must explain bugs, test progress, delivery status, review findings, implementation details, plans, or technical tradeoffs to a sponsor or operator who has not read the code or artifacts. Use when the user says they do not understand, asks for a beginner-friendly explanation, or needs AgentCorp output translated into clear, zero-context language."
 ---
 
-# Plain Explain
+# Explain
 
 This is a reusable AgentCorp communication capability, not a delivery phase and not a role with its own gate. Any AgentCorp role may load it when the current output must be understandable to a sponsor who has not read the code, issue, terminal output, or phase artifacts.
 
@@ -20,9 +20,9 @@ Treat persistence as an explicit choice:
 Invocation examples:
 
 ```text
-/agentcorp:plain-explain output_mode=inline explain this test failure for a sponsor
-/agentcorp:plain-explain output_mode=artifact explain review/code-review.md item by item
-Use $plain-explain with output_mode=artifact to explain verification/verification-report.md.
+/agentcorp:explain output_mode=inline explain this test failure for a sponsor
+/agentcorp:explain output_mode=artifact explain review/code-review.md item by item
+Use $explain with output_mode=artifact to explain verification/verification-report.md.
 ```
 
 Use `inline` for one small answer, a short status update, or a single concept that fits comfortably in the conversation. Use `artifact` when the explanation has many independent points, several findings, several test results, a multi-step implementation walkthrough, or anything the sponsor will likely re-open, annotate, compare, or decide item by item. If the user asks to "落库", "write it down", "make a doc", "put it in artifacts", "方便看", or "分开写", use `artifact`.
@@ -44,7 +44,7 @@ Use this frontmatter for persisted explanations:
 ```yaml
 ---
 artifact_type: ExplanationSet
-author_agent: plain-explain
+author_agent: explain
 status: completed
 source_artifacts:
   - <artifact-or-file-being-explained>

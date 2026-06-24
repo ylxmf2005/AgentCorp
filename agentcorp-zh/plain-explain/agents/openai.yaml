@@ -1,4 +1,0 @@
-interface:
-  display_name: "Plain Explain"
-  short_description: "给零上下文读者解释 AgentCorp 输出"
-  default_prompt: "使用 $plain-explain 把这个 AgentCorp 输出解释给没有项目上下文的人听。"

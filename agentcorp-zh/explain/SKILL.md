@@ -1,9 +1,9 @@
 ---
-name: plain-explain
+name: explain
 description: "当 AgentCorp 需要把 bug、测试进度、交付状态、评审发现、实现细节、计划或技术取舍解释给没有读过代码或产物的 sponsor/operator 时使用。用户表示看不懂、要求零上下文解释、要求通俗解释，或需要把 AgentCorp 输出翻译成清晰中文时使用。"
 ---
 
-# Plain Explain
+# Explain
 
 这是 AgentCorp 的通用沟通能力，不是交付 phase，也不是带独立 gate 的角色。任何 AgentCorp 角色在需要让 sponsor 理解当前输出时都可以加载它，默认 sponsor 没看过代码、issue、终端输出或阶段产物。
 
@@ -20,9 +20,9 @@ description: "当 AgentCorp 需要把 bug、测试进度、交付状态、评审
 调用示例：
 
 ```text
-/agentcorp:plain-explain output_mode=inline explain this test failure for a sponsor
-/agentcorp:plain-explain output_mode=artifact explain review/code-review.md item by item
-Use $plain-explain with output_mode=artifact to explain verification/verification-report.md.
+/agentcorp:explain output_mode=inline explain this test failure for a sponsor
+/agentcorp:explain output_mode=artifact explain review/code-review.md item by item
+Use $explain with output_mode=artifact to explain verification/verification-report.md.
 ```
 
 小问题、短状态、单个概念适合 `inline`。当解释包含很多独立点、多条 finding、多条测试结果、多步实现 walkthrough，或 sponsor 很可能需要反复打开、逐项标注、对比或决策时，使用 `artifact`。用户说“落库”“写成文档”“放到产物里”“方便看”“分开写”时，直接使用 `artifact`。
@@ -44,7 +44,7 @@ explain/<topic-slug>/
 ```yaml
 ---
 artifact_type: ExplanationSet
-author_agent: plain-explain
+author_agent: explain
 status: completed
 source_artifacts:
   - <被解释的产物或文件>

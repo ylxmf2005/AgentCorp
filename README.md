@@ -74,13 +74,13 @@ ylxmf2005/AgentCorp path agentcorp/delivery-orchestrator`.
 In Claude Code, call a skill as a slash command:
 
 ```
-/agentcorp:plain-explain output_mode=artifact explain review/code-review.md for a sponsor
+/agentcorp:explain output_mode=artifact explain review/code-review.md for a sponsor
 ```
 
 In Codex, ask for the skill by name or `$skill-name`:
 
 ```
-Use $plain-explain with output_mode=artifact to explain review/code-review.md for a sponsor.
+Use $explain with output_mode=artifact to explain review/code-review.md for a sponsor.
 ```
 
 If you omit options such as `output_mode`, the skill uses its default behavior.
@@ -112,7 +112,7 @@ needed to run it in real projects.
 - **Code review** - `code-review-lead` + `correctness-reviewer`, `security-reviewer`, `performance-reviewer`, `reliability-reviewer`, `simplicity-reviewer`, `change-hygiene-reviewer`, `standards-reviewer`, `project-steward-reviewer`, `api-contract-reviewer`
 - **Verification** - `test-leader`, `e2e-tester`, `api-contract-tester`, `regression-tester`
 - **Recheck and acceptance** - `review-researcher`, `acceptance-review-lead`
-- **Support** - `change-detailed-walker`, `brainstorm`, `authenticated-browser-session`, `plain-explain`, `concise-code-comments`
+- **Support** - `change-detailed-walker`, `brainstorm`, `authenticated-browser-session`, `explain`, `concise-code-comments`
 
 ## Artifacts
 
