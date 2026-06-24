@@ -1,0 +1,4 @@
+interface:
+  display_name: "Precommit Setup"
+  short_description: "Set up practical pre-commit checks"
+  default_prompt: "Use $precommit-setup to add practical pre-commit checks and optional AI commit review to this repository."

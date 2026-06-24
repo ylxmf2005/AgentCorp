@@ -25,7 +25,7 @@ AgentCorp exists to break that loop. It is a
 [loop engineering](https://addyosmani.com/blog/loop-engineering/) system for
 software delivery: it turns agent work from an uncontrollable, unreadable,
 untraceable black-box chain into a **controllable, understandable, verifiable**
-delivery loop. It includes **31 skills** drawn from enterprise-grade software
+delivery loop. It includes **32 skills** drawn from enterprise-grade software
 delivery practice, covering the full delivery loop and the supporting practices
 needed to run it in real projects. It works with both **Claude Code** and
 **Codex**.
@@ -100,7 +100,7 @@ traces every decision.
 
 ## Skills
 
-The 31 skills are grouped by function below. Each skill's behavior is defined in
+The 32 skills are grouped by function below. Each skill's behavior is defined in
 `agentcorp/<skill>/SKILL.md` and appears in the Claude Code and Codex skill
 pickers. Together, they cover the delivery loop and the supporting behaviors
 needed to run it in real projects.
@@ -112,7 +112,7 @@ needed to run it in real projects.
 - **Code review** - `code-review-lead` + `correctness-reviewer`, `security-reviewer`, `performance-reviewer`, `reliability-reviewer`, `simplicity-reviewer`, `change-hygiene-reviewer`, `standards-reviewer`, `project-steward-reviewer`, `api-contract-reviewer`
 - **Verification** - `test-leader`, `e2e-tester`, `api-contract-tester`, `regression-tester`
 - **Recheck and acceptance** - `review-researcher`, `acceptance-review-lead`
-- **Support** - `change-detailed-walker`, `brainstorm`, `authenticated-browser-session`, `explain`, `concise-code-comments`
+- **Support** - `change-detailed-walker`, `brainstorm`, `authenticated-browser-session`, `explain`, `concise-code-comments`, `precommit-setup`
 
 ## Artifacts
 

@@ -41,6 +41,7 @@ After loading `delivery-orchestrator`, read `references/workflow.md` before choo
 | `deliver`, `delivery-report.md`, final delivery summary | `delivery-orchestrator` |
 | per-hunk diff walkthrough, hunk 讲解走查, walkthrough viewer, explain every hunk of the diff | `change-detailed-walker` |
 | plain-language explanation, zero-context explanation, explain for sponsor, persisted explanation, 落库解释, 白话解释, 看不懂, 方便看 | `explain` |
+| setup precommit, pre-commit setup, commit constraints, commit-time guardrails, Git hook workflow, AI commit review hook, Codex commit review, Claude commit review, 提交前检查, commit 约束, precommit 配置, AI commit review | `precommit-setup` |
 | parallel research, deep research, SOTA, current best practice, external technical research, prior art, paper research, open-source scan, competitor research | `parallel-researcher` |
 | adversarial review, challenge assumptions, pressure-test plan/design | `adversarial-reviewer` |
 

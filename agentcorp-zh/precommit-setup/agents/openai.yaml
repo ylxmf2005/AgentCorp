@@ -1,0 +1,4 @@
+interface:
+  display_name: "Precommit Setup"
+  short_description: "配置实用的提交前检查和约束"
+  default_prompt: "使用 $precommit-setup 为这个仓库配置提交前检查和可选 AI commit review。"
