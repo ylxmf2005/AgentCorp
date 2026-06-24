@@ -136,6 +136,11 @@ teamspace/
     │       ├── sources/
     │       └── experiments/
     │
+    ├── explain/                          # 按需落库的白话解释，方便 sponsor 逐项阅读
+    │   └── review-summary/
+    │       ├── 00-index.md
+    │       └── 001-finding-context.md
+    │
     ├── verification/
     │   ├── assignments/                  # Test Leader 在委派验证时写给各 tester 的分派单
     │   │   ├── e2e-tester.md

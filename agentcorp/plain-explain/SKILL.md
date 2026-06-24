@@ -9,6 +9,42 @@ This is a reusable AgentCorp communication capability, not a delivery phase and 
 
 The goal is to preserve technical accuracy while making the explanation easy to follow. Use it for bug explanations, test progress updates, review findings, delivery reports, implementation walkthroughs, option explanations, and status updates.
 
+## Output Mode
+
+Treat persistence as an explicit choice:
+
+- `output_mode: inline` — answer in the conversation only.
+- `output_mode: artifact` — write the explanation into task artifacts and return a short pointer in the conversation.
+- `output_mode: auto` — choose the mode yourself. This is the default when no mode is specified.
+
+Use `inline` for one small answer, a short status update, or a single concept that fits comfortably in the conversation. Use `artifact` when the explanation has many independent points, several findings, several test results, a multi-step implementation walkthrough, or anything the sponsor will likely re-open, annotate, compare, or decide item by item. If the user asks to "落库", "write it down", "make a doc", "put it in artifacts", "方便看", or "分开写", use `artifact`.
+
+When using `artifact`, write under the current task root:
+
+```text
+explain/<topic-slug>/
+├── 00-index.md
+└── <number>-<short-english-slug>.md
+```
+
+If there is only one substantial explanation, write `explain/<topic-slug>.md` instead of a directory. If the task has a separate Workspace and Location, keep the same relative artifact path synced in both places, following the normal AgentCorp artifact rules. These files are collaboration artifacts, not source changes; do not commit them.
+
+For multi-item explanations, use one file per item, similar to `review-researcher`: one finding, one test result, one design choice, or one implementation point per file. The index lists every item with a one-sentence summary and a link, so the sponsor can scan the set without reading everything at once.
+
+Use this frontmatter for persisted explanations:
+
+```yaml
+---
+artifact_type: ExplanationSet
+author_agent: plain-explain
+status: completed
+source_artifacts:
+  - <artifact-or-file-being-explained>
+---
+```
+
+For a single explanation file, use `artifact_type: Explanation`.
+
 ## Default Shape
 
 Use this shape unless the user asks for another format:
@@ -34,6 +70,7 @@ For small answers, merge sections into natural paragraphs. Do not force headings
 - Avoid condescending words such as "simply", "obviously", "just", or "clearly".
 - Prefer concrete nouns: button, endpoint, field, file, test, phase, artifact, command.
 - Use analogies only when they shorten the explanation and do not distort the mechanism.
+- When writing persisted explanations, make every file self-contained enough to read out of order: restate the local background, the specific point, the evidence, and the current state.
 
 ## Explaining Bugs
 

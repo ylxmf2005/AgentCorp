@@ -178,6 +178,11 @@ teamspace/
     │       ├── sources/
     │       └── experiments/
     │
+    ├── explain/                          # Optional persisted plain-language explanations for sponsor review
+    │   └── review-summary/
+    │       ├── 00-index.md
+    │       └── 001-finding-context.md
+    │
     ├── verification/
     │   ├── assignments/                  # Tester assignments written by Test Leader during delegated verification
     │   │   ├── e2e-tester.md

@@ -9,6 +9,42 @@ description: "当 AgentCorp 需要把 bug、测试进度、交付状态、评审
 
 目标是在不牺牲技术准确性的前提下，让解释容易跟上。适用于 bug 解释、测试进度、评审发现、交付报告、实现 walkthrough、选项解释和状态汇报。
 
+## 输出模式
+
+把是否落库当成显式选择：
+
+- `output_mode: inline` —— 只在对话里回答。
+- `output_mode: artifact` —— 写入任务产物，并在对话里返回一个简短路径。
+- `output_mode: auto` —— 由你判断。未指定时默认使用这个模式。
+
+小问题、短状态、单个概念适合 `inline`。当解释包含很多独立点、多条 finding、多条测试结果、多步实现 walkthrough，或 sponsor 很可能需要反复打开、逐项标注、对比或决策时，使用 `artifact`。用户说“落库”“写成文档”“放到产物里”“方便看”“分开写”时，直接使用 `artifact`。
+
+使用 `artifact` 时，写到当前任务根目录：
+
+```text
+explain/<topic-slug>/
+├── 00-index.md
+└── <number>-<short-english-slug>.md
+```
+
+如果只有一份较长解释，写成 `explain/<topic-slug>.md`，不必建目录。若任务同时有 Workspace 和 Location，按 AgentCorp 产物同步规则保持两边相同相对路径。这些文件是协作产物，不是源码改动，不要提交。
+
+多项解释时，一项一文件，类似 `review-researcher`：一条 finding、一条测试结果、一个设计选择或一个实现点各自成文。`00-index.md` 列出每项的一句话摘要和链接，让 sponsor 不必在聊天里翻一大坨文本。
+
+落库解释使用这个 frontmatter：
+
+```yaml
+---
+artifact_type: ExplanationSet
+author_agent: plain-explain
+status: completed
+source_artifacts:
+  - <被解释的产物或文件>
+---
+```
+
+如果是单文件解释，使用 `artifact_type: Explanation`。
+
 ## 默认结构
 
 除非用户指定格式，按这个顺序解释：
@@ -33,6 +69,7 @@ description: "当 AgentCorp 需要把 bug、测试进度、交付状态、评审
 - 不用“很简单”“显然”“只是”“明显”这类让人焦虑或带评判感的词。
 - 多用具体名词：按钮、接口、字段、文件、测试、阶段、产物、命令。
 - 类比只在能缩短理解路径时使用，且不能扭曲机制。
+- 落库解释要让每个文件都能独立阅读：补齐局部背景、当前点、证据和状态，不要求读者先看完整聊天。
 
 ## 解释 Bug
 
