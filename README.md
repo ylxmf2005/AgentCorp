@@ -71,19 +71,19 @@ ylxmf2005/AgentCorp path agentcorp/delivery-orchestrator`.
 
 ### Calling Skills
 
-In Claude Code, call a skill as a slash command:
+The main entry point is the Delivery Orchestrator. Hand it a task and it drives
+the full pipeline — classifying the work, routing each phase to the right role,
+and gating on evidence:
 
 ```
-/agentcorp:explain output_mode=artifact explain review/code-review.md for a sponsor
+/agentcorp:delivery-orchestrator add rate limiting to the public API and verify it under load
 ```
 
-In Codex, ask for the skill by name or `$skill-name`:
+You can also call any single skill directly when you only need that one step:
 
 ```
-Use $explain with output_mode=artifact to explain review/code-review.md for a sponsor.
+/agentcorp:code-review-lead run a code review on the current diff before I merge
 ```
-
-If you omit options such as `output_mode`, the skill uses its default behavior.
 
 ### First Use
 
@@ -105,14 +105,46 @@ The 32 skills are grouped by function below. Each skill's behavior is defined in
 pickers. Together, they cover the delivery loop and the supporting behaviors
 needed to run it in real projects.
 
-- **Orchestration** - `delivery-orchestrator`
-- **Planning and design** - `solution-architect`, `implementation-planner`, `test-planner`, `parallel-researcher`
-- **Implementation** - `implementation-engineer`, `review-fixer`
-- **Plan and test-plan review** - `plan-review-lead`, `test-plan-reviewer`, `adversarial-reviewer`
-- **Code review** - `code-review-lead` + `correctness-reviewer`, `security-reviewer`, `performance-reviewer`, `reliability-reviewer`, `simplicity-reviewer`, `change-hygiene-reviewer`, `standards-reviewer`, `project-steward-reviewer`, `api-contract-reviewer`
-- **Verification** - `test-leader`, `e2e-tester`, `api-contract-tester`, `regression-tester`
-- **Recheck and acceptance** - `review-researcher`, `acceptance-review-lead`
-- **Support** - `change-detailed-walker`, `brainstorm`, `authenticated-browser-session`, `explain`, `concise-code-comments`, `precommit-setup`
+- **Orchestration**
+  - `delivery-orchestrator` — owns and gates the whole delivery pipeline: classifies the work, routes each phase to the right role, and decides when the evidence is strong enough to move on
+- **Planning and design**
+  - `solution-architect` — settles structural design decisions before any code exists, holding down complexity from change amplification, cognitive load, and unknown unknowns
+  - `implementation-planner` — slices approved design into ordered, dovetailed, independently verifiable stories an engineer can build directly
+  - `test-planner` — sets the verification strategy before implementation — what to test and why, with coverage following risk rather than spread evenly
+  - `parallel-researcher` — decomposes a question into independent research lanes to establish what evidence actually exists, countering anchoring and confirmation bias
+- **Implementation**
+  - `implementation-engineer` — implements an approved Story Spec as clean, working code that hugs the project's existing architecture, patterns, and conventions
+  - `review-fixer` — lands one group of verified fixes at the root within an authorized file set, following the research fix approach and adding regression checks
+- **Plan and test-plan review**
+  - `plan-review-lead` — judges whether a Story Spec is mature enough for an engineer to start without inventing missing architecture, scope, or unapproved dependencies
+  - `test-plan-reviewer` — judges whether a TestPlan's coverage matches the requirements and risks before implementation begins
+  - `adversarial-reviewer` — challenges assumptions, surfaces failure modes, and stress-tests requirements and designs to expose overlooked cross-component risks
+- **Code review**
+  - `code-review-lead` — coordinates the specialist reviewers and converges their findings into a single merge decision, filtering by evidence rather than headcount
+  - `correctness-reviewer` — hunts functional defects — off-by-one, state corruption, null propagation, races — that make code behave wrongly on real inputs
+  - `security-reviewer` — inspects for exploitable holes — injection, auth bypass, hardcoded secrets, SSRF — that let attackers cross trust boundaries
+  - `performance-reviewer` — catches regressions that slow the system or exhaust resources at scale: N+1 queries, unbounded growth, missing pagination, blocking I/O
+  - `reliability-reviewer` — exposes failure-handling gaps — missing timeouts, swallowed errors, retry storms, leaks, cascading failures — that crash or hang the system
+  - `simplicity-reviewer` — finds complexity that doesn't pay for itself: needless abstractions, premature generalization, dead code, structural choices that can't justify their cost
+  - `change-hygiene-reviewer` — checks that every hunk in the diff traces to an approved requirement, blocking out-of-scope changes, history residue, and formatting noise
+  - `standards-reviewer` — verifies code and artifacts follow the project's own conventions — frontmatter, naming, formatting, reference style — not generic best practices
+  - `project-steward-reviewer` — judges whether a change is worth admitting into the project's long-term history: maintenance cost, module boundaries, public surface, direction
+  - `api-contract-reviewer` — keeps API boundaries — schemas, routes, types, status codes, error semantics — backward-compatible so consumers don't break without a migration path
+- **Verification**
+  - `test-leader` — orchestrates a change's overall verification, assigns specialist testers, folds their evidence into one judgment, and gates delivery on sufficient proof
+  - `e2e-tester` — takes on a real user's goal and drives the live system end-to-end through complete flows, capturing exactly what happened
+  - `api-contract-tester` — writes and actually runs tests proving an API honors its request/response shape, status codes, auth boundaries, and error semantics
+  - `regression-tester` — confirms behavior that used to work still works after a change, catching regressions that fail silently
+- **Recheck and acceptance**
+  - `review-researcher` — independently verifies each review finding to ground truth before any fix lands, then proposes the correct, elegant fix
+  - `acceptance-review-lead` — guards the final gate before delivery, judging whether the complete evidence proves every requirement met and the risks acceptable
+  - `change-detailed-walker` — mirrors a change into a PR on a local forge and walks it function-by-function with "why this change" comments reviewers read natively
+- **Support**
+  - `brainstorm` — turns an unclear request into sponsor-approved, testable requirements by pressure-testing intent, scope, and viability one question at a time
+  - `authenticated-browser-session` — holds a real logged-in browser session to verify authenticated flows without reading cookies or asking the user for tokens
+  - `explain` — translates bugs, test progress, review findings, and delivery status into zero-context language a sponsor who hasn't read the code can follow
+  - `concise-code-comments` — writes short, accurate comments that explain only what the code can't show, dropping the obvious, stale, or over-written
+  - `precommit-setup` — sets up commit-time guardrails: fast deterministic checks by default, optional AI review, explicit constraints, without slowing every commit
 
 ## Artifacts
 

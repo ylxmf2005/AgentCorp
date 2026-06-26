@@ -43,19 +43,18 @@ codex plugin marketplace add ylxmf2005/AgentCorp
 
 ### 调用技能
 
-在 Claude Code 里，用 slash command 调技能：
+主入口是交付编排器（Delivery Orchestrator）。把任务交给它，它会带着任务走完整条流水线——
+分类、把每个阶段路由给对应角色、按证据卡关：
 
 ```
-/agentcorp:explain output_mode=artifact explain review/code-review.md for a sponsor
+/agentcorp:delivery-orchestrator 给公开 API 加限流，并在压测下验证
 ```
 
-在 Codex 里，用技能名或 `$skill-name` 说明要用哪个技能：
+只需要其中某一步时，也可以直接调用单个技能：
 
 ```
-Use $explain with output_mode=artifact to explain review/code-review.md for a sponsor.
+/agentcorp:code-review-lead 合并前对当前 diff 做一次代码评审
 ```
-
-如果不写 `output_mode` 这类参数，技能按默认行为处理。
 
 ### 第一次使用
 
@@ -65,16 +64,48 @@ Use $explain with output_mode=artifact to explain review/code-review.md for a sp
 
 ## 技能一览
 
-32 项技能按职能分组如下。每个技能的具体行为定义在 `agentcorp/<skill>/SKILL.md` 中，也会出现在 Claude Code 和 Codex 的技能选择器里。它们共同覆盖交付循环，以及真实项目里运行这套循环所需的支撑行为。
+32 项技能按职能分组如下。每个技能的具体行为定义在 `agentcorp/<skill>/SKILL.md` 中，也会出现在 Claude Code 和 Codex 的技能选择器里。它们共同覆盖交付循环，以及真实项目里运行这套循环所需的配套行为。
 
-- **编排** — `delivery-orchestrator`
-- **规划与设计** — `solution-architect`、`implementation-planner`、`test-planner`、`parallel-researcher`
-- **实现** — `implementation-engineer`、`review-fixer`
-- **计划与测试计划评审** — `plan-review-lead`、`test-plan-reviewer`、`adversarial-reviewer`
-- **代码评审** — `code-review-lead` + `correctness-reviewer`、`security-reviewer`、`performance-reviewer`、`reliability-reviewer`、`simplicity-reviewer`、`change-hygiene-reviewer`、`standards-reviewer`、`project-steward-reviewer`、`api-contract-reviewer`
-- **验证** — `test-leader`、`e2e-tester`、`api-contract-tester`、`regression-tester`
-- **复核与验收** — `review-researcher`、`acceptance-review-lead`
-- **支撑** — `change-detailed-walker`、`brainstorm`、`authenticated-browser-session`、`explain`、`concise-code-comments`、`precommit-setup`
+- **编排**
+  - `delivery-orchestrator` — 掌控整条交付流水线：给任务分级、把每个阶段派给对应角色、判断证据是否足以推进到下一关
+- **规划与设计**
+  - `solution-architect` — 动手写代码前敲定结构性决策，按住变更放大、认知负担和未知的未知带来的复杂度
+  - `implementation-planner` — 把定稿的设计切成有序、环环相扣、可独立验证的实现故事，工程师拿到即可开工
+  - `test-planner` — 在实现之前就定好验证策略：测什么、为什么测，覆盖面跟着风险走而非平均铺开
+  - `parallel-researcher` — 把问题拆成多条独立调研线并行求证，确认外部、内部和本地代码里到底有哪些证据，对抗锚定与确认偏误
+- **实现**
+  - `implementation-engineer` — 把批准的故事规范实现成干净、能跑的代码，贴合项目现有的架构、模式与约定
+  - `review-fixer` — 在授权的文件范围内，按复核给出的修法从根上落地一组已验证的修复，并补上回归检查
+- **计划与测试计划评审**
+  - `plan-review-lead` — 判断实现故事规范是否成熟到工程师能直接开工，不必自己补缺失的架构、范围或未批准的依赖
+  - `test-plan-reviewer` — 在实现启动前，判断测试计划的覆盖面是否对得上需求与风险
+  - `adversarial-reviewer` — 挑战假设、暴露失效模式，对需求和设计做压力测试，揪出被忽略的跨组件交互风险
+- **代码评审**
+  - `code-review-lead` — 协调各专项评审、汇总他们的发现，按证据而非人数把「过不过」一锤定音
+  - `correctness-reviewer` — 专盯功能性缺陷：边界错误、状态写坏、空值蔓延、竞态，这些会让代码在真实输入下给出错误结果
+  - `security-reviewer` — 从攻击者视角排查能击穿信任边界的漏洞：注入、越权、硬编码密钥、SSRF
+  - `performance-reviewer` — 抓会在规模上拖慢系统或耗尽资源的性能退化：N+1 查询、无界增长、缺分页、阻塞 I/O
+  - `reliability-reviewer` — 找依赖出故障时让系统崩溃或卡死的隐患：缺超时、吞错误、重试风暴、资源泄漏、级联故障
+  - `simplicity-reviewer` — 挖出不值当的复杂度：多余的抽象、过早泛化、死代码，以及配不上其成本的结构选择
+  - `change-hygiene-reviewer` — 核查 diff 里每处改动是否都能追溯到批准的需求，挡掉越界改动、历史残留和格式噪音
+  - `standards-reviewer` — 核对代码与产物是否遵循项目自己的约定：frontmatter、命名、格式、引用方式，而非通用最佳实践
+  - `project-steward-reviewer` — 从长期维护成本、模块边界、对外承诺和项目走向，判断一处变更值不值得写进项目历史
+  - `api-contract-reviewer` — 守住 API 边界：schema、路由、类型、状态码、错误语义保持向后兼容，不在无迁移路径下悄悄弄坏调用方
+- **验证**
+  - `test-leader` — 统筹一次变更的整体验证，派出各专项测试者，把证据汇成一个判断，守住交付前那道验证关
+  - `e2e-tester` — 以真实用户的身份从外部把系统端到端跑一遍完整流程，如实记录到底发生了什么
+  - `api-contract-tester` — 动手写测试并真跑，验证 API 是否兑现其结构、状态码、权限边界和错误语义
+  - `regression-tester` — 确认变更之后原本好用的行为仍然好用，逮住那些悄无声息坏掉的回归
+- **复核与验收**
+  - `review-researcher` — 独立查证每条评审发现的真伪与根因，作为落地修复前的断路器，再给出正确利落的修法
+  - `acceptance-review-lead` — 守交付前最后一关，判断完整证据是否足以证明所有需求达成、风险可接受
+  - `change-detailed-walker` — 把一次变更镜像成本地 forge 上的 PR，逐函数写下「为什么这么改」的评论，让评审在原生 diff 界面里读
+- **配套**
+  - `brainstorm` — 用一次一问的追问把模糊诉求逼成经发起人确认、可测试的需求
+  - `authenticated-browser-session` — 用独立浏览器配置维持真实登录态来验证需登录的流程，不读 Cookie 也不要用户贴 token
+  - `explain` — 把 bug、测试进展、评审发现和交付状态翻译成零上下文的话，让没读过代码的发起人也看得懂
+  - `concise-code-comments` — 只写代码本身看不出的上下文，删掉显然、过期或啰嗦的注释
+  - `precommit-setup` — 给仓库配提交前防线：默认跑快速确定性检查，AI 评审按需开启，不拖慢每次提交
 
 ## 产物一览
 
