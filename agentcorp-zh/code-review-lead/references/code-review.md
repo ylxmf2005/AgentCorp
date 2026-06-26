@@ -18,4 +18,6 @@ Must-fix 包括：可复现的行为 bug、security 或数据丢失风险、cont
 
 `approve`：已无 must-fix finding，可以继续验证。`request_changes`：仍有 must-fix finding。`needs_more_evidence`：因缺少 diff、requirements、test 或 design 上下文，无法完成 review。
 
+高风险改动上（安全/权限边界、public/shared contract、数据丢失/不可逆发布），在下结论前取一次跨家族二次意见 —— 从一个跟形成这个 verdict 不同的模型家族那里做一次独立冷读，走 host 暴露的任一通道，不点名具体模型 —— 并作为一个输入记下来; 结论仍归 Code Review Lead 自己。若 sponsor 要求了、而又没有别家族通道，就停下来报告，而不是自己给自己签字。
+
 禁止在没有证据的情况下声称某个 reviewer、command 或 test 已经执行过。

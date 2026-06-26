@@ -18,4 +18,6 @@ When merging duplicate findings, file them under the one with the strongest evid
 
 `approve`: no must-fix findings remain, verification can proceed. `request_changes`: one or more must-fix findings remain. `needs_more_evidence`: the review cannot be completed because the diff, requirements, test, or design context is missing.
 
+On a high-stakes change (security/permission boundary, public/shared contract, data-loss/irreversible release), take one cross-family second opinion — an independent cold read from a model family different from the one forming this verdict, through whatever channel the host exposes, never a named model — and record it as one input before issuing the decision; the conclusion stays the Code Review Lead's own. If the sponsor required it and no other-family channel exists, stop and report rather than self-signing.
+
 Never claim a reviewer, command, or test ran without evidence.

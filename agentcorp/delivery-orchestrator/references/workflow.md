@@ -68,6 +68,19 @@ The two have a **sequential dependency**: `fix` must come after `review-research
 
 Under `partial-delegation`, keep the same phase vocabulary and artifact paths: the Delivery Orchestrator writes the non-review artifacts directly and records itself as owner in `manifest.md`, and these phases may omit the assignment/receipt files; the delegated review phases still keep assignment/receipt. Under `full-delegation`, every delegated phase goes through the full handoff discipline. Under `direct` there are no assignment/receipt at all: all phase artifacts and manifest entries are still required, review-type artifacts record the owner in the manifest as delivery-orchestrator and are marked as draft, and the gate result records the sponsor's adjudication.
 
+### Cross-Family Second Opinion (high-stakes only)
+
+The three roles that own a final verdict — Code Review Lead (`code-review`), Acceptance Review Lead (`acceptance-review`), and Review Researcher (`review-research`) — adjudicate on the decision layer, the same model family that produced the work under review. On an ordinary change this is fine: independence is already held by author/reviewer separation and the review-research circuit breaker. But on a high-stakes change, a verdict adjudicated by the same family that wrote the code shares its blind spot, and nothing downstream catches what both miss.
+
+High-stakes means a security or permission boundary, a public/shared contract, or a data-loss / irreversible / hard-to-roll-back release. On such a change — and only such a change — the verdict owner takes one independent second opinion from a model family different from the one that produced the verdict, before issuing its conclusion. Inherit the other channel from the host exactly as Runtime Routing does — the Codex channel when the owner ran on Claude, the Claude channel when it ran on Codex — and never name a specific model: routing knows only "a different family than the one executing now," chosen from whatever channels the host actually exposes, not which family that is. The second opinion goes out under the independent-handoff discipline (pointers and paths only, no upstream conclusions — see "The Two Kinds of Context Fidelity"), reads the artifacts cold, and returns its own verdict; the owner records it in the decision artifact as one input and still owns the final call.
+
+Opt-in, and it degrades honestly:
+
+- Default for a high-stakes change: the second opinion is offered. If the host exposes no other-family channel, fall back to a same-family independent second pass and record the one-line reason in the decision artifact — do not block.
+- When the sponsor explicitly required a cross-family second opinion and no other-family channel exists, fail loud: stop at the gate and report it, rather than letting the same family silently sign off on its own work.
+
+Ordinary, non-high-stakes changes take no second opinion; their routing is unchanged.
+
 ## Task Classification
 
 | Signal | Paradigm |

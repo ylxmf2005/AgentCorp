@@ -17,3 +17,5 @@ There is one core question: does the evidence truly prove that this delivery sat
 - `needs_more_evidence`: the work itself may be correct, but the evidence is missing, indirect, or incomplete.
 
 The reason to pass is always that the evidence proves the requirements, never the number of reviewers.
+
+On a high-stakes release (security/permission boundary, public/shared contract, data-loss/irreversible change), take one cross-family second opinion before `accept` — an independent cold read of the package from a model family different from the one forming this verdict, through whatever channel the host exposes, never a named model — and record it as one input; the call stays the Acceptance Review Lead's own. If the sponsor required it and no other-family channel exists, return `blocked` and report rather than self-signing.

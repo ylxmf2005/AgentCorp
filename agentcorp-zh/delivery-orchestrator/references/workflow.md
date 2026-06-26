@@ -68,6 +68,19 @@
 
 在 `partial-delegation` 下，保持同样的 phase 词汇和产物路径: Delivery Orchestrator 直接写非 review 产物，并在 `manifest.md` 里记录自己为 owner，这些 phase 可以省略 assignment/receipt 文件; 委托的 review phase 仍保留 assignment/receipt。在 `full-delegation` 下，每个委托的 phase 都走完整的 handoff 规范。在 `direct` 下完全没有 assignment/receipt: 所有 phase 产物和 manifest 条目仍要，review 类产物在 manifest 里记录 owner 为 delivery-orchestrator 并标记为 draft，gate 结果记录 sponsor 的裁决。
 
+### 跨家族二次意见（仅高风险）
+
+三个拥有最终 verdict 的角色 —— Code Review Lead（`code-review`）、Acceptance Review Lead（`acceptance-review`）、Review Researcher（`review-research`）—— 都在决策层裁决，跟产出被审代码的是同一个模型家族。普通改动这样没问题: review 独立性已经由作者/评审分离和 review-research 这个 circuit breaker 守着。但在高风险改动上，由写代码的同一个家族来裁决，它跟代码共享盲点，下游也没人能兜住两边都漏掉的东西。
+
+高风险指: 安全或权限边界、public/shared contract、数据丢失/不可逆/难回滚的发布。只在这种改动上 —— 也仅在这种改动上 —— verdict owner 在下结论前，从一个跟产出 verdict 不同的模型家族那里取一次独立的二次意见。像运行时路由那样从 host 继承另一个通道 —— owner 跑在 Claude 上就走 Codex 通道，跑在 Codex 上就走 Claude 通道 —— 且不点名具体模型: 路由只知道「跟当前在执行的不是同一个家族」，从 host 实际暴露的通道里挑，不知道、也不需要知道那到底是哪个家族。二次意见按独立 handoff 规范派出（只给 pointer 和路径，不带上游结论 —— 见「Handoff 里的两种上下文保真」），冷读 artifact，返回自己的 verdict; owner 把它作为一个输入记进 decision 产物，最终那一锤仍归 owner。
+
+opt-in，且诚实降级:
+
+- 高风险改动的默认: 提供这次二次意见。若 host 没有别家族的通道，退回到同家族的独立二次复核，并在 decision 产物里记一行原因 —— 不阻断。
+- 当 sponsor 明确要求跨家族二次意见、而又没有别家族通道时，fail loud: 停在 gate 上并报告，而不是让同一个家族悄悄给自己的活签字。
+
+普通的、非高风险改动不取二次意见，路由不变。
+
 ## 任务分类
 
 | 信号 | Paradigm |

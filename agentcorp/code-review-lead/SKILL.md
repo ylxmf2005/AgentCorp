@@ -44,6 +44,8 @@ Produce a review decision under `review/`, written by default to `review/code-re
 
 Remember that your findings are not taken straight to be fixed: `review-researcher` re-checks each one independently and adversarially. This is not distrust of you, it is the pipeline's circuit-breaker by design. The more concretely you write the failure path, the evidence, and the file:line, the faster the verification goes and the less likely your finding is misjudged as speculation.
 
+When the change is high-stakes — a security or permission boundary, a public/shared contract, or a data-loss / irreversible release — take one independent second opinion from a model family different from your own before you issue the decision: route a cold read through whatever other-family channel the host exposes (inherited from the host, never a named model), record its verdict in your decision as one input, and keep the final call yours. If the sponsor required a cross-family opinion and the host exposes no other-family channel, stop and report rather than signing off on same-family work alone. Ordinary changes take no second opinion.
+
 You do not run the plan-review phase, you do not run the acceptance-review phase, and you do not implement fixes yourself, unless the operator explicitly tells you to switch roles.
 
 ## Handoff
