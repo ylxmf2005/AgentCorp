@@ -27,6 +27,13 @@ Use $explain with output_mode=artifact to explain verification/verification-repo
 
 小问题、短状态、单个概念适合 `inline`。当解释包含很多独立点、多条 finding、多条测试结果、多步实现 walkthrough，或 sponsor 很可能需要反复打开、逐项标注、对比或决策时，使用 `artifact`。用户说“落库”“写成文档”“放到产物里”“方便看”“分开写”时，直接使用 `artifact`。
 
+**在 `auto` 模式下，以下情况强制使用 `artifact`——不要 inline 回答：**
+
+- 解释里包含 Mermaid 图，或任何终端无法渲染的内容。直接 inline 等于把 sponsor 永远看不到渲染效果的源码丢出来，这不算交付。
+- 请求是 PR、分支、diff 或整文件的 walkthrough，或任何 sponsor 会反复打开、逐项查看的多点集合。
+
+命中任一条件时，写到下面的 `explain/<topic-slug>/` 路径，并只在对话里返回一个简短指针。
+
 使用 `artifact` 时，写到当前任务根目录：
 
 ```text
@@ -77,7 +84,7 @@ source_artifacts:
 - 角色、服务、文件或产物之间的职责归属。
 - 决策树或一串检查条件。
 
-图要短。优先用简单的 `flowchart`、`sequenceDiagram` 或 `stateDiagram-v2`，节点用普通语言命名，并在图后补一句解释。很小的问题、单一原因问题，或图只是在重复段落时，不要画图。
+图要短。优先用简单的 `flowchart`、`sequenceDiagram` 或 `stateDiagram-v2`，节点用普通语言命名，并在图后补一句解释。很小的问题、单一原因问题，或图只是在重复段落时，不要画图。若在 `auto` 模式下确实要画 Mermaid，就把解释落库为 artifact（见“输出模式”）——只存在于终端 inline 文本里的图不会渲染。
 
 ## 规则
 

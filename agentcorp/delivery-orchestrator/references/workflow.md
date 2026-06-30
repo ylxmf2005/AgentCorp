@@ -81,6 +81,16 @@ Opt-in, and it degrades honestly:
 
 Ordinary, non-high-stakes changes take no second opinion; their routing is unchanged.
 
+## Fix-Loop Protocol (post-delivery rapid fixes)
+
+When a narrowly-scoped defect surfaces after delivery (before a broader release) and the original diagnosis still holds, the Delivery Orchestrator may run a **lightweight fix-loop** instead of re-running the full pipeline. Enter only with sponsor agreement, and enforce three gates before any publish:
+
+1. **Root cause locked** — the original diagnosis is re-confirmed; if it changed, escalate to a new task instead of continuing to patch.
+2. **Reproduction bound** — a runnable case that reproduces the defect (from the TestPlan or newly written) is attached, and the fix is falsified against the original failing input, not a proxy sample.
+3. **Pre-publish SCM gate** — before any push, confirm the target branch, current `HEAD`, and the built artifact all agree with the task; a mismatch blocks the push.
+
+Keep a small **invariant ledger** across fix rounds (in `delivery/fix-loop.md` or the manifest): record every parameter/config the fix touches, and re-check the prior invariants each round so a later edit cannot silently revert an earlier fix. An invariant violation or an SCM mismatch is a hard stop pending sponsor risk acceptance.
+
 ## Task Classification
 
 | Signal | Paradigm |
@@ -226,9 +236,9 @@ When it affects more than 3 modules, or an existing interface must change, escal
 | `code-review` | Code Review Lead | the diff, changed files, Story Spec, requirements, TestPlan, design/diagnosis, local standards | a review decision plus graded findings | review complete; correctness, standards, simplicity, change hygiene, and project stewardship considered; must-fix items handled via `review-research`/`fix` or decided as request_changes |
 | `review-research` | Review Researcher (when findings are many, the Delivery Orchestrator orchestrates in parallel by code domain and aggregates the index) | code-review findings (required), the diff, design principles/conventions | `review/research/`: **one per-issue file per finding** (verdict + root-cause-level fix recommendation + a human-readable explanation for someone unfamiliar) + `00-index.md` | each finding has an evidence-backed verdict landed on real code, written per item (not bundled), with context; false-positive/partially-valid items explain why; confirmed/partially-valid items get an elegant fix recommendation; missing out-of-repo context is marked for human confirmation rather than forced to a conclusion |
 | `fix` | Delivery Orchestrator coordinating parallel Review Fixer workers | `review/research/` (required, with verdicts and fix recommendations) + human comments; the changed-file list | per-group `review/fix-records/<group>.md` + the aggregate `review/fix-result.md` + backend code changes (left in the working tree) | `review/research/` found and consumed (if missing, stop and require `review-research` first); confirmed/partially-valid items partitioned into mutually non-overlapping groups by file ownership, parallel workers dispatched to land them, no concurrency on the same file; each worker lands faithfully, fixing the root cause rather than patching; merge validation run once and passing; no commits, no touching the frontend |
-| `verify` | Test Leader coordinating testers | the implementation, the TestPlan or diagnosis criteria, the environment spec | verification results given per capability/integration/E2E/regression | required checks pass; E2E run when needed; gaps explicit; no fabricated or assumed success |
-| `acceptance-review` | Acceptance Review Lead | requirements, TestPlan, Story Spec, implementation notes, the code review decision, verification evidence, residual risks | `accept`, `reject`, or `needs_more_evidence` | evidence supports every Must Have and the scoped risks; residual risk acceptable |
-| `deliver` | Delivery Orchestrator | the accepted implementation and evidence | a delivery report | the report includes files/artifacts, tests, deviations, follow-ups, and residual risks |
+| `verify` | Test Leader coordinating testers | the implementation, the TestPlan or diagnosis criteria, the environment spec | verification results given per capability/integration/E2E/regression | required checks pass; E2E run when needed; gaps explicit; no fabricated or assumed success; each passed/failed result names its result-file path or output excerpt (e.g. verification/test-results/<tester>.md), not a bare pass/fail; a behavior claim that can only be verified in an environment the local box lacks (e.g., a real browser, headless renderer, GPU, or prod-like service) MUST run in that environment or be marked status=unverified and may not pass any gate; user verbal confirmation is not evidence |
+| `acceptance-review` | Acceptance Review Lead | requirements, TestPlan, Story Spec, implementation notes, the code review decision, verification evidence, residual risks | `accept`, `reject`, or `needs_more_evidence` | evidence supports every Must Have and the scoped risks; for defect-class tasks, the original failing input has been re-run against the fix and produces correct output; residual risk acceptable |
+| `deliver` | Delivery Orchestrator | the accepted implementation and evidence | a delivery report | the report and the final sponsor reply explicitly list artifact paths — code location, verification/test-result paths, review/MR paths — plus tests, deviations, follow-ups, and residual risks; any claim with no inspectable path is recorded as a gap, never stated as passed |
 
 ### Phase Completion Hint
 

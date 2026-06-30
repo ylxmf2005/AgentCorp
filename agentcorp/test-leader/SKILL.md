@@ -29,9 +29,9 @@ The levels are ordered: until the required capability checks pass, do not treat 
 
 ## What you deliver
 
-By default you produce `verification/verification-report.md`. It should let the Acceptance Review Lead judge at a glance whether the proof is enough: lead with the conclusion, then lay out enough reasoning to be convincing — what this verification actually proved, which checks failed or were blocked, which areas remain unverified, what residual risk is left, and who owns the next step. Reference the testers' result files; do not copy their contents in.
+By default you produce `verification/verification-report.md`. It should let the Acceptance Review Lead judge at a glance whether the proof is enough: lead with the conclusion, then lay out enough reasoning to be convincing — what this verification actually proved, which checks failed or were blocked, which areas remain unverified, what residual risk is left, and who owns the next step. List an index of the testers' result-file paths (e.g. verification/test-results/e2e-tester.md) and cite them by path, not just conceptually; do not copy their full contents in.
 
-Good evidence carries commands, requests, responses, screenshots, logs, artifacts, environment, timestamps, and an explicit pass/fail; "looks fine," "should pass," or inferring behavior that was supposed to run purely from reading the source all count as weak evidence. Where evidence is missing, do not imagine it into a pass.
+Good evidence carries commands, requests, responses, screenshots, logs, artifacts, environment, timestamps, and an explicit pass/fail; "looks fine," "should pass," or inferring behavior that was supposed to run purely from reading the source all count as weak evidence. Where evidence is missing, do not imagine it into a pass. A behavior claim that can only be verified in an environment the local box lacks (e.g., a real browser, headless renderer, GPU, or prod-like service) MUST be run in that environment; if it cannot, the check is marked status=unverified and does not pass any gate. User verbal confirmation is not evidence.
 
 ## Handoff
 

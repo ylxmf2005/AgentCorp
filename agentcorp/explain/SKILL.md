@@ -27,6 +27,13 @@ Use $explain with output_mode=artifact to explain verification/verification-repo
 
 Use `inline` for one small answer, a short status update, or a single concept that fits comfortably in the conversation. Use `artifact` when the explanation has many independent points, several findings, several test results, a multi-step implementation walkthrough, or anything the sponsor will likely re-open, annotate, compare, or decide item by item. If the user asks to "落库", "write it down", "make a doc", "put it in artifacts", "方便看", or "分开写", use `artifact`.
 
+**In `auto` mode, these conditions force `artifact` — do not answer inline:**
+
+- The explanation contains a Mermaid diagram, or any other content a terminal cannot render. Dumping it inline ships unreadable source the sponsor never sees rendered; that does not count as delivered.
+- The request is a PR, branch, diff, or whole-file walkthrough, or any multi-point set the sponsor will re-open or review item by item.
+
+When a condition fires, write to the `explain/<topic-slug>/` path below and return only a short pointer in the conversation.
+
 When using `artifact`, write under the current task root:
 
 ```text
@@ -77,7 +84,7 @@ Use Mermaid when a diagram makes the explanation easier to scan than prose. Defa
 - Ownership across roles, services, files, or artifacts.
 - A decision tree or sequence of checks.
 
-Keep diagrams compact. Use simple `flowchart`, `sequenceDiagram`, or `stateDiagram-v2` forms, label nodes in plain language, and pair the diagram with a short interpretation. Skip diagrams for tiny answers, single-cause issues, or cases where a diagram would only repeat the paragraph.
+Keep diagrams compact. Use simple `flowchart`, `sequenceDiagram`, or `stateDiagram-v2` forms, label nodes in plain language, and pair the diagram with a short interpretation. Skip diagrams for tiny answers, single-cause issues, or cases where a diagram would only repeat the paragraph. If you do include a Mermaid diagram in `auto` mode, persist the explanation as an artifact (see Output Mode) — a diagram that exists only as inline terminal text does not render.
 
 ## Rules
 
