@@ -1,4 +1,4 @@
 interface:
   display_name: "Explain"
-  short_description: "Explain AgentCorp work for zero-context readers"
-  default_prompt: "Use $explain to explain this AgentCorp output in plain language for someone without project context."
+  short_description: "Make an unclear thing understandable with just enough context"
+  default_prompt: "Use $explain to help the user understand this unclear thing. Assume they may not know the repo, report, domain, or surrounding knowledge system. Focus on what it is, what it means, and what context matters, not detailed how."

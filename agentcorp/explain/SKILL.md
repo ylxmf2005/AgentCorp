@@ -1,165 +1,71 @@
 ---
 name: explain
-description: "Use when AgentCorp must explain known evidence, artifacts, failures, status, decisions, or technical tradeoffs to a sponsor or operator who has not read the source material. Do not use for discovering blind spots, grilling a plan, brainstorming requirements, or walking through a branch/PR/diff."
+description: "Use when the user does not understand a knowledge point, term, sentence, paragraph, report, artifact excerpt, log, metric, review finding, status, decision, or AgentCorp output and needs enough surrounding context to grasp what it is and what it means. Assume the user may not know the repo, report, domain, or knowledge system. First inspect the relevant source/context when available. Focus on what, not detailed how."
 ---
 
 # Explain
 
-This is a reusable AgentCorp communication capability, not a delivery phase and not a role with its own gate. Any AgentCorp role may load it when known material must become understandable to a sponsor who has not read the code, issue, terminal output, artifact, or earlier investigation.
+Explain is for: **"I do not understand this."**
 
-The goal is to preserve technical accuracy while making the explanation easy to follow. Use it for bug explanations, test progress updates, review findings, delivery reports, implementation summaries, option explanations, and status updates.
+The user may be missing the whole context. Treat that as normal. They may not have read the repo, the report, the issue, the previous investigation, or the surrounding knowledge system. Your job is to make the thing understandable anyway.
 
-## Place In The Thinking System
+Keep the skill simple. Use it as a translation layer from opaque material into usable understanding, not as a research role, review role, tutorial generator, or delivery phase.
+
+## Philosophy
+
+Answer **what**:
+
+- What is this thing?
+- What context does it live inside?
+- What is this sentence, report, finding, metric, log, or decision saying?
+- What background knowledge is being assumed?
+- What should the user take away from it?
+- What is still unknown or only inferred?
+
+Do **not** default to detailed **how**. Give mechanism only when it is necessary to understand the what. Do not turn local confusion into a full walkthrough, repo tour, implementation lesson, or step-by-step procedure unless the user asks for that.
+
+## Context
+
+Inspect enough source material before explaining. If the user points at a report, read the relevant report structure. If the report depends on the repo, inspect enough repo context to locate what the report is talking about. If the user points at a term, sentence, finding, log, metric, or artifact excerpt, read the surrounding paragraph, artifact, command output, or task notes when available.
+
+Then pick the smallest context frame that makes the object legible:
+
+- For a knowledge point, the context is the surrounding knowledge system.
+- For a report, the context is the repo plus the report's overall argument.
+- For a review finding, status, test result, log, metric, or artifact excerpt, the context is the task history and the source artifact.
+- For a term or sentence, the context is the paragraph and the larger object it belongs to.
+
+Start from the selected thing, then expand outward only as far as needed. If needed context is unavailable, state that and label the explanation as inference.
+
+## Boundary
 
 When the boundary among `probe`, `brainstorm`, `grill`, `explain`, and `walkthrough` is unclear, read `../_shared/thinking-system.md`.
 
-AgentCorp keeps five nearby but different thinking moves separate:
+Stay in `explain` when the user wants to understand what an existing thing means. Hand off only when the real task is a full walkthrough, blind-spot discovery, option shaping, or pressure testing.
 
-- `probe` finds blind spots before the team commits to a direction.
-- `brainstorm` turns unclear intent into sponsor-approved requirements or option paths.
-- `grill` pressure-tests an existing plan, design, proposal, or argument.
-- `walkthrough` teaches a concrete branch, PR, or diff as a rich artifact.
-- `explain` explains known evidence or conclusions. It does not discover new scope, interrogate the sponsor, or teach a whole diff.
+## Default Answer Shape
 
-If the user asks what a PR, branch, or diff does, use `walkthrough`. If the user asks whether they are missing something, use `probe`. If the user asks to challenge a plan, use `grill`. If the user asks to shape vague requirements, use `brainstorm`.
+Use natural prose unless structure helps. Usually this is enough:
 
-## Output Mode
+1. **Plain meaning**: Restate the confusing thing in direct language.
+2. **Context**: Say where it sits in the knowledge system, repo, report, task, or artifact.
+3. **Assumed background**: Define only the terms or premises needed right now.
+4. **Takeaway**: Say what the user should understand or decide from it.
+5. **Limits**: Separate confirmed facts from inference or unknowns.
 
-Treat persistence as an explicit choice:
+For tiny questions, answer in a paragraph. For larger reports, repeat the same shape section by section.
 
-- `output_mode: inline` — answer in the conversation only.
-- `output_mode: artifact` — write the explanation into task artifacts and return a short pointer in the conversation.
-- `output_mode: auto` — choose the mode yourself. This is the default when no mode is specified.
+## Style
 
-Invocation examples:
+- Assume the user is smart but missing context.
+- Do not be condescending. Avoid "obvious", "simply", "just", and "clearly".
+- Prefer short, concrete explanations over exhaustive ones.
+- Use examples only when they make the what clearer.
+- Avoid Mermaid, diagrams, long procedures, and implementation detail unless they materially improve understanding.
+- Do not invent repo, report, or domain context. Use source material when available.
 
-```text
-/agentcorp:explain output_mode=inline explain this test failure for a sponsor
-/agentcorp:explain output_mode=artifact explain review/code-review.md item by item
-Use $explain with output_mode=artifact to explain verification/verification-report.md.
-```
+## Output
 
-Use `inline` for one small answer, a short status update, or a single concept that fits comfortably in the conversation. Use `artifact` when the explanation has many independent points, several findings, several test results, a multi-step implementation walkthrough, or anything the sponsor will likely re-open, annotate, compare, or decide item by item. If the user asks to "落库", "write it down", "make a doc", "put it in artifacts", "方便看", or "分开写", use `artifact`.
+Default to inline answers.
 
-**In `auto` mode, these conditions force `artifact` — do not answer inline:**
-
-- The explanation contains a Mermaid diagram, or any other content a terminal cannot render. Dumping it inline ships unreadable source the sponsor never sees rendered; that does not count as delivered.
-- The explanation is any multi-point set the sponsor will re-open or review item by item.
-
-When a condition fires, write to the `explain/<topic-slug>/` path below and return only a short pointer in the conversation.
-
-When using `artifact`, write under the current task root:
-
-```text
-explain/<topic-slug>/
-├── 00-index.md
-└── <number>-<short-english-slug>.md
-```
-
-If there is only one substantial explanation, write `explain/<topic-slug>.md` instead of a directory. If the task has a separate Workspace and Location, keep the same relative artifact path synced in both places, following the normal AgentCorp artifact rules. These files are collaboration artifacts, not source changes; do not commit them.
-
-For multi-item explanations, use one file per item, similar to `review-researcher`: one finding, one test result, one design choice, or one implementation point per file. The index lists every item with a one-sentence summary and a link, so the sponsor can scan the set without reading everything at once.
-
-Use this frontmatter for persisted explanations:
-
-```yaml
----
-artifact_type: ExplanationSet
-author_agent: explain
-status: completed
-source_artifacts:
-  - <artifact-or-file-being-explained>
----
-```
-
-For a single explanation file, use `artifact_type: Explanation`.
-
-## Default Shape
-
-Use this shape unless the user asks for another format:
-
-1. **Short answer**: State the main point in one or two sentences.
-2. **Source material**: Name the artifact, command output, log, test, diff, or user-provided evidence being explained.
-3. **Confirmed facts**: State only what the source material supports.
-4. **Inference**: Label likely causes, implications, or tradeoffs as inference.
-5. **Unknowns**: Separate what is unverified, blocked, or still unknown.
-6. **What would change this**: Name the evidence that would revise the explanation.
-7. **Glossary**: Define only the technical terms needed for this explanation.
-
-For small answers, merge sections into natural paragraphs. Do not force headings when they add clutter.
-
-## Examples and Diagrams
-
-Prefer concrete examples over abstract explanation. For any non-trivial bug, test result, review finding, implementation flow, or tradeoff, include at least one small example that shows what the reader would see, send, click, configure, or decide. Keep examples realistic and local to the task; do not invent broad business context that the evidence does not support.
-
-Use Mermaid when a diagram makes the explanation easier to scan than prose. Default to a Mermaid diagram when explaining:
-
-- A request, data, or control flow with three or more steps.
-- State transitions, retries, fallbacks, gates, or failure paths.
-- Ownership across roles, services, files, or artifacts.
-- A decision tree or sequence of checks.
-
-Keep diagrams compact. Use simple `flowchart`, `sequenceDiagram`, or `stateDiagram-v2` forms, label nodes in plain language, and pair the diagram with a short interpretation. Skip diagrams for tiny answers, single-cause issues, or cases where a diagram would only repeat the paragraph. If you do include a Mermaid diagram in `auto` mode, persist the explanation as an artifact (see Output Mode) — a diagram that exists only as inline terminal text does not render.
-
-## Rules
-
-- Assume the reader has not seen the code, diff, logs, issue, artifact, or earlier investigation.
-- Explain only known source material. Do not manufacture new evidence, discover scope, or settle requirements; hand off to `probe`, `brainstorm`, or `grill` when the explanation depends on missing knowledge.
-- Lead with outcome, not chronology.
-- Define necessary jargon the first time it appears.
-- Summarize logs, stack traces, diffs, and test output by meaning before quoting any raw text.
-- Explain cause and effect: "Because X happens, Y breaks."
-- Distinguish fact, inference, and unknowns. Use phrases like "confirmed", "likely", and "not yet verified".
-- Avoid confidence theater. If evidence is incomplete, say so.
-- Avoid condescending words such as "simply", "obviously", "just", or "clearly".
-- Prefer concrete nouns: button, endpoint, field, file, test, phase, artifact, command.
-- Use analogies only when they shorten the explanation and do not distort the mechanism.
-- When writing persisted explanations, make every file self-contained enough to read out of order: restate the local background, the specific point, the evidence, and the current state.
-
-## Explaining Bugs
-
-When explaining a bug or error:
-
-- State what the user or system was trying to do.
-- State what went wrong.
-- Name the likely cause in plain language.
-- Say whether it is reproduced, fixed, partially fixed, or still under investigation.
-- Cite the evidence that supports the conclusion.
-
-Example:
-
-> The save looked successful, but the database did not change. The frontend sent `userId`, while the backend only accepts `user_id`, so the backend rejected the request. The page did not surface that rejection, which made failure look like success.
-
-## Explaining Test Progress
-
-When explaining testing or verification:
-
-- Say what user journey, code branch, or risk was tested.
-- State the result: passed, failed, blocked, skipped, or not run.
-- If a test failed, explain what behavior the failure points to.
-- Separate "tests passed for this slice" from "the whole system is safe".
-- Name remaining risk and the next verification step.
-
-Example:
-
-> The normal login flow works in the browser. Expired-session handling was not tested, so this gives confidence in the happy path but not in timeout behavior.
-
-## Explaining Implementations
-
-When explaining how a feature, implementation, or technical design works:
-
-- Start with the user-visible or operational purpose.
-- Name the main moving parts and what each one owns.
-- Walk through the flow in order.
-- Call out the key invariant or guard that must not be removed.
-- Mention tradeoffs only when they affect the user's decision or review confidence.
-
-Do not turn this into a branch/PR/diff teaching artifact. For that, hand off to `walkthrough`.
-
-## AgentCorp Integration
-
-- **Delivery Orchestrator**: use for sponsor-facing status, gate summaries, and final delivery explanations.
-- **Test Leader / testers**: use when reporting what a test result actually proves and what remains untested.
-- **Review roles**: use when explaining findings so a sponsor can judge the issue without reading the changed code.
-- **Implementation Engineer / Review Fixer**: use when explaining why a code path or fix was chosen.
-- **Walkthrough**: use for rich branch, PR, or diff walkthrough artifacts. Keep this `explain` skill for known evidence, artifacts, failures, status, implementation details, plans, and tradeoffs.
+Use an artifact only when the user asks to write it down, make a doc, make it convenient to reread, explain a long report section by section, or preserve it for later. Put persisted explanations under `explain/<topic-slug>.md` or `explain/<topic-slug>/` for multi-file sets.

@@ -7,7 +7,7 @@ Use this reference when routing or handing off among `probe`, `brainstorm`, `gri
 - `probe` converts hidden uncertainty into named uncertainty: unknown unknown -> known unknown.
 - `brainstorm` converts unclear intent into selectable requirements or direction.
 - `grill` converts a chosen shape into a harder-to-fool shape.
-- `explain` converts known evidence into understandable known knowns.
+- `explain` converts an unclear piece of knowledge, report, excerpt, or output into context-aware understanding.
 - `walkthrough` converts a concrete code change into teachable understanding.
 
 ## Knowledge Matrix

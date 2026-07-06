@@ -1,6 +1,6 @@
 ---
 name: probe
-description: "Use before brainstorm, planning, or implementation when the user wants to uncover blind spots, unknown unknowns, hidden constraints, missing frames, or questions they should answer before choosing a direction."
+description: "Use when the user wants to uncover blind spots, unknown unknowns, hidden constraints, missing frames, or questions they should answer before choosing a direction, especially before brainstorm, planning, or implementation."
 ---
 
 # Probe

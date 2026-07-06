@@ -1,4 +1,4 @@
 interface:
   display_name: "Explain"
-  short_description: "给零上下文读者解释 AgentCorp 输出"
-  default_prompt: "使用 $explain 把这个 AgentCorp 输出解释给没有项目上下文的人听。"
+  short_description: "用刚好够的上下文让不懂的东西变得可懂"
+  default_prompt: "使用 $explain 帮用户理解这个看不懂的东西。默认用户可能不了解 repo、报告、领域或知识体系。重点讲它是什么、是什么意思、哪些上下文重要，不展开 detailed how。"

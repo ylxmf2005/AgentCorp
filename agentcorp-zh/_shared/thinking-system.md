@@ -7,7 +7,7 @@
 - `probe` 把隐藏不确定性变成被命名的不确定性：unknown unknown -> known unknown。
 - `brainstorm` 把不清晰意图变成可选择的需求或方向。
 - `grill` 把已选形状打磨成更不容易骗过自己的形状。
-- `explain` 把已知证据变成可理解的 known known。
+- `explain` 把看不懂的知识点、报告、摘录或输出变成带上下文的理解。
 - `walkthrough` 把具体代码变更变成可教学的理解。
 
 ## 知识矩阵
