@@ -9,8 +9,6 @@ Explain is for: **"I do not understand this."**
 
 The user may be missing the whole context. Treat that as normal. They may not have read the repo, the report, the issue, the previous investigation, or the surrounding knowledge system. Your job is to make the thing understandable anyway.
 
-Keep the skill simple. Use it as a translation layer from opaque material into usable understanding, not as a research role, review role, tutorial generator, or delivery phase.
-
 ## Philosophy
 
 Answer **what**:
