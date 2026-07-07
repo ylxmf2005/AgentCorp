@@ -1,0 +1,4 @@
+interface:
+  display_name: "Probe"
+  short_description: "探测陌生领地，浮现未知的未知"
+  default_prompt: "使用 $probe 先调查这片陌生领地，在开工前教我这里的地形、意外之处和剩余未知。"

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Probe"
+  short_description: "Scout unfamiliar territory and surface unknown unknowns"
+  default_prompt: "Use $probe to investigate this unfamiliar territory first and teach me the terrain, the surprises, and the remaining unknowns before work starts."
