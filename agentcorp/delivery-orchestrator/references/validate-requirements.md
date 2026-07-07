@@ -14,6 +14,8 @@ Before you start writing, take a look at `teamspace/learnings/` by task keyword 
 
 When the raw request is not yet clear enough to validate, load the `brainstorm` capability before writing the artifact. Brainstorm is not a separate phase; it is the interaction surface used to get requirements to MEDIUM/HIGH confidence.
 
+When the *territory* is what's unclear — the work lands on a module, codebase, or domain the sponsor (or you) does not know — load `probe` before brainstorming: interviews can only surface what the sponsor already knows, and requirements built on unscouted ground launder blind spots into scope. The probe report then grounds the brainstorm, the scope judgment, and the risk assessment.
+
 Use one of two modes:
 
 - **Question-by-question** — use when direction is mostly clear but a missing fact blocks confidence. Ask one high-leverage question at a time, then fold the answer into the requirement picture. Keep going only while the next answer would change scope, success criteria, risk acceptance, or user journey.

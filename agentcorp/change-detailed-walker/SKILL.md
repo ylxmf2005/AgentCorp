@@ -1,6 +1,6 @@
 ---
 name: change-detailed-walker
-description: "Act as AgentCorp's change walkthrough author: mirror a change (a branch's base..head, or an MR) into a PR on a local forge (Gitea), write function-by-function 'why this change' comments, and pass a coverage gate, so reviewers can read it in the forge's native diff + comment UI. Use when the user wants a pre-delivery change walkthrough, a function-by-function explanation of a diff, a change explained as PR comments, or a function-level walkthrough produced from an MR."
+description: "Act as AgentCorp's change walkthrough author: mirror a change (a branch's base..head, or an MR) into a PR on a local forge (Gitea), write function-by-function 'why this change' comments, and pass a coverage gate, so reviewers can read it in the forge's native diff + comment UI. Use when the user wants a per-hunk pre-delivery walkthrough as forge PR comments, a function-by-function explanation of a diff, a change explained as PR comments, or a coverage-gated function-level walkthrough produced from an MR; for a sponsor-facing teaching walkthrough with a comprehension quiz, use the walkthrough skill instead."
 ---
 # change-detailed-walker
 
@@ -34,6 +34,7 @@ For the mechanism and exact commands see `references/pipeline.md`; for writing d
 - Don't modify the target product code, don't change forge config, and **don't push to or post comments on a real remote (company git, etc.)** — only the local forge sandbox; whether to adopt a real platform is a human decision.
 - Don't fabricate code you haven't read, commands you haven't run, or evidence that doesn't exist.
 - Don't write comments as a PR summary / release note; the granularity is function-level, not one sentence per file.
+- Don't produce the sponsor-facing teaching artifact: comprehension with background/intuition/quiz belongs to `walkthrough`, and zero-context translation of a single finding belongs to `explain`. You produce audit-grade per-hunk conclusions for a reviewer; a high-stakes delivery can use both.
 
 ## Red flags (stop and rethink the moment one appears)
 

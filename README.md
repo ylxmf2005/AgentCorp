@@ -25,7 +25,7 @@ AgentCorp exists to break that loop. It is a
 [loop engineering](https://addyosmani.com/blog/loop-engineering/) system for
 software delivery: it turns agent work from an uncontrollable, unreadable,
 untraceable black-box chain into a **controllable, understandable, verifiable**
-delivery loop. It includes **34 skills** drawn from enterprise-grade software
+delivery loop. It includes **36 skills** drawn from enterprise-grade software
 delivery practice, covering the full delivery loop and the supporting practices
 needed to run it in real projects. It works with both **Claude Code** and
 **Codex**.
@@ -100,7 +100,7 @@ traces every decision.
 
 ## Skills
 
-The 34 skills are grouped by delivery phase below (within a phase, planners, reviewers, and implementers sit together). Each skill's behavior is defined in
+The 36 skills are grouped by delivery phase below (within a phase, planners, reviewers, and implementers sit together). Each skill's behavior is defined in
 `agentcorp/<skill>/SKILL.md` and appears in the Claude Code and Codex skill
 pickers. Together, they cover the delivery loop and the supporting behaviors
 needed to run it in real projects.
@@ -141,9 +141,11 @@ needed to run it in real projects.
   - `acceptance-review-lead` — guards the final gate before delivery, judging whether the complete evidence proves every requirement met and the risks acceptable
   - `change-detailed-walker` — mirrors a change into a PR on a local forge and walks it function-by-function with "why this change" comments reviewers read natively
 - **Support**
+  - `probe` — investigates unfamiliar territory before work starts and teaches the sponsor the terrain: the corrections to their map, the surprises, what "good" looks like locally, and a living unknowns ledger
   - `brainstorm` — turns an unclear request into sponsor-approved, testable requirements by pressure-testing intent, scope, and viability one question at a time
   - `authenticated-browser-session` — holds a real logged-in browser session to verify authenticated flows without reading cookies or asking the user for tokens
   - `explain` — translates bugs, test progress, review findings, and delivery status into zero-context language a sponsor who hasn't read the code can follow
+  - `walkthrough` — turns a change into a teaching artifact — background first, intuition before code, the change as a story rather than a file list — ending in a quiz the sponsor must pass before merge
   - `precommit-setup` — sets up commit-time guardrails: fast deterministic checks by default, optional AI review, explicit constraints, without slowing every commit
   - `skill-evolution` — turns a skill-improvement signal captured at session end into a reviewed, landed edit (or a new skill from research), keeping AgentCorp's own skills improving with a human in the loop
 
@@ -162,9 +164,15 @@ teamspace/
 │   └── invite-token-reuse-trap.md        #   Trigger -> root cause -> what to do -> how to move faster next time
 ├── knowledge/                            # Reusable research snapshots copied out of task research when worth keeping
 │   └── <technology>/INDEX.md
+├── probes/                               # Standalone terrain reports written before any task exists
+│   └── 20260620-billing-module.md
+├── walkthroughs/                         # Standalone change walkthroughs (self-contained HTML) outside a task
 └── tasks/20260622-invite-members/        # Current task root
     ├── task.md                           # Task record: request, success criteria, phase sequence, gate history, decisions
     ├── manifest.md                       # Audit ledger: phase, owner, status, human gate, quality gate, assignment, artifact, receipt
+    │
+    ├── probe/                            # Optional pre-requirements terrain report with a living unknowns ledger
+    │   └── 00-probe.md
     │
     ├── handoffs/                         # Assignment/receipt loop for delegated phases
     │   ├── 001-validate-requirements.md
@@ -233,6 +241,9 @@ teamspace/
     │   └── review-summary/
     │       ├── 00-index.md
     │       └── 001-finding-context.md
+    │
+    ├── walkthrough/                      # Optional teaching artifact for the change: background → intuition → story → quiz
+    │   └── invite-flow.html
     │
     ├── verification/
     │   ├── assignments/                  # Tester assignments written by Test Leader during delegated verification

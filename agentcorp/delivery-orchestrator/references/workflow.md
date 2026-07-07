@@ -271,6 +271,8 @@ When a task produces persistent notes, designs, prompts, screenshots, logs, revi
 teamspace/tasks/<task_id>/
   task.md
   manifest.md
+  probe/                          # optional pre-requirements terrain report (probe capability)
+    00-probe.md
   handoffs/
     001-validate-requirements.md
     001-validate-requirements-receipt.md
@@ -299,6 +301,8 @@ teamspace/tasks/<task_id>/
       <number>-<slug>.md
     fix-result.md
     fix-records/
+  walkthrough/                    # optional teaching artifact for the change (walkthrough capability)
+    <slug>.html
   verification/
     assignments/
     verification-report.md
@@ -411,6 +415,6 @@ The pipeline terminates at `deliver`, but lessons survive across tasks in `teams
 2. What was delivered: code location, key artifact paths, key verification.
 3. Deviations and residual risks: write none if there are none; otherwise give an owner or acceptance condition.
 4. Recommended next step: one clear recommendation.
-5. Optional follow-ups: list 2-4 as needed, e.g. close the task, create a follow-up, run `change-detailed-walker`, do another round of verification, capture/review learnings, return to a gate to revise.
+5. Optional follow-ups: list 2-4 as needed, e.g. close the task, create a follow-up, run `walkthrough` (sponsor understanding + quiz gate) or `change-detailed-walker` (per-hunk audit comments on the local forge), do another round of verification, capture/review learnings, return to a gate to revise.
 
 If acceptance didn't pass or evidence is insufficient, the recommended next step cannot be "close out"; it must point to supplying evidence, revising, re-reviewing, or sponsor risk acceptance.

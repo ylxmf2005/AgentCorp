@@ -30,7 +30,7 @@ AgentCorp 应该像交付负责人一样主动领路，而不是仅仅汇报 pip
 
 在任务接收入口，先做一次轻量级分流：如果请求已经足够清晰，直接推荐路线；否则，最多问一组能改变路线的问题。对于低风险的小改动，你可以提供三种协作节奏——"快速小改动 / 标准交付 / 深度编排"——但内部它们仍然映射为 `direct`、`partial-delegation` 和 `full-delegation`，且 `direct` 必须明确说明 sponsor 将亲自裁定 review gate。
 
-在每个 phase 结束时，给出一个"下一步提示"：artifact 在哪、质量 gate 是否通过、接下来谁负责。当收尾 `deliver` 时，除了最终状态外，还要提供常见后续选项：结束、开启跟进任务、跑 change walkthrough、沉淀 learnings、或重新进入未完成的 gate；只推荐对此任务真正相关的项。
+在每个 phase 结束时，给出一个"下一步提示"：artifact 在哪、质量 gate 是否通过、接下来谁负责。当收尾 `deliver` 时，除了最终状态外，还要提供常见后续选项：结束、开启跟进任务、跑 change walkthrough（`walkthrough` 面向 sponsor 理解、带 quiz gate；`change-detailed-walker` 在本地 forge 上产出逐 hunk 的审计评论）、沉淀 learnings、或重新进入未完成的 gate；只推荐对此任务真正相关的项。
 
 ## 证据交付
 
@@ -95,7 +95,9 @@ AgentCorp 应该像交付负责人一样主动领路，而不是仅仅汇报 pip
 - `references/intake.md`：当流入的工作以 issue、bug 报告、用户反馈或模糊请求的形式到来，需要去重、分类或拆分为工作项时加载。
 
 **内置能力**（不是 phase，按需触发加载）：
+- `probe`：在 `intake`/`validate-requirements` 中，当工作落在 sponsor——或你自己——不了解的领域时加载。在敲定需求之前，它会实打实地勘察地形，交付一份带有持续更新的 unknowns 台账的教学报告；让 `brainstorm` 和验证后的需求扎根在这份报告上，而不是就一片没人勘察过的土地去访谈 sponsor。
 - `brainstorm`：在 `validate-requirements` 中，当 sponsor 意图、成功标准、范围、用户旅程或方案方向不清楚时加载。把它当作通用工具使用：缺事实时逐个追问；需要 sponsor 在完整方向之间选择时，使用多方案提案。
+- `walkthrough`：在 merge 之前或 `deliver` 收尾时，当 sponsor 应该真正理解这次改动、而不只是裁定它时加载。它产出一份教学 artifact（背景 → 直觉 → 把改动讲成一个 story → quiz），并主持一个 quiz gate，按任何 human gate 的标准对待，用标准词汇记录进 Gate History：满分记 `approved`，sponsor 显式跳过记 `skipped`。
 - `references/fresh-start-handoff.md`：当对话或 workspace 可能污染后续工作（同一问题反复出现、需求散落各处、假设被推翻、工作树不干净），或 sponsor 要求重新开始时加载——在 sponsor 同意的前提下，产出一份干净的 handoff prompt。
 - `references/learnings.md`：在 `intake`/`validate-requirements` 开始时（用于搜索 `teamspace/learnings/` 中的历史教训）、交付收尾时、或任务中途出现值得跨任务保留的教训时（意外根因、重复返工、repo 陷阱）加载。
 

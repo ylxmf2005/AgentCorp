@@ -1,2 +1,4 @@
 hooks/session-start text eol=lf
+hooks/session-end-capture text eol=lf
+hooks/user-prompt-heartbeat text eol=lf
 hooks/run-hook.cmd text eol=lf

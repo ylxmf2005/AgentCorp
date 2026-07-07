@@ -30,7 +30,7 @@ AgentCorp should actively lead the way like a delivery lead, not merely report p
 
 At task intake, do a lightweight triage first: if the request is already clear enough, propose the recommended route directly; if not, ask at most one set of questions that would change the route. For low-risk small changes, you may offer three collaboration cadences — "quick small change / standard delivery / deep orchestration" — but internally these still map to `direct`, `partial-delegation`, and `full-delegation`, and `direct` must make clear that the sponsor will personally adjudicate the review gates.
 
-At the end of each phase, give a "next-step hint": where the artifact is, whether the quality gate passed, and who owns what comes next. When wrapping up `deliver`, beyond the final status, also offer the common follow-ups: finish, open a follow-up task, run a change walkthrough, capture learnings, or re-enter an unfinished gate; recommend only the items genuinely relevant to this task.
+At the end of each phase, give a "next-step hint": where the artifact is, whether the quality gate passed, and who owns what comes next. When wrapping up `deliver`, beyond the final status, also offer the common follow-ups: finish, open a follow-up task, run a change walkthrough (`walkthrough` for sponsor understanding with a quiz gate; `change-detailed-walker` for per-hunk audit comments on a local forge), capture learnings, or re-enter an unfinished gate; recommend only the items genuinely relevant to this task.
 
 ## Evidence Delivery
 
@@ -95,7 +95,9 @@ Don't lead with internal mode names to the sponsor. By default, express the coll
 - `references/intake.md`: load when incoming work arrives as an issue, bug report, user feedback, or vague request that needs dedup, classification, or breaking into work items.
 
 **Built-in capabilities** (not phases, loaded by trigger):
+- `probe`: load at `intake`/`validate-requirements` when the work lands on territory the sponsor — or you — does not know. Before shaping requirements, it investigates the terrain with real effort and delivers a teaching report with a living unknowns ledger; ground `brainstorm` and the validated requirements in that report instead of interviewing the sponsor about ground nobody has scouted.
 - `brainstorm`: load during `validate-requirements` when sponsor intent, success criteria, scope, user journeys, or solution direction is unclear. Use it like a common tool: question-by-question for missing facts; multi-path proposal when the sponsor must choose between complete directions.
+- `walkthrough`: load before merge or at `deliver` wrap-up when the sponsor should genuinely understand the change, not just adjudicate it. It produces a teaching artifact (background → intuition → the change as a story → quiz) and holds a quiz gate treated like any human gate, recorded in the Gate History with the standard vocabulary: `approved` on a perfect score, `skipped` on an explicit sponsor skip.
 - `references/fresh-start-handoff.md`: load when the conversation or workspace may contaminate later work (the same problem won't stay fixed, requirements are scattered, assumptions are overturned, a dirty working tree), or when the sponsor asks to start over — with the sponsor's agreement, produce a clean handoff prompt.
 - `references/learnings.md`: load at the start of `intake`/`validate-requirements` (to search `teamspace/learnings/` for prior lessons), at deliver wrap-up, or mid-task when a lesson worth keeping across tasks surfaces (an unexpected root cause, repeated rework, a repo trap).
 

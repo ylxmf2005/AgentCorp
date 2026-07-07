@@ -11,3 +11,10 @@
 - 若 assignment 中无 `task_root`，则从 assignment 文件所在位置推导：找到父级 `handoffs/` 目录，取其上级目录作为 task root。
 - 将 phase 的主要持久化 artifact 写入 `output_path`；除非该 role 的 instructions 明确要求创建 tester assignment、sub-result 或 acceptance package，否则不要散落额外 artifact。
 - 返回 receipt；receipt 的 `artifact_path` 必须与主 artifact 路径一致，或者当该 role 明确产出多个 artifact 时，指向最终合并后的 artifact。
+
+## 本 role 可用的模板
+
+- `templates/phase-assignment.demo.md`
+- `templates/phase-receipt.demo.md`
+- `templates/decision-artifact.demo.md`
+- `templates/review-decision.demo.md`

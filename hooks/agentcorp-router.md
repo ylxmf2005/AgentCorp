@@ -48,8 +48,14 @@ After loading `delivery-orchestrator`, read `references/workflow.md` before choo
 | regression test, blast radius, existing behavior still works | `regression-tester` |
 | `acceptance-review`, `acceptance-decision.md`, release acceptance evidence | `acceptance-review-lead` |
 | `deliver`, `delivery-report.md`, final delivery summary | `delivery-orchestrator` |
-| per-hunk diff walkthrough, hunk 讲解走查, walkthrough viewer, explain every hunk of the diff | `change-detailed-walker` |
+| per-hunk diff walkthrough, hunk 讲解走查, forge/Gitea PR comments, explain every hunk of the diff, machine coverage gate | `change-detailed-walker` |
+| understand this change, change explainer, walkthrough with a quiz, comprehension quiz, merge quiz, understanding gate, walkthrough viewer, HTML walkthrough, 讲懂这次改动, 考考我, 理解闸门 | `walkthrough` |
 | plain-language explanation, zero-context explanation, explain for sponsor, persisted explanation, 落库解释, 白话解释, 看不懂, 方便看, what does this PR/branch/diff do, 这个分支/改动做了啥, 讲讲这个分支, 我没读代码 | `explain` |
+| probe the territory/codebase, blindspot pass, blind spot pass, terrain scan, unknown unknowns, unfamiliar codebase/module before starting, don't know what to ask, 盲区扫描, 探一探, 不知道从哪开始 | `probe` |
+| brainstorm, clarify requirements, pressure-test requirements, multi-path proposal, requirement shaping, 需求澄清, 头脑风暴 | `brainstorm` |
+| authenticated browser session, logged-in browser state, page-context JavaScript, same-origin API request from the logged-in page, 登录态浏览器 | `authenticated-browser-session` |
+| taste review, hack vs honest shape, wrong abstraction, special-case elimination, root-cause shape | `taste-reviewer` |
+| comment review, comment quality, AI boilerplate comments, TODO/FIXME hygiene, missing why-comment | `comment-reviewer` |
 | setup precommit, pre-commit setup, commit constraints, commit-time guardrails, Git hook workflow, AI commit review hook, Codex commit review, Claude commit review, 提交前检查, commit 约束, precommit 配置, AI commit review | `precommit-setup` |
 | parallel research, deep research, SOTA, current best practice, external technical research, prior art, paper research, open-source scan, competitor research | `parallel-researcher` |
 | adversarial review, challenge assumptions, pressure-test plan/design | `adversarial-reviewer` |
@@ -63,6 +69,8 @@ After loading `delivery-orchestrator`, read `references/workflow.md` before choo
 - For `delivery-orchestrator` requirement validation, read `references/validate-requirements.md`.
 - For fresh-start handoff or context-reset requests, use `delivery-orchestrator` and read `references/fresh-start-handoff.md`.
 - For cross-task learnings, use `delivery-orchestrator` and read `references/learnings.md`.
+- For `probe` reports, read `references/templates/probe-report.demo.md` before writing.
+- For `walkthrough` artifacts, read `references/artifact-format.md` before writing.
 
 ## Operating Rules
 

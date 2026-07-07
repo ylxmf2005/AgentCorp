@@ -14,6 +14,8 @@ optional: false
 
 当原始 request 还不够清楚，无法诚实 validate 时，先加载 `brainstorm` 能力，再写 artifact。Brainstorm 不是单独 phase；它是把需求推到 MEDIUM/HIGH confidence 的互动界面。
 
+当不清楚的是*地形*本身——工作落在 sponsor（或你）不了解的 module、codebase 或领域上——先加载 `probe` 再做 brainstorm：访谈只能问出 sponsor 已经知道的东西，而建立在未勘察土地上的需求，会把盲区洗白成 scope。之后，probe 报告为 brainstorm、scope 判断和 risk 评估提供根基。
+
 使用两种模式之一：
 
 - **逐个追问** —— 当方向大体清楚，但某个缺失事实会阻塞 confidence 时使用。每次只问一个高杠杆问题，然后把答案折回需求图景。只有当下一个答案会改变 scope、success criteria、risk acceptance 或 user journey 时，才继续问。

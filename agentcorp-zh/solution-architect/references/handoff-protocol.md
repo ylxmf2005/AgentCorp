@@ -18,3 +18,10 @@
 - `templates/phase-receipt.demo.md`
 - `templates/design-artifact.demo.md`
 - `templates/interface-contract.demo.md`
+
+## 本 role 可用的模板
+
+- `templates/phase-assignment.demo.md`
+- `templates/phase-receipt.demo.md`
+- `templates/design-artifact.demo.md`
+- `templates/interface-contract.demo.md`
