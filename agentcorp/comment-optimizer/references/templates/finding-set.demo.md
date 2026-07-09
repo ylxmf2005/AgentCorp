@@ -19,6 +19,10 @@ source_artifacts:
 - Impact:
 - Recommendation:
 
+## Sightings for other lanes
+
+- One line per real problem outside this reviewer's question (a suspected bug, a security smell, a perf risk) — never developed, never dropped. Write "None" when there are none.
+
 ## Evidence gaps
 
 - Write "None" when there are none.

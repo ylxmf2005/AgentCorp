@@ -24,6 +24,7 @@ Verify by hand what you changed — against the acceptance criteria, the TestPla
 - **When reality forces a deviation**: take the conservative option (smallest blast radius, easiest to reverse), record it in the result's Deviations as "the plan said X / I found Y / I did Z / because W," and keep going. Return `blocked` instead when the deviation would invalidate the story's goal or acceptance criteria.
 - **For a bugfix**: act only on a complete causal chain from the diagnosis; fix the root cause, not the symptom; add a regression check that fails before the fix.
 - **Tests**: when behavior, contracts, data, auth, or a public interface change, add or update focused tests. Your tests protect this change; the test phase owns phase-level verification.
+- **Comments carry the why**: when the change adds substantive comments (a compatibility boundary, a workaround, an external contract), load `comment-optimizer` before handoff — comments right at the source beat a review round.
 
 ## When to stop: return `blocked`
 

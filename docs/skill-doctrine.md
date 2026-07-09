@@ -187,7 +187,29 @@ handoff-protocol.md / phase-assignment / phase-receipt (regenerated centrally); 
 agentcorp-zh alone (translated later); keep gate/status enums and artifact contracts
 exactly; run nothing destructive. Return per-skill rewrite notes.
 
-## 9. Process for the rewrite
+## 9. Coherence rules (added 2026-07-09; govern cross-skill edits)
+
+- **Coordinators do not re-teach worker discipline.** Every worker's iron law already
+  structurally prevents "claims done, no artifact" / "status without a body". A
+  coordinator (orchestrator, leads, test-leader) keeps at most ONE home for that
+  defense-in-depth (its iron law or one trap row); its body centers on the failure
+  mode only IT can commit — insufficient coverage, wrong routing, headcount-as-proof,
+  self-approval. Repeatedly stressing a structurally-prevented failure is noise.
+- **Cross-references must be load-bearing, and bidirectional when a duty is claimed.**
+  A skill may name another only when the mention changes runtime behavior (consumed
+  input path, genuine redirect, roster row, escalation lane). If skill A claims "role
+  B uses me before handoff", role B's own text must say so — otherwise the claim is
+  decorative and gets deleted or wired. Current wired pairs: probe↔parallel-researcher,
+  brainstorm→probe/parallel-researcher, explain↔walkthrough, solution-architect→
+  parallel-researcher, review-researcher→parallel-researcher (needs-human research
+  lane), implementation-engineer/review-fixer→comment-optimizer, testers→
+  authenticated-browser-session, api-contract-tester↔api-contract-reviewer.
+- **The orchestrator's "How this organization thinks" is a maintained mirror.** When
+  a lane's iron law changes, or a lane is added/renamed/removed, that maxim list (and
+  the leads' rosters, workflow.md's Runtime Routing lists, router, READMEs) updates in
+  the same landing — a stale roster name is a routing bug, not cosmetics.
+
+## 10. Process for the rewrite
 
 - Fable writes EN. Exemplars first (taste-reviewer, correctness-reviewer as specialist
   pattern; probe as capability pattern), then Fable forks fan out by family with

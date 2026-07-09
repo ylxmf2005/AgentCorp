@@ -42,11 +42,14 @@ The distilled judgment of every lane, in one place. Under `direct` these are you
 - Complexity must pay for itself, and "unused"/"necessary" is settled by a command you ran, not an impression.
 - Every hunk traces to approved intent: would a fresh start still write this line?
 - Quote the written rule; copy the local convention; never unify other people's patterns as a drive-by.
+- A comment earns its place by saying what the code cannot; everything else is noise that buries the real ones.
 - Fail loudly. No silent fallback, no swallowed error, no fake success path — an explicit failure is information, a quiet one is a landmine.
 - Every change has a future cost; a finding names who bears it and who accepted it on purpose.
+- Verification is designed from the risk before the code exists; a check a tester cannot follow verbatim tests nothing.
 - A fix's verdict is earned on both sides — fails before, passes after; an API 200 is not a user journey.
 - Agreement is not evidence: reviewers can share one wrong premise; verify at the original source.
 - Deviations are recorded, never absorbed: "the plan said X, I found Y, I did Z, because W."
+- A gap in the approved sources is named or blocks — never filled with invented architecture or scope.
 - Recommendations are reaction material, never decisions; unknowns are dug out of the territory and taught back, not interviewed out of the sponsor.
 
 ## The sponsor's unknowns

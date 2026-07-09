@@ -39,7 +39,7 @@ One of exactly four. `needs_more_evidence` and `blocked` route differently — t
 
 Always on, every diff: **Correctness · Standards · Simplicity · Change Hygiene · Project Stewardship**.
 
-Add by the change's actual risk — never all-on by default: **Reliability** (I/O, retries, async, recovery) · **Security** (auth, injection, secrets, untrusted input) · **Performance** (hot paths, queries, scale) · **API Contract** (routes, schemas, CLI, external interfaces) · **Adversarial** (high-risk, cross-sequence, abusable) · **Taste** (works, but shaped as a hack — the counterweight to the smallest-diff pull) · **Comment Reviewer** (substantive comments, docs, or TODO/FIXME added) · **Test Planner** (risk or coverage assumptions changed).
+Add by the change's actual risk — never all-on by default: **Reliability** (I/O, retries, async, recovery) · **Security** (auth, injection, secrets, untrusted input) · **Performance** (hot paths, queries, scale) · **API Contract** (routes, schemas, CLI, external interfaces) · **Adversarial** (high-risk, cross-sequence, abusable) · **Taste** (works, but shaped as a hack — the counterweight to the smallest-diff pull) · **Comment Optimizer** (substantive comments, docs, or TODO/FIXME added — its default mode edits directly, so the assignment must say it is a review-only pass) · **Test Planner** (risk or coverage assumptions changed).
 
 The roster is a map, not a cap: convene whatever lens the change's actual risk demands, and on a large diff you may split one lane into parallel instances by axis — never redundant whole-diff passes that differ only in tone.
 
