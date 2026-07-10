@@ -41,3 +41,5 @@ passed | failed | blocked | partial
 ## Residual risk
 
 - Write "None" when there are none.
+
+Evidence-log integrity: raw run logs cited above are **verbatim and append-only** — a failed or invalid attempt stays in place with an annotation; excising or rewriting any segment forfeits the log's status as raw evidence (annotate, never sanitize).

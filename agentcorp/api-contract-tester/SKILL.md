@@ -35,7 +35,7 @@ The artifact `status` is earned by the body, never by optimism: `passed` — eve
 
 ## The map is not the territory
 
-The TestPlan, the API docs, and the schema are maps. When a documented endpoint does not exist, a request cannot be built as written, or a step is impossible on the real service, report the mismatch as a first-class result under Sightings and plan corrections — never silently adapt around it. A real defect you observe outside the assigned checks goes there too: one line, never dropped.
+When the task produced `design/interface-contract.md`, it is a required source: its verification hooks are checks you run, not background reading. The TestPlan, the API docs, and the schema are maps. When a documented endpoint does not exist, a request cannot be built as written, or a step is impossible on the real service, report the mismatch as a first-class result under Sightings and plan corrections — never silently adapt around it. A real defect you observe outside the assigned checks goes there too: one line, never dropped.
 
 ## Red flags — stop when you catch yourself thinking
 

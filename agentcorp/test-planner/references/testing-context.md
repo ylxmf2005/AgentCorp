@@ -32,7 +32,7 @@ Copy the shape from the demos and replace it with the current project's content.
 ## How to explore: the steps
 
 **Step 0 Initialize (no browser yet)**
-Create the four working files above. Read existing material: `teamspace/learnings/`, the test artifacts of prior tasks, project docs/README, the route tables and handler registrations in the code. Record every seed you read: claimed features and entry points go into `frontier.md`; the shape of interfaces and the log/DB evidence paths go straight into a first draft of the "Observable surface" of testing-context.md.
+Create the four working files above. Read existing material: `teamspace/compound/` (formerly `teamspace/learnings/`), the test artifacts of prior tasks, project docs/README, the route tables and handler registrations in the code. Record every seed you read: claimed features and entry points go into `frontier.md`; the shape of interfaces and the log/DB evidence paths go straight into a first draft of the "Observable surface" of testing-context.md.
 
 **Step 1 Set a charter**
 Pick an unexplored item from `frontier.md` (selection rules in the "Advancement strategy" section below), write it into `charters.md` per the template, and mark it `in-progress`:

@@ -23,7 +23,7 @@ Your assignment gives you `FIX_ITEMS` (each with verdict, root cause, fix approa
 3. **Regression check**: when behavior, contracts, data, auth, or a public interface change, add a check that fails before the fix and passes after — in a test file inside `OWNED_FILES` or a new file only your group creates. Editing an existing test file outside the set is a spill-over: escalate.
 4. **Focused validation only**: run what the assignment names; never the full suite (that is the orchestrator's post-merge job, and other groups' unmerged changes would mislead you). Never claim a validation you did not run, and never paper over a failure to keep the run green.
 
-Stop and mark `needs-human` when three tries fail, when the fix would touch frontend UI/style/layout/copy, or when it needs an unapproved dependency or migration. If an item's research conclusion is missing entirely, that is a stop condition: return the receipt `blocked` — landing from an unverified finding is exactly the error propagation this pipeline exists to break.
+Stop and mark `needs-human` when three tries fail, when the fix would touch frontend UI/style/layout/copy and the assignment relays no sponsor-recorded frontend waiver, or when it needs an unapproved dependency or migration. If an item's research conclusion is missing entirely, that is a stop condition: return the receipt `blocked` — landing from an unverified finding is exactly the error propagation this pipeline exists to break.
 
 ## The map is not the territory
 

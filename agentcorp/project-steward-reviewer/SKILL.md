@@ -30,7 +30,7 @@ On entering the review, load `references/stewardship-rubric.md` and select the d
 
 ## The map is not the territory
 
-The requirements and the approved design are maps drawn for today's delivery; long-term cost is exactly what they tend not to show. When the approved plan itself writes an unaffordable commitment into the project, say so — that the commitment was approved upstream makes it *more* worth surfacing, not less. Whether the feature is wanted was decided upstream; whether it *fits and can be afforded* is your question.
+The requirements and the approved design are maps drawn for today's delivery; long-term cost is exactly what they tend not to show. When the approved plan itself writes an unaffordable commitment into the project, say so — that the commitment was approved upstream makes it *more* worth surfacing, not less. Whether the feature is wanted was decided upstream; whether it *fits and can be afforded* is your question. And "taste" in your iron law means an unpriced preference — `taste-reviewer`'s lane prices shape into concrete failure paths, so a priced finding from that lane is not the taste your law forbids; do not talk it down by name.
 
 ## Red flags — stop when you catch yourself thinking
 

@@ -64,14 +64,14 @@ Only three cases permit passing parameters explicitly: the sponsor explicitly re
 Roles split across two runtime layers, both invoked per the runtime-inheritance principle above without specifying extra model parameters:
 
 - **Claude (decision layer)**: Delivery Orchestrator, Test Planner, Test Plan Reviewer, Solution Architect, Implementation Planner, Plan Review Lead, Code Review Lead, Test Leader, Review Researcher, Acceptance Review Lead, Adversarial Reviewer, Parallel Researcher, Simplicity Reviewer, Project Steward Reviewer, Taste Reviewer, Comment Optimizer — go through the native subagent/Agent capability of the current Claude environment.
-- **Codex (execution layer)**: Implementation Engineer, Review Fixer, Correctness Reviewer, Security Reviewer, Performance Reviewer, Reliability Reviewer, Standards Reviewer, API Contract Reviewer, API Contract Tester, E2E Tester, Regression Tester — go through the native subagent/CLI/skill capability of the current Codex environment; when no Codex channel is present in the host, degrade to a local subagent invocation of the same skill, with the protocol unchanged.
+- **Codex (execution layer)**: Implementation Engineer, Review Fixer, Correctness Reviewer, Security Reviewer, Performance Reviewer, Reliability Reviewer, Standards Reviewer, API Contract Reviewer, API Contract Tester, E2E Tester, Regression Tester — go through the native subagent/CLI/skill capability of the current Codex environment; when no Codex channel is present in the host, degrade to a local subagent invocation of the same skill, with the protocol unchanged. When the host exposes **no subagent channel at all**, the phase's coordinator executes the work itself under the same skill and protocol, discloses author=judge in both the artifact and the receipt (attributing `author_agent` to the executing coordinator), and the next independent gate spot-checks that evidence — a bespoke authorization clause invented per-assignment is not a substitute for this rule.
 
 Review independence cannot be compromised in any of the three modes; only the adjudicator changes: under `partial-delegation`/`full-delegation`, `test-plan-review`, `plan-review`, `code-review`, and `acceptance-review` always go to their review owners; under `direct` these phases have the Delivery Orchestrator produce a draft conclusion itself, but **a draft is not approval** — each review phase's human gate must stay active and be adjudicated by the sponsor, and these gates cannot be skipped under `direct`. In any mode, the Delivery Orchestrator never approves its own artifacts or evidence.
 
 The two phases that handle code-review findings, `review-research` and `fix`, are both **delegated** out under `partial-delegation`/`full-delegation`; the Delivery Orchestrator does not verify or write fix code itself (under `direct` it does them itself, but keeps the same order and artifacts: research first, producing a per-issue verdict, then the sponsor's human gate, then fix lands). The division of labor:
 
 - `review-research` is delegated as a whole to `review-researcher`: it adversarially re-checks each finding independently, kills the false positives, and produces `review/research/` (verdict + fix recommendation + per-issue explanation). This is the circuit breaker against error propagation and must be done independently and thoroughly.
-- `fix` is **orchestrated in parallel by the Delivery Orchestrator**: the Orchestrator does not write fix code itself, but **partitions the confirmed/partially-valid fix items into mutually non-overlapping groups by file ownership**, dispatches one `review-fixer` single worker per group to land them in parallel (ensuring two groups never touch the same file), and after all groups return, runs one merge validation and aggregates them into `review/fix-result.md`. A `review-fixer` is a single fix worker, and does not partition or dispatch on its own. See the Parallel Execution Protocol.
+- `fix` is **orchestrated in parallel by the Delivery Orchestrator**: the Orchestrator does not write fix code itself, but **partitions the confirmed/partial fix items into mutually non-overlapping groups by file ownership**, dispatches one `review-fixer` single worker per group to land them in parallel (ensuring two groups never touch the same file), and after all groups return, runs one merge validation and aggregates them into `review/fix-result.md`. A `review-fixer` is a single fix worker, and does not partition or dispatch on its own. See the Parallel Execution Protocol.
 
 The two have a **sequential dependency**: `fix` must come after `review-research`; `review-fixer` consumes only the verified `review/research/`, and if it can't find it, it stops — it does not verify the raw findings itself. This preserves the author separation between "independent verification" and "faithful landing."
 
@@ -155,6 +155,8 @@ For small, low-risk changes, consult the sponsor about whether to skip some upco
 
 Never silently skip a human gate. Record skipped gates in the Gate History of `task.md` and in `manifest.md`.
 
+A sponsor reply that does not address a gate's question maps to **no outcome**: record the gate as pending (or `blocked` on its dependent transition) and ask the one follow-up — a partial or asynchronous answer covers only the gates it actually speaks to, and Gate History entries may cite only clauses that exist in this document, never an unnamed "default-approve convention".
+
 When unattended (the sponsor is absent — automation-triggered, scheduled job, called by another process), no agent may answer a human gate. The sponsor may pre-approve named gates before the run starts (recorded in `task.md`'s Gate History, treated as `approved`); when reaching a gate that wasn't pre-approved, write the pending question and the current artifact paths into `task.md`, stop the dependent branch, continue any pre-approved or independent reversible work, then end the round and wait for the sponsor to return and adjudicate — "the sponsor would probably agree" is not a reason to cross the gate.
 
 Even when a gate is skipped or full automation is required, the following still require a pause before the affected transition: requirements confidence is LOW or the success criteria are unclear; priority, scope, or risk acceptance is unclear; a review owner returns `request_changes` or `needs_more_evidence`; verification fails or lacks necessary evidence; credentials, environment, or permissions are missing; Final delivery status needs reporting. The pause does not suspend unrelated reversible work.
@@ -173,10 +175,11 @@ Even when a gate is skipped or full automation is required, the following still 
 8. `implement`
 9. `code-review`
 10. `review-research` — when code-review produces findings that need handling; verify truth, give fix recommendations, explain per issue
-11. `fix` — land the fixes that `review-research` judged confirmed/partially-valid; must follow `review-research`
+11. `fix` — land the fixes that `review-research` judged confirmed/partial; must follow `review-research`
 12. `verify`
 13. `acceptance-review`
-14. `deliver`
+14. `compound` — soft phase: turn this round's lessons into active assets (regression tests, repo rules, sponsor-gated reviewer proposals); scaled to the task, never hard-gating `deliver`
+15. `deliver`
 
 ### `enhancement/delta-design`
 
@@ -190,10 +193,11 @@ Even when a gate is skipped or full automation is required, the following still 
 8. `implement`
 9. `code-review`
 10. `review-research` — when code-review produces findings that need handling; verify truth, give fix recommendations, explain per issue
-11. `fix` — land the fixes that `review-research` judged confirmed/partially-valid; must follow `review-research`
+11. `fix` — land the fixes that `review-research` judged confirmed/partial; must follow `review-research`
 12. `verify`
 13. `acceptance-review`
-14. `deliver`
+14. `compound` — soft phase: turn this round's lessons into active assets (regression tests, repo rules, sponsor-gated reviewer proposals); scaled to the task, never hard-gating `deliver`
+15. `deliver`
 
 Design artifacts are owned by the Solution Architect.
 
@@ -208,12 +212,13 @@ Design artifacts are owned by the Solution Architect.
 5. `implement`
 6. `code-review`
 7. `review-research` — when code-review produces findings that need handling; verify truth, give fix recommendations, explain per issue
-8. `fix` — land the fixes that `review-research` judged confirmed/partially-valid; must follow `review-research`
+8. `fix` — land the fixes that `review-research` judged confirmed/partial; must follow `review-research`
 9. `verify`
 10. `acceptance-review`
-11. `deliver`
+11. `compound` — soft phase: turn this round's lessons into active assets (regression tests, repo rules, sponsor-gated reviewer proposals); scaled to the task, never hard-gating `deliver`
+12. `deliver`
 
-Diagnosis defines the correctness and regression criteria. If the bug can't be reproduced or its boundary can't be pinned down, block to ask for more information rather than guess.
+Diagnosis defines the correctness and regression criteria, and `verify` consumes them directly. When the verification surface outgrows what the diagnosis criteria can carry — multi-surface regressions, layered environments — insert `test-plan` (+ `test-plan-review`) after `diagnose`: the Test Planner's declared ability to consume diagnosis criteria only runs when this insertion gives it a phase. If the bug can't be reproduced or its boundary can't be pinned down, block to ask for more information rather than guess.
 
 ### `addition/simple`
 
@@ -227,10 +232,11 @@ Diagnosis defines the correctness and regression criteria. If the bug can't be r
 8. `implement`
 9. `code-review`
 10. `review-research` — when code-review produces findings that need handling; verify truth, give fix recommendations, explain per issue
-11. `fix` — land the fixes that `review-research` judged confirmed/partially-valid; must follow `review-research`
+11. `fix` — land the fixes that `review-research` judged confirmed/partial; must follow `review-research`
 12. `verify`
 13. `acceptance-review`
-14. `deliver`
+14. `compound` — soft phase: turn this round's lessons into active assets (regression tests, repo rules, sponsor-gated reviewer proposals); scaled to the task, never hard-gating `deliver`
+15. `deliver`
 
 When it affects more than 3 modules, or an existing interface must change, escalate to `enhancement/delta-design`.
 
@@ -240,19 +246,20 @@ When it affects more than 3 modules, or an existing interface must change, escal
 | --- | --- | --- | --- | --- |
 | `validate-requirements` | Delivery Orchestrator (writes personally, see `references/validate-requirements.md`) | task description, issue, or requirement draft | validated requirements with confidence, user journeys, and constraints, plus a flow diagram when it clarifies intent | confidence MEDIUM/HIGH; no blocker questions; inputs/outputs/constraints/success criteria understood; user journeys observable; if multiple solution paths were plausible, sponsor selected a path or authorized a hybrid; diagrams included whenever they make a journey, scope, state, or before/after behavior easier to understand, any number, with syntax and readability validated |
 | `test-plan` | Test Planner | validated requirements or diagnosis criteria, project testing context (`teamspace/testing-context.md`, explore to fill it in first if missing) | a TestPlan file set: the overall strategy (risk-ordered checks, required layers, environment needs, explicit gaps) plus the API/E2E/Regression playbooks | Must Haves observable; forbidden zones specific; no unjustified coverage gaps; playbooks runnable as written (E2E execution shape explicit, user input given verbatim) |
-| `test-plan-review` | Test Plan Reviewer | validated requirements, the TestPlan file set, project constraints | `approve`, `request_changes`, or `needs_more_evidence` | the test plan is executable, covers the requirements/risk surface, and has no test theater |
+| `test-plan-review` | Test Plan Reviewer | validated requirements, the TestPlan file set, project constraints | `approve`, `request_changes`, `needs_more_evidence`, or `blocked` | the test plan is executable, covers the requirements/risk surface, and has no test theater |
 | `architecture` | Solution Architect | validated requirements and the approved TestPlan | a reader-facing design: context, goals, key decisions, module boundaries, interfaces, data/state flows, compatibility, trade-offs, risks, verification-relevant constraints | required decisions explicit; the design is thorough and clear enough for the sponsor and Implementation Planner to work from; diagrams included whenever they make structure, sequencing, ownership, data/state flow, or before/after change easier to inspect, any number, validated; each step states the action/output/boundary, not just a function name |
 | `impact-analysis` | Solution Architect | validated requirements, the approved TestPlan, existing code context | a delta record: affected modules, interface/data changes, behavior to preserve, risks, complexity, plus a useful delta diagram or flow description | affected modules and interface changes explicit; current and target behavior understandable; risk assessment present; a diagram or precise flow description makes the delta inspectable; use a before/after comparison only when it directly explains the change; complexity S/M or escalated |
 | `diagnose` | Solution Architect | bug report, reproduction steps, observed failure | a diagnosis: verified hypotheses, evidence, root cause, proposed fix, affected files, regression criteria, plus a useful failure/fix diagram or flow description | the root cause's causal chain has evidence; no guessing; reproduction status recorded; the failure path and corrected behavior are understandable; diagrams are complete, not placeholders |
-| `interface-contract` | Solution Architect | the architecture or impact document plus the interface requirements | a Markdown interface contract artifact: public/shared interfaces, request/response schemas, auth/error semantics, compatibility behavior, verification hooks | every public/shared/cross-module interface has a contract with signature, schema, protocol shape, ownership, compatibility, and auth/error semantics; shared types centralized; the API Contract Reviewer/Tester can verify without guessing |
+| `interface-contract` | Solution Architect | the architecture or impact document plus the interface requirements | a Markdown interface contract artifact: public/shared interfaces, request/response schemas, auth/error semantics, compatibility behavior, verification hooks | every public/shared/cross-module interface has a contract with signature, schema, protocol shape, ownership, compatibility, and auth/error semantics; shared types centralized; the API Contract Reviewer/Tester can verify without guessing; because this phase lands after the TestPlan in every paradigm, the Orchestrator hands the finished contract back for a TestPlan contract-delta pass — API/contract checks written before the contract existed are provisional until then |
 | `implementation-plan` | Implementation Planner | validated requirements, the approved TestPlan, design artifacts/contracts | an Implementation Story Spec: goals, scoped ACs, ordered tasks, target modules, constraints, verification expectations given by reference | the first task is unambiguous; target paths/modules named; no open questions that change the implementation direction |
-| `plan-review` | Plan Review Lead | the Implementation Story Spec plus requirements, TestPlan, design artifacts/contracts | `approve`, `request_changes`, or `needs_more_evidence` | the Story Spec gives the Implementation Engineer enough context to not invent architecture itself |
+| `plan-review` | Plan Review Lead | the Implementation Story Spec plus requirements, TestPlan, design artifacts/contracts | `approve`, `request_changes`, `needs_more_evidence`, or `blocked` | the Story Spec gives the Implementation Engineer enough context to not invent architecture itself |
 | `implement` | Implementation Engineer | the approved Implementation Story Spec and the Plan Review Lead decision | working code, focused tests, an implementation result recording changed files/commands/deviations/blockers | consistent with the approved Story Spec/contracts; focused tests/checks run or blockers recorded |
 | `code-review` | Code Review Lead | the diff, changed files, Story Spec, requirements, TestPlan, design/diagnosis, local standards | a review decision plus graded findings | review complete; correctness, standards, simplicity, change hygiene, and project stewardship considered; must-fix items handled via `review-research`/`fix` or decided as request_changes |
-| `review-research` | Review Researcher (when findings are many, the Delivery Orchestrator orchestrates in parallel by code domain and aggregates the index) | code-review findings (required), the diff, design principles/conventions | `review/research/`: **one per-issue file per finding** (verdict + root-cause-level fix recommendation + a human-readable explanation for someone unfamiliar) + `00-index.md` | each finding has an evidence-backed verdict landed on real code, written per item (not bundled), with context; false-positive/partially-valid items explain why; confirmed/partially-valid items get an elegant fix recommendation; missing out-of-repo context is marked for human confirmation rather than forced to a conclusion |
-| `fix` | Delivery Orchestrator coordinating parallel Review Fixer workers | `review/research/` (required, with verdicts and fix recommendations) + human comments; the changed-file list | per-group `review/fix-records/<group>.md` + the aggregate `review/fix-result.md` + backend code changes (left in the working tree) | `review/research/` found and consumed (if missing, stop and require `review-research` first); confirmed/partially-valid items partitioned into mutually non-overlapping groups by file ownership, parallel workers dispatched to land them, no concurrency on the same file; each worker lands faithfully, fixing the root cause rather than patching; merge validation run once and passing; no commits, no touching the frontend |
-| `verify` | Test Leader coordinating testers | the implementation, the TestPlan or diagnosis criteria, the environment spec | verification results given per capability/integration/E2E/regression | required checks pass; E2E run when needed; gaps explicit; no fabricated or assumed success; each passed/failed result names its result-file path or output excerpt (e.g. verification/test-results/<tester>.md), not a bare pass/fail; a behavior claim that can only be verified in an environment the local box lacks (e.g., a real browser, headless renderer, GPU, or prod-like service) MUST run in that environment or be marked status=unverified and may not pass any gate; user verbal confirmation is not evidence |
-| `acceptance-review` | Acceptance Review Lead | requirements, TestPlan, Story Spec, implementation notes, the code review decision, verification evidence, residual risks | `accept`, `reject`, `needs_more_evidence`, or `blocked` | evidence supports every Must Have and the scoped risks; for defect-class tasks, the original failing input has been re-run against the fix and produces correct output; residual risk acceptable |
+| `review-research` | Review Researcher (when findings are many, the Delivery Orchestrator orchestrates in parallel by code domain and aggregates the index) | code-review findings (required), the diff, design principles/conventions | `review/research/`: **one per-issue file per finding** (verdict + root-cause-level fix recommendation + a human-readable explanation for someone unfamiliar) + `00-index.md` | each finding has an evidence-backed verdict landed on real code, written per item (not bundled), with context; false-positive/partial items explain why; confirmed/partial items get an elegant fix recommendation; missing out-of-repo context is marked for human confirmation rather than forced to a conclusion |
+| `fix` | Delivery Orchestrator coordinating parallel Review Fixer workers | `review/research/` (required, with verdicts and fix recommendations) + human comments; the changed-file list | per-group `review/fix-records/<group>.md` + the aggregate `review/fix-result.md` + backend code changes (left in the working tree) | `review/research/` found and consumed (if missing, stop and require `review-research` first); confirmed/partial items partitioned into mutually non-overlapping groups by file ownership, parallel workers dispatched to land them, no concurrency on the same file; each worker lands faithfully, fixing the root cause rather than patching; merge validation run once and passing; no commits; no touching the frontend unless the sponsor explicitly authorized frontend scope for this task at a recorded gate and the assignment relays that waiver |
+| `verify` | Test Leader coordinating testers | the implementation, the TestPlan or diagnosis criteria, the environment spec; when a `fix` phase ran, also `review/fix-result.md` + `review/fix-records/` — the tree under verification is the post-fix tree, and the Implementation Result alone no longer describes it | verification results given per capability/integration/E2E/regression | required checks pass; E2E run when needed; gaps explicit; no fabricated or assumed success; each passed/failed result names its result-file path or output excerpt (e.g. verification/test-results/<tester>.md), not a bare pass/fail; a behavior claim that can only be verified in an environment the local box lacks (e.g., a real browser, headless renderer, GPU, or prod-like service) MUST run in that environment or be marked status=unverified and may not pass any gate; user verbal confirmation is not evidence |
+| `acceptance-review` | Acceptance Review Lead | `acceptance/acceptance-package.md` — the Delivery Orchestrator assembles it before dispatching this phase, so the lead's required input always has an obligated producer — plus requirements, TestPlan, Story Spec, implementation notes, the code review decision, verification evidence including `verification/verification-report.md`, fix results when a `fix` ran, residual risks | `accept`, `reject`, `needs_more_evidence`, or `blocked` | evidence supports every Must Have and the scoped risks; for defect-class tasks, the original failing input has been re-run against the fix and produces correct output; residual risk acceptable |
+| `compound` | Delivery Orchestrator (writes personally like `deliver`: no assignment/receipt, manifest entry required) | the finished round's artifacts (diagnosis, fix results, review research) plus mid-task compound notes | `compound/compound-result.md` (`artifact_type: CompoundResult`): regression tests landed in the target repo, rules landed in the target repo's `CLAUDE.md`/`AGENTS.md`, reviewer-trigger proposals awaiting the sponsor, persistent entries under `teamspace/compound/` — or an honest "无可沉淀" with the reason | soft phase on the deliver path only: skipping is visible (the delivery report's compound line stays empty) but `deliver` is never hard-gated on it; a one-line change compounds as one line; AgentCorp-self-modifying assets land only as proposals pending an explicit sponsor yes (see `references/compound.md`) |
 | `deliver` | Delivery Orchestrator | the accepted implementation and evidence | a delivery report | the report and the final sponsor reply explicitly list artifact paths — code location, verification/test-result paths, review/MR paths — plus tests, deviations, follow-ups, and residual risks; any claim with no inspectable path is recorded as a gap, never stated as passed |
 
 ### Phase Completion Hint
@@ -282,7 +289,7 @@ Keep the live reconciliation state in `task.md` under Artifact Coherence: trigge
 ## Stage Owners
 
 - The Delivery Orchestrator owns classification, mode selection, gatekeeping, and final delivery in all three modes.
-- The Delivery Orchestrator directly owns `validate-requirements` and writes the artifact personally — on entering that phase, load `references/validate-requirements.md` (confidence, when to block, the gate adjudicated by the sponsor; shape per the demo, bar per the Phase Catalog).
+- The Delivery Orchestrator directly owns `compound` (load `references/compound.md` on entering it) and `validate-requirements` and writes the artifact personally — on entering that phase, load `references/validate-requirements.md` (confidence, when to block, the gate adjudicated by the sponsor; shape per the demo, bar per the Phase Catalog).
 - Under `partial-delegation`, the Delivery Orchestrator also personally writes `test-plan`, the design/diagnosis/contracts when needed, `implementation-plan`, `implement`, and `verify` artifacts.
 - Under `direct`, the Delivery Orchestrator executes every phase itself; for review-type phases it produces a draft from the corresponding review perspective, with approval resting on the sponsor's human gate.
 - Under `full-delegation`, the Test Planner owns `test-plan`; the Solution Architect owns the design/analysis artifacts; the Implementation Planner owns the Implementation Story Spec; the Implementation Engineer owns `implement`; the Test Leader owns verification coordination; the API Contract Tester, E2E Tester, and Regression Tester execute their assigned verification.
@@ -322,11 +329,12 @@ teamspace/tasks/<task_id>/
     implementation-result.md
   review/
     plan-review.md
+    plan-review-findings/          # plan-review specialists (kept apart from code-review's)
     code-review.md
     specialist-findings/
     research/
       00-index.md
-      <number>-<slug>.md
+      <id>-<verdict>-<slug>.md
     fix-result.md
     fix-records/
   walkthrough/                    # optional teaching artifact for the change (walkthrough capability)
@@ -338,11 +346,13 @@ teamspace/tasks/<task_id>/
   acceptance/
     acceptance-package.md
     acceptance-decision.md
+  compound/
+    compound-result.md
   delivery/
     delivery-report.md
 ```
 
-Use only the files/subdirectories the task needs. Keep paths inside artifacts and handoffs relative. Outside the task directory, `teamspace/testing-context.md` is the project-level testing context (the basis for the test-plan phase, reused across tasks and maintained incrementally), and `teamspace/learnings/` is the learnings layer. `teamspace/` is local coordination state: if it shows up in git status, add `teamspace/` to `.git/info/exclude` for that local repo or worktree; never stage or commit it.
+Use only the files/subdirectories the task needs. Keep paths inside artifacts and handoffs relative. Outside the task directory, `teamspace/testing-context.md` is the project-level testing context (the basis for the test-plan phase, reused across tasks and maintained incrementally), and `teamspace/compound/` is the cross-task compound store (successor of `teamspace/learnings/`; migrate old entries opportunistically). `teamspace/` is local coordination state: if it shows up in git status, add `teamspace/` to `.git/info/exclude` for that local repo or worktree; never stage or commit it.
 
 `task.md` is also the live execution ledger. Update its Execution Progress after each completed, failed, or blocked work unit with the evidence handle or blocker. The approved Implementation Story Spec remains stable planning input; never turn its checkboxes or prose into runtime state.
 
@@ -358,7 +368,7 @@ Use the local demos rather than restating the shape:
 
 Copy the shape, then replace the example values with the current task's phases, owners, statuses, and paths.
 
-`artifact_type` values: what the Orchestrator produces is `TaskRecord`, `TaskManifest`, `PhaseAssignment`, or `AcceptancePackage`, with `author_agent: delivery-orchestrator`; a delegated phase's receipt is written back by its owner, with `from_agent` being that owner and `phase` being the assignment's phase. At final delivery, write `delivery/delivery-report.md`, covering Status, Code/Artifact Location, what was delivered, the verification results, gaps, follow-ups, and the key artifact paths.
+`artifact_type` values: what the Orchestrator produces is `TaskRecord`, `TaskManifest`, `PhaseAssignment`, `AcceptancePackage`, `FixResult` (`review/fix-result.md`), `CompoundResult` (`compound/compound-result.md`), or `DeliveryReport` (`delivery/delivery-report.md`), with `author_agent: delivery-orchestrator`; a delegated phase's receipt is written back by its owner, with `from_agent` being that owner and `phase` being the assignment's phase. At final delivery, write `delivery/delivery-report.md`, covering Status, Code/Artifact Location, what was delivered, the verification results, gaps, follow-ups, and the key artifact paths. Merging or pushing the product code is not part of `deliver`: it stays with the sponsor unless they explicitly order it, and an ordered push runs the Fix-Loop Protocol's pre-publish SCM gate first.
 
 ## Phase Handoff Discipline
 
@@ -392,7 +402,7 @@ The one-line criterion: **does the downstream "judge it again independently" or 
 1. Capability: every per-module Must Have and failure/edge case is checked directly.
 2. Integration/API: every cross-module or public-contract flow has both success and error-propagation checks.
 3. E2E: every user-facing capability appears in at least one complete user goal, with both happy and error paths.
-4. When a change involves UI, do a frontend visual/interaction check.
+4. When a change involves UI, do a frontend visual/interaction check. The corpus ships no frontend owner: when nobody in the host can run or act on this check, record it as an explicit gap (or `status=unverified`) instead of skipping it silently — finding a frontend defect nobody may fix is a sponsor decision, not a dead end to hide.
 
 Don't advance to a higher layer while a required lower-layer check still fails. When a scenario can't be run, record the reason and treat it as a gap, unless explicitly accepted.
 
@@ -419,7 +429,7 @@ Each parallel implementation session receives exactly these inputs:
 
 1. **Take the findings**: take all findings to verify from the code-review findings.
 2. **Dedup and merge into clusters by code domain**: when multiple findings across reviewers point at the same file / the same call chain, group them into one cluster (e.g. "convert polling," "asset clone lock," "batch status contract"). A cluster exists so that one worker reads that shared batch of code once and covers multiple findings, rather than 33 findings each spawning an agent that re-reads the same files.
-3. **Dispatch `review-researcher` in parallel**: one assignment per cluster, giving `FINDINGS` (the full text of each finding in this cluster + reviewer evidence, as leads only), `CODE_SCOPE` (the relevant code range for this cluster), `DESIGN_PRINCIPLES` (the documented design principles), the discipline of independent adversarial re-checking, and `OUTPUT_DIR=review/research/`. **Write the hard constraint into the assignment: the worker writes one per-issue file `review/research/<number>-<slug>.md` for each finding in its cluster, and is not allowed to write a bundle/cluster file.** Respect the harness concurrency limit; if parallelism isn't supported, go serial, with the protocol unchanged.
+3. **Dispatch `review-researcher` in parallel**: one assignment per cluster, giving `FINDINGS` (the full text of each finding in this cluster + reviewer evidence, as leads only), `CODE_SCOPE` (the relevant code range for this cluster), `DESIGN_PRINCIPLES` (the documented design principles), the discipline of independent adversarial re-checking, and `OUTPUT_DIR=review/research/`. **Write the hard constraint into the assignment: the worker writes one per-issue file `review/research/<id>-<verdict>-<slug>.md` for each finding in its cluster (the verdict segment is the worker's own verdict, named per its skill), and is not allowed to write a bundle/cluster file.** Respect the harness concurrency limit; if parallelism isn't supported, go serial, with the protocol unchanged.
 4. **Aggregate the index**: each worker writes the per-issue files for its few findings and returns a receipt. After all return, **the Orchestrator aggregates `review/research/00-index.md` from all per-issue files** (index shape, same as the Review Researcher's own: one line per finding ordered P0→P1→P2 — one-sentence summary + verdict + an empty human-decision column + a link to the per-issue file). The Orchestrator does not invent a merged `SUMMARY.md`, nor assign a custom `artifact_type` to the index — the index is `00-index.md`.
 5. **Only proceed to fix after the human-review gate**: by default, stop at the review-research human gate to let the sponsor confirm the verdicts and fixes, then proceed to `fix`; don't chain straight from research to fix.
 
@@ -427,19 +437,21 @@ When receiving receipts, validate as usual with `scripts/validate-handoff.py` (a
 
 ### Parallelizing `fix` (same protocol, partitioned by file ownership)
 
-`fix` is also a parallel protocol orchestrated by the Delivery Orchestrator, not a special case outside a separate phase. Precondition: `review-research` has produced `review/research/`, in which there are fix items judged **confirmed/partially-valid**. The Orchestrator does the following:
+`fix` is also a parallel protocol orchestrated by the Delivery Orchestrator, not a special case outside a separate phase. Precondition: `review-research` has produced `review/research/`, in which there are fix items judged **confirmed/partial**. The Orchestrator does the following:
 
-1. **Take the items to fix**: take all confirmed/partially-valid items and their fix recommendations from `review/research/` (overlaid with human comments; false positives and "needs human confirmation" are not fixed). If `review/research/` can't be found, stop and run `review-research` first.
+1. **Take the items to fix**: take all confirmed/partial items and their fix recommendations from `review/research/` (overlaid with human comments; false positives and `needs-human` items are not fixed). If `review/research/` can't be found, stop and run `review-research` first.
 2. **Partition into mutually non-overlapping groups by file ownership**: list each item's primary file to change (and the foreseeable spill-over files); **items touching the same file go into the same group**, handled serially by the same worker. The file-occupancy sets of two groups must be disjoint.
-3. **Dispatch `review-fixer` single workers in parallel**: one assignment per group, giving exactly these inputs — `GROUP_SLUG`, `FIX_ITEMS` (this group's confirmed/partially-valid items and the research fix recommendations), `OWNED_FILES` (the file set this group is authorized to edit and no other group will touch), `REPO_CONVENTIONS`, `FOCUSED_VALIDATION` (the focused checks this group should run), `OUTPUT_PATH` (`review/fix-records/<group-slug>.md`). Respect the harness concurrency limit: queue when over the limit and fill as slots free up; if the harness doesn't support parallelism, go serial, with the protocol unchanged.
+3. **Dispatch `review-fixer` single workers in parallel**: one assignment per group, giving exactly these inputs — `GROUP_SLUG`, `FIX_ITEMS` (this group's confirmed/partial items and the research fix recommendations), `OWNED_FILES` (the file set this group is authorized to edit and no other group will touch), `REPO_CONVENTIONS`, `FOCUSED_VALIDATION` (the focused checks this group should run), `OUTPUT_PATH` (`review/fix-records/<group-slug>.md`). Respect the harness concurrency limit: queue when over the limit and fill as slots free up; if the harness doesn't support parallelism, go serial, with the protocol unchanged.
 4. **Collect + merge validation**: each worker writes its group's `fix-records/<group>.md` and returns a receipt. After all return, the Orchestrator **runs one** full-repo validation over the merged changes (syntax/import/types/relevant tests) to catch cross-group interactions. A failure that lands on a changed file → send the relevant group back to redo, or escalate; a failure that lands only on a file no one changed → record it as a pre-existing failure.
 5. **Aggregate**: the Orchestrator writes `review/fix-result.md`: aggregate each group's disposition by P0→P1→P2 (landed/sent back as needs-research/needs-human/false-positive reference), the merge validation result, and the residual risks. This aggregate belongs to the Orchestrator, not to any single worker.
 
 Workers don't collide on files because their occupancy sets are disjoint; if some worker's fix spills out of `OWNED_FILES`, it must stop and report rather than cross the boundary, and the Orchestrator re-partitions or reruns serially.
 
-## Learnings
+## Compound (沉淀)
 
-The pipeline terminates at `deliver`, but lessons survive across tasks in `teamspace/learnings/` — this is a built-in capability of the Delivery Orchestrator, not a phase, has no gate, and doesn't change the Phase Catalog. Two actions: at the start of `intake`/`validate-requirements`, **search** prior lessons by task keyword and feed relevant entries by path into the downstream assignment; at deliver wrap-up or when a qualifying lesson surfaces mid-task (an unexpected root cause, repeated rework, a repo trap), **capture** it. The bar, shape, dedup, and reflux rules are in `references/learnings.md`.
+Lessons used to live in a silent housekeeping note that almost never triggered — not a phase, gated by nothing, invisible when skipped. `compound` is now a **soft phase** between `acceptance-review` and `deliver` in every paradigm: the orchestrator walks to it naturally, it produces assets that change future behavior on their own (a bug becomes a regression test, a decision becomes a repo rule, a confirmed review pattern becomes a sponsor-gated reviewer proposal), and skipping stays visible without ever hard-gating `deliver`. The bar, the three active assets, dedup, reflux, and per-scale behavior are in `references/compound.md`.
+
+Two standing touchpoints live outside the phase: at the start of `intake`/`validate-requirements`, **search** `teamspace/compound/` by task keyword and feed relevant entries by path into the downstream assignment; **mid-task**, when a compoundable moment happens (a counterintuitive root cause, a batch of overturned false positives, a repo trap, `FAILED:` marks before a fresh-start handoff), jot the lightweight note then — the phase collects the scraps, it does not rely on end-of-task memory.
 
 ## Wrap-Up Navigation
 
@@ -448,7 +460,8 @@ The pipeline terminates at `deliver`, but lessons survive across tasks in `teams
 1. Status: delivered / delivered-with-risk / blocked / rejected.
 2. What was delivered: code location, key artifact paths, key verification.
 3. Deviations and residual risks: write none if there are none; otherwise give an owner or acceptance condition.
+3.5. Compound: one sentence on what this round compounded (tests/rules/proposals), or "无可沉淀".
 4. Recommended next step: one clear recommendation.
-5. Optional follow-ups: list 2-4 as needed, e.g. close the task, create a follow-up, run `walkthrough` (sponsor understanding + quiz gate), do another round of verification, capture/review learnings, return to a gate to revise.
+5. Optional follow-ups: list 2-4 as needed, e.g. close the task, create a follow-up, run `walkthrough` (sponsor understanding + quiz gate), do another round of verification, review the compound result, return to a gate to revise.
 
 If acceptance didn't pass or evidence is insufficient, the recommended next step cannot be "close out"; it must point to supplying evidence, revising, re-reviewing, or sponsor risk acceptance.

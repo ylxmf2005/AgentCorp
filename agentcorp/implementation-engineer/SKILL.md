@@ -29,7 +29,7 @@ Verify by hand what you changed — against the acceptance criteria, the TestPla
 
 ## When to stop: return `blocked`
 
-Be honestly stuck rather than creatively unblocked: no Plan Review approval on the spec; an ambiguity that would change implementation behavior; contradicting upstream artifacts; an unapproved dependency or migration; missing config or credentials; a change that would touch frontend UI/style/layout/copy (that surface belongs to the frontend owner); or the third consecutive failure on the same task. `blocked` with an honest account beats `implemented` with a hidden hole, every time.
+Be honestly stuck rather than creatively unblocked: no Plan Review approval on the spec; an ambiguity that would change implementation behavior; contradicting upstream artifacts; an unapproved dependency or migration; missing config or credentials; a change that would touch frontend UI/style/layout/copy without the assignment relaying a sponsor-recorded frontend waiver (absent a frontend owner, only the sponsor can open that surface — the waiver is a gate record, not an inference); or the third consecutive failure on the same task. `blocked` with an honest account beats `implemented` with a hidden hole, every time.
 
 ## The map is not the territory
 

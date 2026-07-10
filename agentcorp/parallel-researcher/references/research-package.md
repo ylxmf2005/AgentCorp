@@ -71,7 +71,7 @@ A statement like "this SDK supports X" appearing in a recommendation rationale w
 
 ## Teamspace Promotion
 
-A research package belongs to the current task by default. At wrap-up, judge once: does the documentation snapshot or an experiment conclusion have reuse value for the **next, different task** (the same technology is likely to come up again)? If so, copy the relevant part to `teamspace/knowledge/<tech>/` and note the source task and date in its INDEX.md; follow the same dedup rule as learnings — first check whether an old snapshot already exists in `teamspace/knowledge/`, and on high overlap update the old one rather than starting fresh. Conversely, **at the start of every research effort, check `teamspace/knowledge/` first**; on a hit, confirm the version is current and reuse it directly, saving a round of fetching.
+A research package belongs to the current task by default. At wrap-up, judge once: does the documentation snapshot or an experiment conclusion have reuse value for the **next, different task** (the same technology is likely to come up again)? If so, copy the relevant part to `teamspace/knowledge/<tech>/` and note the source task and date in its INDEX.md; follow the same dedup rule as the compound store — first check whether an old snapshot already exists in `teamspace/knowledge/`, and on high overlap update the old one rather than starting fresh. Conversely, **at the start of every research effort, check `teamspace/knowledge/` first**; on a hit, confirm the version is current and reuse it directly, saving a round of fetching.
 
 ## Pre-Delivery Self-Check (Research Package Part)
 

@@ -6,7 +6,7 @@ These files are the **human gate**: a person reads only this one file and then d
 
 Verdict values: **confirmed / false-positive / partial / needs-human**.
 
-Severity values: **P0** (data loss/corruption, security exposure, or a mainline path broken for real users) / **P1** (wrong behavior a real caller will hit, but bounded or with a workaround) / **P2** (edge case, quality, or hygiene). When your verdict corrects the reviewer's severity, use the corrected value everywhere — the frontmatter, the title tag, and the index row.
+Severity values: **P0** (data loss/corruption, security exposure, or a mainline path broken for real users) / **P1** (wrong behavior a real caller will hit, but bounded or with a workaround) / **P2** (edge case, quality, or hygiene). Reviewers grade on their own scale; translate before comparing (critical→P0, major→P1, minor→P2 — steward's P3 folds into P2). When your verdict corrects the reviewer's severity, use the corrected value everywhere — the frontmatter, the title tag, and the index row.
 
 ---
 

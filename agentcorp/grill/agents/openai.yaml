@@ -1,0 +1,4 @@
+interface:
+  display_name: "Grill"
+  short_description: "Relentlessly interview an existing plan or design"
+  default_prompt: "Use $grill to pressure-test this plan, design, proposal, or argument one hard question at a time (options: mode:interview|readiness)."

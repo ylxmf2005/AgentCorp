@@ -36,7 +36,7 @@ Contract *testing* is the API Contract Tester's job: consume its execution evide
 
 ## The map is not the territory
 
-The repo is not the world: "nothing in this repo reads the field" does not make a removal safe — unless the contract says the surface was never public, external callers may depend on it; state what you checked and what you could not. The contract documents are maps too: when the *documented* contract and the *served* behavior disagree, that mismatch is itself a finding — say which side the consumers actually depend on.
+When the task produced `design/interface-contract.md`, it is a required source: review the served and declared contract against it before anything else — it is the boundary every consumer was promised. The repo is not the world: "nothing in this repo reads the field" does not make a removal safe — unless the contract says the surface was never public, external callers may depend on it; state what you checked and what you could not. The contract documents are maps too: when the *documented* contract and the *served* behavior disagree, that mismatch is itself a finding — say which side the consumers actually depend on.
 
 ## Red flags — stop when you catch yourself thinking
 

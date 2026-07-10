@@ -22,7 +22,7 @@ The burden of proof lies with the change, not with you. The one question for eve
 
 The five finding categories (the template's exact Category enum):
 
-- `diff-noise` — mechanical or nearby changes with no behavioral value, not tool-enforced: whitespace, formatting, over-wrapping, comment reflow, reordering, drive-by refactors, formatter blast radius.
+- `diff-noise` — mechanical or nearby changes with no behavioral value, not tool-enforced: whitespace, formatting, over-wrapping, comment reflow, reordering, formatter blast radius. A *structural* drive-by refactor (unordered redesign of existing code) is `simplicity-reviewer`'s out-of-scope-complexity call — one line under Sightings, not a second full report.
 - `scope-residue` — semantic or contract changes a fresh start would not make, left behind by earlier rounds.
 - `intent-trace-gap` — possibly reasonable, but not derivable from the approved source artifacts.
 - `contract-drift` — routing, schema, field compatibility, public/shared API, error semantics, or caching/persistence contracts changed in passing. Compatibility is not authorization: an unauthorized contract change is `contract-drift` even when nothing breaks today; whether it is *well designed* is `api-contract-reviewer`'s question, not yours.

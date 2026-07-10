@@ -67,7 +67,7 @@ After loading `delivery-orchestrator`, read `references/workflow.md` before choo
 - For `delivery-orchestrator` handoffs, read `references/handoff-protocol.md` and the relevant template under `references/templates/`.
 - For `delivery-orchestrator` requirement validation, read `references/validate-requirements.md`.
 - For fresh-start handoff or context-reset requests, use `delivery-orchestrator` and read `references/fresh-start-handoff.md`.
-- For cross-task learnings, use `delivery-orchestrator` and read `references/learnings.md`.
+- For the `compound` phase or cross-task lessons (复盘/总结经验/沉淀), use `delivery-orchestrator` and read `references/compound.md`.
 - For `probe` reports, read `references/templates/probe-report.demo.md` before writing.
 - For `walkthrough` artifacts, read `references/artifact-format.md` before writing.
 - For `explain` persisted artifacts, read `references/artifact-format.md` before writing.
