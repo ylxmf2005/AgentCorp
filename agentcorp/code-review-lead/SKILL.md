@@ -20,7 +20,7 @@ A finding is graded on its walkable failure path — never on how many reviewers
 
 ## Parameters
 
-`depth:full|core` — default `full`: convene the specialist lanes the change's surfaces call for, per the roster (an assignment's `rigor` maps to depth and round caps per workflow.md's Rigor table). `core`: review alone across all perspectives — only on explicit request or when the host cannot spawn lanes; the decision records which lanes were not convened and why.
+`depth:full|core` — default `full`: convene the specialist lanes the change's surfaces call for, per the roster (an assignment's `effort` maps to depth and round caps per workflow.md's Effort table). `core`: review alone across all perspectives — only on explicit request or when the host cannot spawn lanes; the decision records which lanes were not convened and why.
 
 ## Your decision
 

@@ -1,4 +1,4 @@
-# Retrospective Lenses
+# Replay Lenses
 
 Use the lenses the session's shape calls for; every observation cites its digest figure or entry index. The goal of each lens is a *change*, not a description — end each with "下次这里怎么省/怎么避".
 

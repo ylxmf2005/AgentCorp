@@ -27,6 +27,7 @@ from_agent: delivery-orchestrator
 to_agent: implementation-engineer
 phase: implement
 status: assigned
+effort: high
 output_path: review/impl.md
 ---
 Goal, inputs, constraints — enough body to be a real assignment.
@@ -100,6 +101,8 @@ CASES = [
      sub("receipt", "status: completed", "status: assigned")),
     ("receipt status gibberish", "WARNED",
      sub("receipt", "status: completed", "status: totally_fine_trust_me")),
+    ("unknown effort value", "WARNED",
+     sub("assignment", "effort: high", "effort: extreme")),
     ("unknown phase on both sides", "WARNED",
      compose(sub("assignment", "phase: implement", "phase: vibing"),
              sub("receipt", "phase: implement", "phase: vibing"))),
@@ -113,6 +116,11 @@ CASES = [
              sub("artifact", "20260709-120000-fuzz", "my-cool-task"))),
     ("unknown artifact_type", "WARNED",
      sub("artifact", "artifact_type: ImplementationResult", "artifact_type: FooBarReport")),
+    ("replay skill and report type are known", "CLEAN",
+     compose(sub("assignment", "to_agent: implementation-engineer", "to_agent: replay"),
+             sub("receipt", "from_agent: implementation-engineer", "from_agent: replay"),
+             sub("artifact", "artifact_type: ImplementationResult", "artifact_type: ReplayReport"),
+             sub("artifact", "author_agent: implementation-engineer", "author_agent: replay"))),
     ("empty artifact body", "CAUGHT",
      sub("artifact", "Changed files, commands, deviations — a real body.", "")),
     ("output_path dir without trailing slash accepts nested artifact", "CLEAN",

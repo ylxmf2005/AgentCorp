@@ -5,7 +5,8 @@ author_agent: delivery-orchestrator
 status: active
 current_phase: validate-requirements
 workflow_mode: partial-delegation
-interaction_cadence: continuous
+interaction_pace: continuous
+effort: high
 ---
 
 # 任务：示例任务
@@ -30,9 +31,13 @@ interaction_cadence: continuous
 
 - partial-delegation（从以下选项中选一：direct | partial-delegation | full-delegation）
 
-## 交互 Cadence
+## 交互 Pace
 
 - continuous（从以下选项中选一：continuous | guided）
+
+## Effort
+
+- high（从以下选项中选一：low | medium | high | max）
 
 ## 阶段序列
 

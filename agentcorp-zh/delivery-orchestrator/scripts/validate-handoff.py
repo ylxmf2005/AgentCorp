@@ -43,6 +43,8 @@ KNOWN_STATUS = {
     "passed", "failed", "partial",
 }
 
+KNOWN_EFFORT = {"low", "medium", "high", "max"}
+
 # A TestExecutionResult with one of these statuses actually ran, so it must carry an
 # inspectable evidence handle in its body — not just a green/red status word.
 TEST_STATUS_NEEDS_EVIDENCE = {"passed", "failed", "partial", "completed"}
@@ -63,7 +65,7 @@ KNOWN_AGENTS = {
     "adversarial-reviewer", "api-contract-reviewer", "comment-optimizer",
     "review-researcher", "review-fixer", "test-leader", "api-contract-tester",
     "e2e-tester", "regression-tester", "acceptance-review-lead", "parallel-researcher",
-    "probe", "brainstorm", "explain", "walkthrough", "grill", "retrospect",
+    "probe", "brainstorm", "explain", "walkthrough", "grill", "replay",
     "authenticated-browser-session", "precommit-setup", "skill-evolution",
 }
 KNOWN_PHASES = {
@@ -80,7 +82,7 @@ KNOWN_ARTIFACT_TYPES = {
     "SpecialistReviewFindingSet", "SpecialistResearchReport", "ReviewResearchNote",
     "FixRecord", "FixResult", "TestExecutionResult", "VerificationReport",
     "AcceptanceDecision", "CompoundResult", "DeliveryReport", "ProbeReport",
-    "ChangeWalkthrough", "ResearchPackage", "ExplanationSet", "RetrospectiveReport",
+    "ChangeWalkthrough", "ResearchPackage", "ExplanationSet", "ReplayReport",
 }
 # Timestamp-first task ids browse in time order; the convention is load-bearing for
 # directory listings, so a violation warns loudly.
@@ -153,6 +155,9 @@ def check_shape(path, errors, warnings):
     status = scalars.get("status", "")
     if status and status not in KNOWN_STATUS:
         warnings.append(f"{path}: status '{status}' not in known set (typo? or update KNOWN_STATUS)")
+    effort = scalars.get("effort", "")
+    if effort and effort not in KNOWN_EFFORT:
+        warnings.append(f"{path}: effort '{effort}' not in known set low|medium|high|max")
     if atype == "PhaseReceipt" and status in RECEIPT_NOT_CONCLUDED:
         errors.append(f"{path}: a receipt with status '{status}' reports work that never concluded "
                       f"(receipts carry an outcome, not a start marker)")

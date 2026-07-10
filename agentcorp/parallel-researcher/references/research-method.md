@@ -7,7 +7,7 @@ This file is `parallel-researcher`'s execution manual: how to split a research q
 Choose the research type first, then split lanes. Do not put several researchers on the same broad question — when lanes have no independent question and source strategy of their own, what comes back is several near-identical, vague surveys.
 
 - Technology selection / SOTA: official docs, release notes, standards/RFCs, upstream issues/PRs, mainstream implementations, benchmarks, migration/deprecation information.
-- Open-source project scan: GitHub/GitLab repos, README, docs, examples, issues, discussions, release/changelog, stars/forks/activity, license, maintenance cadence.
+- Open-source project scan: GitHub/GitLab repos, README, docs, examples, issues, discussions, release/changelog, stars/forks/activity, license, maintenance pace.
 - Papers / academic: arXiv, Google Scholar, Semantic Scholar, OpenAlex, Crossref, ACM/IEEE/Springer/USENIX, Papers with Code, related surveys and benchmarks.
 - Engineering practice: official guides, code from mature projects, postmortems, conference talks, engineering blogs, Stack Overflow, HN/Reddit discussions.
 - Product / market / competitors: official sites, pricing, docs, changelog, case studies, G2/Capterra, industry reports, press releases, job postings, customer forums.
@@ -45,7 +45,7 @@ Searches must cover synonyms and reverse queries. For example: `<tech> best prac
 
 README, official docs, and paper abstracts are all the project's marketing face — saying "supports X" is not the same as having implemented X, let alone implemented it correctly. In the cases below, delivering at the web layer is the same as not having verified at all:
 
-- **A capability the recommendation depends on**: fully clone the candidate repo (into a temp directory) and locate the implementation of that capability and its tests in the source. Anything the README claims but you cannot find in the source/tests, write as "unconfirmed." Commit history is evidence too: `git log`/`git blame` answer maintenance cadence, which version introduced a key capability, and how a bug was fixed, directly. While there, look at the real usage in examples and issues — that is first-hand evidence beyond the docs.
+- **A capability the recommendation depends on**: fully clone the candidate repo (into a temp directory) and locate the implementation of that capability and its tests in the source. Anything the README claims but you cannot find in the source/tests, write as "unconfirmed." Commit history is evidence too: `git log`/`git blame` answer maintenance pace, which version introduced a key capability, and how a bug was fixed, directly. While there, look at the real usage in examples and issues — that is first-hand evidence beyond the docs.
 - **Papers / algorithms**: find the implementation first — the code link in the paper, Papers with Code, the authors' GitHub, a high-star reproduction. If there is an implementation, read the core algorithm file and check it against what the paper claims (how the metrics are computed, whether the key tricks are actually implemented, whether the hyperparameters are the set from the paper); if there is no public implementation, write "cannot be reproduced" explicitly into the evidence gaps — that itself is a fact that bears on the selection.
 - **Doubtful version behavior**: when blogs and Stack Overflow conflict, settle it by reading the upstream source or changelog at the current tag directly; do not pick whichever side has more people.
 

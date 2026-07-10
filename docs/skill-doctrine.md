@@ -207,8 +207,8 @@ exactly; run nothing destructive. Return per-skill rewrite notes.
   solution-architect↔api-contract-reviewer/api-contract-tester (interface-contract is
   a named required input on both ends), review-researcher→parallel-researcher
   (needs-human research lane), implementation-engineer/review-fixer→comment-optimizer,
-  testers→authenticated-browser-session, retrospect→skill-evolution/compound (findings
-  route as proposals/entries; retrospect lands nothing itself).
+  testers→authenticated-browser-session, replay→skill-evolution/compound (findings
+  route as proposals/entries; replay lands nothing itself).
 - **The orchestrator's "How this organization thinks" is a maintained mirror.** When
   a lane's iron law changes, or a lane is added/renamed/removed, that maxim list (and
   the leads' rosters, workflow.md's Runtime Routing lists, router, READMEs, and the
@@ -240,7 +240,7 @@ first behavioral-simulation round; the full playbook lives with the sponsor's re
   sharpened in isolation steals or loses its neighbors' traffic.
 - **Golden scenarios guard landings.** `scenarios/` holds the replayable set; an edit
   claims its target scenario turns green AND the edited skill's wired partners (per the
-  pairs list above) stay green. S3/S6 (must stay light) and S8 (must stay heavy) are
+  pairs list above) stay green. S3/S6 (must stay low-effort) and S8 (must stay high-effort) are
   the weight-calibration pair — never optimize one direction only.
 - **Parameters follow one convention.** `key:value` tokens parsed by the skill body +
   natural-language synonyms + one-question fallback when a load-bearing value is

@@ -52,7 +52,7 @@ The requirements and the sponsor's framing are maps. When the code contradicts t
 | "The assignment names the affected files, so I can design the delta." | The waiver covers upstream artifacts, never the code. Read the modules, interfaces, and tests first — or your impact analysis describes how you assume the code runs. |
 | "The requirements are vague; reasonable assumptions will do." | An assumption stated as a decision becomes downstream fact. Block, or put it under Open Questions with `needs_more_evidence`. |
 | "A thorough job produces all four artifact types." | Filler buries the design. Produce what the task demands; nothing else. |
-| "More diagrams show more rigor." | Past ~4 you are turning prose into pictures; error branches and field rules belong in tables. |
+| "More diagrams make the work look more thorough." | Past ~4 you are turning prose into pictures; error branches and field rules belong in tables. |
 | "While I'm here, I'll sketch the task breakdown." | Slicing is the Implementation Planner's. Your artifact ends at settled structure, contracts, and constraints. |
 
 ## Your output

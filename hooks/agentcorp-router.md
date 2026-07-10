@@ -50,8 +50,8 @@ After loading `delivery-orchestrator`, read `references/workflow.md` before choo
 | regression test, blast radius, existing behavior still works | `regression-tester` |
 | `acceptance-review`, `acceptance-decision.md`, release acceptance evidence (judging the evidence; a plain "帮我做验收/上线前验一下" usually means *producing* verification first → `delivery-orchestrator` chains verify → acceptance) | `acceptance-review-lead` |
 | `deliver`, `delivery-report.md`, final delivery summary | `delivery-orchestrator` |
-| `compound`, `compound-result.md`, 总结这次任务学到了什么, 沉淀经验, 下次别再踩坑, cross-task lessons (task-delivery lessons; "复盘这个 session/工作流本身" → `retrospect`) | `delivery-orchestrator` (read `references/compound.md`) |
-| session retrospective, 复盘这次会话/工作流, where did the time/tokens go, 时间花哪了, token 花哪了, 为什么这么久, what kept failing, 一直在哪失败, analyze the session trajectory | `retrospect` |
+| `compound`, `compound-result.md`, 总结这次任务学到了什么, 沉淀经验, 下次别再踩坑, cross-task lessons (task-delivery lessons; "复盘这个 session/工作流本身" → `replay`) | `delivery-orchestrator` (read `references/compound.md`) |
+| session replay, 复盘这次会话/工作流, where did the time/tokens go, 时间花哪了, token 花哪了, 为什么这么久, what kept failing, 一直在哪失败, analyze the session trajectory | `replay` |
 | understand this change, change explainer, walkthrough with a quiz, comprehension quiz, merge quiz, understanding gate, walkthrough viewer, HTML walkthrough, 讲懂这次改动, 帮我看懂这个分支, 考考我, 理解闸门 (tiebreak vs `explain`: wants to *master the whole change* → walkthrough; wants *one point translated / what did it do* → explain) | `walkthrough` |
 | plain-language explanation, zero-context explanation, explain for sponsor, persisted explanation, 落库解释, 白话解释, 看不懂, 方便看, what does this PR/branch/diff do, 这个分支/改动做了啥, 讲讲这个分支, 我没读代码 (tiebreak vs `walkthrough`: single-point translation → explain; "吃透整个改动+考我" → walkthrough) | `explain` |
 | probe the territory/codebase, blindspot pass, blind spot pass, terrain scan, unknown unknowns, unfamiliar codebase/module before starting, don't know what to ask, 盲区扫描, 探一探, 不知道从哪开始 (if the fog is *what to build* rather than *what's out there*, it's `brainstorm`) | `probe` |

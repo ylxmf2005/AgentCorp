@@ -62,7 +62,7 @@
     },
     {
       "type": "text", "id": "knobs_text", "x": 70, "y": 292, "width": 260, "height": 45,
-      "text": "mode / cadence\nrigor / lang", "originalText": "mode / cadence\nrigor / lang",
+      "text": "mode / pace\neffort / lang", "originalText": "mode / pace\neffort / lang",
       "fontSize": 15, "fontFamily": 3, "textAlign": "left", "verticalAlign": "top",
       "strokeColor": "#64748b", "backgroundColor": "transparent", "fillStyle": "solid",
       "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100, "angle": 0,
@@ -661,7 +661,7 @@
     },
 
     {
-      "type": "rectangle", "id": "evidence_shape", "x": 430, "y": 842, "width": 830, "height": 92,
+      "type": "rectangle", "id": "evidence_shape", "x": 430, "y": 842, "width": 800, "height": 92,
       "strokeColor": "#1e3a5f", "backgroundColor": "#1e293b", "fillStyle": "solid",
       "strokeWidth": 2, "strokeStyle": "solid", "roughness": 0, "opacity": 100, "angle": 0,
       "seed": 400101, "version": 1, "versionNonce": 400102, "isDeleted": false,
@@ -678,10 +678,10 @@
       "containerId": null, "lineHeight": 1.25
     },
     {
-      "type": "text", "id": "evidence_chain", "x": 458, "y": 891, "width": 770, "height": 24,
+      "type": "text", "id": "evidence_chain", "x": 458, "y": 891, "width": 720, "height": 22,
       "text": "assignment.yml  ->  validate-handoff.py  ->  artifact  ->  receipt.yml  ->  manifest.md",
       "originalText": "assignment.yml  ->  validate-handoff.py  ->  artifact  ->  receipt.yml  ->  manifest.md",
-      "fontSize": 16, "fontFamily": 3, "textAlign": "left", "verticalAlign": "top",
+      "fontSize": 14, "fontFamily": 3, "textAlign": "left", "verticalAlign": "top",
       "strokeColor": "#22c55e", "backgroundColor": "transparent", "fillStyle": "solid",
       "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100, "angle": 0,
       "seed": 400105, "version": 1, "versionNonce": 400106, "isDeleted": false,
@@ -689,23 +689,23 @@
       "containerId": null, "lineHeight": 1.25
     },
     {
-      "type": "arrow", "id": "arrow_compound_next", "x": 1160, "y": 797, "width": 120, "height": 99,
+      "type": "arrow", "id": "arrow_compound_next", "x": 1160, "y": 797, "width": 100, "height": 99,
       "strokeColor": "#047857", "backgroundColor": "transparent", "fillStyle": "solid",
       "strokeWidth": 2, "strokeStyle": "dashed", "roughness": 0, "opacity": 100, "angle": 0,
       "seed": 400107, "version": 1, "versionNonce": 400108, "isDeleted": false,
       "groupIds": [], "boundElements": null, "link": null, "locked": false,
-      "points": [[0, 0], [110, 0], [110, 99], [120, 99]], "startBinding": null, "endBinding": null,
+      "points": [[0, 0], [90, 0], [90, 99], [100, 99]], "startBinding": null, "endBinding": null,
       "startArrowhead": null, "endArrowhead": "arrow"
     },
     {
-      "type": "ellipse", "id": "next_intake_shape", "x": 1280, "y": 856, "width": 155, "height": 80,
+      "type": "ellipse", "id": "next_intake_shape", "x": 1260, "y": 856, "width": 155, "height": 80,
       "strokeColor": "#c2410c", "backgroundColor": "#fed7aa", "fillStyle": "solid",
       "strokeWidth": 2, "strokeStyle": "dashed", "roughness": 0, "opacity": 100, "angle": 0,
       "seed": 400109, "version": 1, "versionNonce": 400110, "isDeleted": false,
       "groupIds": [], "boundElements": null, "link": null, "locked": false
     },
     {
-      "type": "text", "id": "next_intake_text", "x": 1298, "y": 877, "width": 119, "height": 42,
+      "type": "text", "id": "next_intake_text", "x": 1278, "y": 877, "width": 119, "height": 42,
       "text": "next\nintake", "originalText": "next\nintake",
       "fontSize": 17, "fontFamily": 3, "textAlign": "center", "verticalAlign": "middle",
       "strokeColor": "#374151", "backgroundColor": "transparent", "fillStyle": "solid",

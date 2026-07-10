@@ -20,7 +20,7 @@ argument-hint: "[depth:full|core]"
 
 ## 参数
 
-`depth:full|core` —— 默认 `full`：按名册召集变更所涉及表面需要的专家通道（一份分配的 `rigor` 按 workflow.md 的 Rigor 表映射到 depth 和轮次上限）。`core`：独自一人走完所有视角——只在被明确要求、或宿主拉不起子代理通道时使用；决策里要记下哪些通道没有召集、以及原因。
+`depth:full|core` —— 默认 `full`：按名册召集变更所涉及表面需要的专家通道（一份分配的 `effort` 按 workflow.md 的 Effort 表映射到 depth 和轮次上限）。`core`：独自一人走完所有视角——只在被明确要求、或宿主拉不起子代理通道时使用；决策里要记下哪些通道没有召集、以及原因。
 
 ## 你的决策
 

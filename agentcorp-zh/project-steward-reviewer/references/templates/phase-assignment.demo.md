@@ -8,7 +8,7 @@ phase: code-review
 status: assigned
 output_path: review/specialist-findings/project-steward-reviewer.md
 output_language: zh-CN
-rigor: standard
+effort: high
 ---
 
 # 任务分配：code-review

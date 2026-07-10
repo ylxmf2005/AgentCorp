@@ -113,21 +113,21 @@ every downstream assignment:
 | Knob | Values | Decides |
 | --- | --- | --- |
 | `mode:` | `direct` \| `partial` \| `full` | you-as-reviewer / orchestrator executes, reviews delegated / every phase delegated |
-| `cadence:` | `continuous` \| `guided` | keep moving, report at checkpoints / one artifact at a time, taught |
-| `rigor:` | `light` \| `balanced` \| `standard` \| `strict` | how much redundancy and optional coverage the task buys |
+| `pace:` | `continuous` \| `guided` | keep moving, report at checkpoints / one artifact at a time, taught |
+| `effort:` | `low` \| `medium` \| `high` \| `max` | how much redundancy and optional coverage the task buys |
 | `lang:` | any | the language every human-facing artifact is written in |
 
-`rigor:light` gets you speed by trading redundancy — one review round, focused
+`effort:low` gets you speed by trading redundancy — one review round, focused
 verification, optional phases skipped. It never trades honesty: no tier can
 fabricate evidence, approve its own work, or skip re-running the original
 failing input — and a security/permission/data-loss surface **auto-upgrades its
-phases to strict, out loud**, whatever tier the task chose. Individual skills
+phases to max, out loud**, whatever tier the task chose. Individual skills
 take parameters the same way: `/agentcorp:probe output:inline`,
 `/agentcorp:walkthrough format:md quiz:off`, `/agentcorp:explain reader:newcomer`.
 
 Be honest about the bill: a delegated multi-reviewer pipeline costs real tokens
-and wall-clock. That is exactly what `rigor` prices — `light` approaches a
-single-agent session, `strict` buys an independent session per lane. Spend it
+and wall-clock. That is exactly what `effort` prices — `low` approaches a
+single-agent session, `max` buys an independent session per lane. Spend it
 where wrongness is expensive.
 
 ## The Trust Architecture
@@ -173,7 +173,7 @@ AgentCorp treats its own skills as a system under test:
   lessons become assets that change future behavior on their own: a fixed bug
   becomes a regression test, a discovered trap becomes a `CLAUDE.md` rule, a
   confirmed review pattern becomes a proposal for the reviewer that missed it.
-- **`retrospect` replays the session itself.** A deterministic extractor parses
+- **`replay` replays the session itself.** A deterministic extractor parses
   the runtime's own recordings (Claude Code project JSONL, Codex rollouts) into
   turns, wall-clock, token economics, tool errors, and stall points — then the
   analysis anchors every claim to a transcript entry. Memory is a hypothesis;
@@ -195,8 +195,8 @@ editing the asserts, a policy hidden in the docs that the goal-state satisfies
 by violating, and a defect verifiable only in a real browser. Alongside them:
 24 routing probes (realistic phrasings vs. the trigger table) and the validator
 fuzz suite. Any skill edit replays its scenario and its wired partners — the
-calibration pair (a one-liner that must stay light, a greenfield build that
-must go heavy) keeps the pipeline from ever being optimized in one direction only.
+calibration pair (a one-liner that must stay low-effort, a greenfield build that
+must stay high-effort) keeps the pipeline from ever being optimized in one direction only.
 
 ## Skills
 
@@ -243,7 +243,7 @@ needed to run it in real projects.
   - `probe` — investigates unfamiliar territory before work starts and teaches the sponsor the terrain: the corrections to their map, the surprises, what "good" looks like locally, and a living unknowns ledger
   - `brainstorm` — turns an unclear request into sponsor-approved, testable requirements by pressure-testing intent, scope, and viability one question at a time
   - `grill` — pressure-tests an existing plan, design, or argument through a relentless one-question-at-a-time interview with its owner, ending in an honest readiness verdict (`ready`/`needs-evidence`/`needs-redesign`/`blocked`)
-  - `retrospect` — replays a session's recorded trajectory (Claude Code JSONL / Codex rollouts) through a deterministic extractor: where time and tokens went, what kept failing, and what to improve — routed to skill-evolution proposals, project docs, or compound entries
+  - `replay` — replays a session's recorded trajectory (Claude Code JSONL / Codex rollouts) through a deterministic extractor: where time and tokens went, what kept failing, and what to improve — routed to skill-evolution proposals, project docs, or compound entries
   - `authenticated-browser-session` — holds a real logged-in browser session to verify authenticated flows without reading cookies or asking the user for tokens
   - `explain` — explains bugs, test progress, review findings, and delivery status at the reader's level — zero-context sponsor by default — with every conclusion carrying its status and evidence
   - `walkthrough` — turns a change into a teaching artifact — background first, intuition before code, the change as a story rather than a file list — ending in a quiz the sponsor must pass before merge

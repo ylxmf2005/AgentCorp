@@ -1,0 +1,4 @@
+interface:
+  display_name: "Replay"
+  short_description: "Replay the session trajectory and mine it for improvements"
+  default_prompt: "Use $replay to analyze this session's recorded trajectory — where time and tokens went, what kept failing, what to improve (options: session:current|last|<path>, focus:time|tokens|friction|evolution|project|all, output:artifact|inline)."

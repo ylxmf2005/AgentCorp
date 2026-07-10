@@ -5,7 +5,8 @@ author_agent: delivery-orchestrator
 status: active
 current_phase: validate-requirements
 workflow_mode: partial-delegation
-interaction_cadence: continuous
+interaction_pace: continuous
+effort: high
 ---
 
 # Task: Example Task
@@ -30,9 +31,13 @@ interaction_cadence: continuous
 
 - partial-delegation (choose one of: direct | partial-delegation | full-delegation)
 
-## Interaction Cadence
+## Interaction Pace
 
 - continuous (choose one of: continuous | guided)
+
+## Effort
+
+- high (choose one of: low | medium | high | max)
 
 ## Phase Sequence
 

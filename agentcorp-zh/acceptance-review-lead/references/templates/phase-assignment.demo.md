@@ -8,7 +8,7 @@ phase: example-phase
 status: assigned
 output_path: review/example-output.md
 output_language: zh-CN
-rigor: standard
+effort: high
 ---
 
 # 任务指派：example-phase

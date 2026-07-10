@@ -26,7 +26,7 @@ Ten questions at once is a questionnaire the owner fills on autopilot; one hard 
 
 Target selection beats question quality: aim each question with the lenses in `references/grill-lenses.md` (goal reality, success signal, non-goal boundary, evidence, knowledge matrix, counterexample, simpler alternative, cost of wrongness, dependency, user behavior, verification) — load it at session start and use only the lenses that fit this plan. An answer of "I don't know" is a finding, not a failure: convert it to a named unknown with a resolution path (ask, inspect, research via `parallel-researcher`, experiment, or an explicit assumption with a revisit point) rather than letting it stay poetic.
 
-Be direct and exacting, not theatrical: the user asked for the grilling, so do not sand the edge off the question — but no gotchas, no performative skepticism, no questions asked to display rigor rather than to find weakness.
+Be direct and exacting, not theatrical: the user asked for the grilling, so do not sand the edge off the question — but no gotchas, no performative skepticism, and no questions asked merely to look exacting rather than to find weakness.
 
 ## The verdict
 

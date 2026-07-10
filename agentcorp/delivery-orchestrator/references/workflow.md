@@ -18,20 +18,20 @@ Each task chooses a mode before phase execution begins. The three modes are orde
 
 The default is `partial-delegation`. Switching to `full-delegation` requires the sponsor's explicit choice, or a documented orchestration rationale: high complexity, mutually independent parallel modules, a dedicated execution environment, or a strong need for author separation beyond review. Switching to `direct` must be the sponsor's explicit choice or confirmation — it replaces independent review roles with the sponsor adjudicating personally, and the sponsor must be informed and willing to be the reviewer; never silently downgrade to `direct`.
 
-## Interaction Cadence
+## Interaction Pace
 
-Cadence is independent of workflow mode: mode decides **who executes and adjudicates**; cadence decides **how much ready work advances before the sponsor sees the next checkpoint**. Record one in `task.md`, and let the sponsor switch at any time.
+Pace is independent of workflow mode: mode decides **who executes and adjudicates**; pace decides **how much ready work advances before the sponsor sees the next checkpoint**. Record one in `task.md`, and let the sponsor switch at any time.
 
-- `continuous` (default for an actionable request) — continue through every ready, reversible action permitted by the current gates; batch non-urgent narration into meaningful checkpoints. "Keep going," "use your judgment," and "do not stop for routine approvals" select this cadence and act as standing permission for skippable human pauses, not as permission to weaken evidence or cross an unapproved irreversible boundary.
+- `continuous` (default for an actionable request) — continue through every ready, reversible action permitted by the current gates; batch non-urgent narration into meaningful checkpoints. "Keep going," "use your judgment," and "do not stop for routine approvals" select this pace and act as standing permission for skippable human pauses, not as permission to weaken evidence or cross an unapproved irreversible boundary.
 - `guided` — advance one meaningful artifact or action at a time. Teach with **explain → do → show → pause** on the real task, not a toy walkthrough; recommend a smaller first slice when the task is too large to teach clearly, but let the sponsor override that soft guardrail.
 
-Both cadences keep the same quality gates, author separation, stop conditions, and artifact set. `guided` is not a slower workflow mode, and `continuous` is not blanket pre-approval.
+Both paces keep the same quality gates, author separation, stop conditions, and artifact set. `guided` is not a slower workflow mode, and `continuous` is not blanket pre-approval.
 
-## Rigor
+## Effort
 
-The third orthogonal knob: mode decides **who executes**, cadence decides **how much advances between checkpoints**, rigor decides **how much redundancy and optional coverage the task buys**. `rigor:light|balanced|standard|strict` — default `standard` — is chosen at intake (sponsor's word "赶时间/尽快" suggests light or balanced; "从严/别出错" suggests strict; say which you picked and why), recorded in `task.md`, and threaded into every assignment as `rigor`. This table is the single mapping; consumers read their row here rather than re-deriving it:
+The third orthogonal knob: mode decides **who executes**, pace decides **how much advances between checkpoints**, effort decides **how much redundancy and optional coverage the task buys**. `effort:low|medium|high|max` — default `high` — is chosen at intake (the sponsor's words "赶时间/尽快" suggest `low` or `medium`; "从严/别出错" suggests `max`; say which you picked and why), recorded in `task.md`, and threaded into every assignment as `effort`. This table is the single mapping; consumers read their row here rather than re-deriving it:
 
-| Dial | `light` (赶时间) | `balanced` | `standard` (default) | `strict` |
+| Dial | `low` (赶时间) | `medium` | `high` (default) | `max` |
 | --- | --- | --- | --- | --- |
 | Review rounds | one round, `depth:core` (lead alone); afterwards scoped amendments only | one full round; afterwards scoped amendments only | one full round + scoped amendments; a second full round needs a recorded reason | up to two full rounds, `depth:full`, then escalate to the sponsor |
 | review-research | must-fix items only | must-fix items only | items the lead routed | must-fix + suggested items |
@@ -40,11 +40,11 @@ The third orthogonal knob: mode decides **who executes**, cadence decides **how 
 | Human gates | propose skipping all skippable gates once, up front | propose skipping the low-risk gates | per the Human Gate Policy | no skip proposals |
 | Cross-family second opinion | high-stakes rule still applies | high-stakes rule still applies | high-stakes rule (offered) | offered on high-stakes, lean toward taking it |
 
-**Hard floors — no tier may cross these.** Rigor trades redundancy and optional coverage, never honesty: (1) evidence is never fabricated and `unverified` never passes a gate; (2) author/reviewer separation holds — under `light` the sponsor personally adjudicates what independent reviewers would have; (3) a defect's done still means the original failing input re-run; (4) **high-stakes surfaces auto-upgrade**: a security/permission boundary, public/shared contract, or data-loss/irreversible change runs its affected phases at `strict` regardless of the task's tier, and the upgrade is said out loud, not silently applied. A tier is a budget, not a quality waiver — when a tier and a floor collide, the floor wins and the sponsor hears about the cost.
+**Hard floors — no tier may cross these.** Effort trades redundancy and optional coverage, never honesty: (1) evidence is never fabricated and `unverified` never passes a gate; (2) author/reviewer separation holds — under `low` the sponsor personally adjudicates what independent reviewers would have; (3) a defect's done still means the original failing input re-run; (4) **high-stakes surfaces auto-upgrade**: a security/permission boundary, public/shared contract, or data-loss/irreversible change runs its affected phases at `max` regardless of the task's tier, and the upgrade is said out loud, not silently applied. A tier is a budget, not a quality waiver — when a tier and a floor collide, the floor wins and the sponsor hears about the cost.
 
 ### Sponsor Work-Path Menu
 
-Mode is an internal ledger term; lead with the work path the sponsor needs, state interaction cadence separately, then map the path to a mode:
+Mode is an internal ledger term; lead with the work path the sponsor needs, state interaction pace separately, then map the path to a mode:
 
 | Path the sponsor sees | Internal mode | When to recommend |
 | --- | --- | --- |
@@ -134,7 +134,7 @@ A human gate is the sponsor's checkpoint, not a phase's quality gate. Skipping a
 
 `blocked` is always scoped: it stops only the dependent claim, action, or phase transition. It never means the sponsor is blocked or that the whole task must stop. Continue every reversible, independent action that preserves approved intent, and record both the blocked transition and the continueable work in `task.md`. An explicit sponsor risk acceptance may change the delivery conclusion to `delivered-with-risk`; it never turns missing evidence into a passed quality gate.
 
-A sponsor instruction such as "keep going," "do not stop for routine approvals," or "use your judgment" selects `continuous` cadence and is a standing navigation preference. Record it once in `task.md`; skip every human pause that the workflow allows to be skipped, continue reversible decisions within approved scope, and defer non-urgent reporting to the next meaningful checkpoint instead of asking again. This preference cannot authorize fabricated evidence, unauthorized access, self-approval, or destructive/irreversible action without specific informed confirmation; those constraints apply only to the affected transition.
+A sponsor instruction such as "keep going," "do not stop for routine approvals," or "use your judgment" selects `continuous` pace and is a standing navigation preference. Record it once in `task.md`; skip every human pause that the workflow allows to be skipped, continue reversible decisions within approved scope, and defer non-urgent reporting to the next meaningful checkpoint instead of asking again. This preference cannot authorize fabricated evidence, unauthorized access, self-approval, or destructive/irreversible action without specific informed confirmation; those constraints apply only to the affected transition.
 
 Default human gates: Requirements, TestPlan, Design or diagnosis, Implementation Story Spec, blocking or risky review/verification decisions, the review-research verdict and fix recommendations (before `fix` lands), Final delivery.
 
