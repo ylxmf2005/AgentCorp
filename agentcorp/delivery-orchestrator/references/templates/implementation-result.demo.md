@@ -14,6 +14,12 @@ source_artifacts:
 
 implementation/implementation-story.md
 
+## Progress Ledger
+
+| Work unit | Status | Evidence or blocker |
+| --- | --- | --- |
+| T1 | completed | file:line or command + observed output |
+
 ## Completed Tasks
 
 - Tasks and evidence.
@@ -41,6 +47,13 @@ implementation/implementation-story.md
 ## Deviations from the Plan
 
 - Write "None" if there are none.
+
+## Artifact Coherence Impact
+
+- Fact discovered: None.
+- Potentially stale artifacts: None.
+- Continueable work: All remaining in-scope work.
+- Next owner: None.
 
 ## Blockers
 

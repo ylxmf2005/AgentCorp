@@ -23,6 +23,14 @@ output_path: review/example-output.md
 
 - requirements/validated-requirements.md
 
+## Action Context
+
+- Source of truth：观察行为以点名的运行环境为准；预期行为以所列任务交付物为准。
+- 待读 context file：具体 TestPlan/playbook、实现与评审路径。
+- 允许写入的根目录：被分配的结果路径，以及明确授权的测试数据。
+- 只读上下文：产品代码；除非 assignment 明确授权 fixture 或测试编辑。
+- Artifact rules：执行约束；不要抄进结果。
+
 ## 约束
 
 - 语言、范围、环境和风险约束。

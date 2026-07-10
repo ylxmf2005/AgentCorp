@@ -19,6 +19,7 @@ Self-check before delivery:
 - artifact_type matches the artifact (ArchitectureDesign / ImpactAnalysis / Diagnosis / InterfaceContract); author_agent is solution-architect.
 - Source References name the code, tests, and artifacts actually read.
 - Every unverified assumption sits under Open Questions; status is needs_more_evidence when a judgment depends on one.
+- Artifact Coherence Impact names every upstream or downstream artifact made stale by a changed decision, or says None.
 - Mermaid syntax validated per references/mermaid.md, or the skip declared in the delivery note.
 - When several artifacts were produced, the receipt lists every path.
 -->
@@ -50,6 +51,8 @@ Self-check before delivery:
 ## Implementation Constraints
 
 ## Recommended Specialized Reviews
+
+## Artifact Coherence Impact
 
 ## Open Questions
 

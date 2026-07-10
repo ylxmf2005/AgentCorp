@@ -22,6 +22,10 @@ source_artifacts:
 - 测试计划/测试策略：test/test-plan.md
 - 设计制品：design/impact-analysis.md
 - 计划评审状态：待处理
+- Source of truth：当前代码行为以仓库为准；已批准意图以已批准任务交付物为准。
+- 已读取的具体 context file：逐一列出实际存在的文件，不写未解析 glob。
+- 允许编辑的根目录：精确路径。
+- 只读上下文：精确路径。
 - 实现需要预先了解的关键事实：
   - 仅陈述工程师立即需要的事实。
 

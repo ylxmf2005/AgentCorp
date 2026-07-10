@@ -23,12 +23,13 @@ TO THE SPECIFIC PRESENTED DIFF — PER PROPOSAL, WITH NO SIZE THRESHOLD.
 - **Enforcement over prose.** Prefer changes that make a rule unavoidable — a mechanical check, a gate cell, a structural change — over another sentence that gets ignored. A rule that exists but is not followed needs its enforcement fixed, not firmer wording.
 - **Smallest honest change, right shape.** Fast lane (wording/enforcement edits, one or a few files): draft the exact edit yourself. Full lane (structural change, or `NEW:` a skill from research): hand to `delivery-orchestrator` — plus `parallel-researcher` for external-research proposals, whose findings you consume rather than researching inline — and land the outcome back into the proposal lifecycle.
 - **Dual-source parity.** Every skill change lands in BOTH `agentcorp/` (EN, canonical) and `agentcorp-zh/` (ZH mirror). The plugin-root `hooks/` are the declared exception: they exist once, with no ZH mirror, because Capture and Surface must run before any skill is loaded.
+- **Privacy-minimal capture.** Pending proposals carry enough evidence to verify the signal, never the raw transcript: no secrets, absolute home/workspace paths, personal or company names, email addresses, or private URLs. Verify against the original local transcript when needed; do not expand redacted details back into the proposal, diff, or landing report.
 - **Project-agnostic; evidence on landing.** No product- or environment-specific assumptions in a shared skill; report changes with paths and a verification handle, never a bare "done".
 
 ## How to run
 
 1. **Pick a proposal.** Read `pending/`. A file can hold several proposals; decide proposal by proposal, never file by file. If the user named one, use it; otherwise summarize the pending set and ask which to act on.
-2. **Verify the signal is real.** The analyzer runs headless and can hallucinate — re-read the cited evidence yourself. A false positive gets a one-line rejection under that proposal's `## Outcome` block (per `references/proposal-format.md`).
+2. **Verify the signal is real.** The analyzer runs headless and can hallucinate — re-read the cited evidence yourself in the original local transcript. Redacted placeholders are a privacy boundary, not missing context to copy back into the pending file. A false positive gets a one-line rejection under that proposal's `## Outcome` block (per `references/proposal-format.md`).
 3. **Choose the lane, draft, and present** the specific diff to the human. For research-derived skills, cite sources.
 4. **Land on approval:** apply to both trees; run `python3 tools/validate-skills.py` plus any change-specific check (orchestrator changes: `agentcorp/delivery-orchestrator/scripts/validate-handoff.py`; shared-reference edits: `python3 tools/sync-shared-refs.py --check`). If a skill was added or renamed, update `README.md` AND `README_CN.md` AND the router table `hooks/agentcorp-router.md` — a skill missing from the router is never proactively routed.
 5. **Close the proposal, not the file.** Record the outcome under that proposal's block. A file leaves `pending/` only when every proposal in it has an outcome; then update `status:` and move it to `landed/` or `rejected/`.
@@ -51,10 +52,11 @@ TO THE SPECIFIC PRESENTED DIFF — PER PROPOSAL, WITH NO SIZE THRESHOLD.
 4. If a skill was added or renamed: `README.md`, `README_CN.md`, and `hooks/agentcorp-router.md` all updated.
 5. The proposal file records the outcome under the right block and left `pending/` only if nothing in it remains undecided.
 6. The report carries evidence handles — paths plus validator output or a before/after.
+7. The proposal, presented diff, and landing report contain no secret, absolute personal path, personal/company identity, email address, or private URL copied from the session.
 
 ## Referenced files
 
 - `references/proposal-format.md`: proposal schema and file lifecycle — load before recording any outcome or moving any proposal file.
-- Plugin-root `hooks/`: `hooks/session-end-capture` + `hooks/skill-evolution-analyze.md` (Capture), `hooks/session-start` (Surface). `hooks/skill-evolution-analyze.md` is the authoritative proposal shape; a change to the hooks machinery is itself a skill change that passes your own gate. You never write proposals into `pending/` yourself.
+- Plugin-root `hooks/`: `hooks/session-end-capture` + `hooks/skill-evolution-analyze.md` + `hooks/redact-skill-evolution.py` (Capture), `hooks/session-start` (Surface). The analyzer performs semantic redaction and the script provides deterministic defense in depth before persistence. `hooks/skill-evolution-analyze.md` is the authoritative proposal shape; a change to the hooks machinery is itself a skill change that passes your own gate. You never write proposals into `pending/` yourself.
 
 Human-facing prose in zh-CN (follow the requester's language when it differs); identifiers, paths, enums, and frontmatter values verbatim. `teamspace/` stays local: add to `.git/info/exclude` if untracked; never stage, commit, or push it.

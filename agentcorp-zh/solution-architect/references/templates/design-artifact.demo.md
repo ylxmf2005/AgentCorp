@@ -19,6 +19,7 @@ source_artifacts:
 - artifact_type 匹配产出（ArchitectureDesign / ImpactAnalysis / Diagnosis / InterfaceContract）；author_agent 为 solution-architect。
 - Source References 命名了实际阅读过的代码、测试与产出。
 - 每条未验证假设都在 Open Questions 下；当判断依赖某条时 status 为 needs_more_evidence。
+- Artifact Coherence Impact 点名每份因设计决定变化而过期的上下游交付物，或写 None。
 - Mermaid 语法按 references/mermaid.md 验证，或在交付备注中声明跳过。
 - 当产出多份时，回执列出每条路径。
 -->
@@ -50,6 +51,8 @@ source_artifacts:
 ## 实现约束
 
 ## 建议的专项审查
+
+## 交付物一致性影响
 
 ## 开放问题
 

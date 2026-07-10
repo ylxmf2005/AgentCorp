@@ -7,6 +7,13 @@ Look for three kinds of signal:
 2. **Agent trial-and-error** — an agent struggled, retried, worked around a skill's own instructions, or discovered a better way while using a skill.
 3. **External research** — an open-source project, paper, or technique surfaced that is worth turning into, or folding into, a project skill.
 
+Privacy-minimize before you write anything. Preserve only the technical detail needed to evaluate the proposal:
+- replace absolute home/workspace paths with `<path>` or a short relative path;
+- replace keys, tokens, passwords, cookies, private-key material, and secret values with `<redacted>`;
+- replace personal names with `<user>`, company/organization names with `<company>`, email addresses with `<email>`, and private/internal URLs with `<url>`;
+- quote only the smallest useful fragment of the conversation, never a whole prompt or transcript block;
+- public source URLs may remain when they are genuinely needed to verify external research.
+
 Output rules — follow EXACTLY:
 - If nothing is worth proposing, output exactly this and nothing else: `NO_PROPOSALS`
 - Otherwise output ONE markdown document in EXACTLY this shape, with no extra commentary before or after:
@@ -22,7 +29,7 @@ status: pending
 ## Proposal 1: <short imperative title>
 - **target**: <existing skill name, e.g. `delivery-orchestrator`> OR `NEW: <topic>`
 - **trigger**: user-noticed | agent-trial-and-error | external-research
-- **signal**: <1-3 sentences of concrete evidence from the transcript — what actually happened; quote a key line if useful>
+- **signal**: <1-3 privacy-minimized sentences of concrete evidence from the transcript — what actually happened; quote only the smallest useful redacted fragment>
 - **proposed change**: <concrete: what to edit and how, or what to research; prefer enforcement/structure over adding prose that will be ignored>
 - **blast radius**: wording | behavior | structural | new-skill
 - **suggested lane**: fast | full
@@ -31,4 +38,4 @@ status: pending
 ## Proposal 2: ...
 ```
 
-Be conservative and specific. Propose only genuinely useful improvements grounded in what actually happened this session — do not invent, do not pad. Two or three strong proposals beat ten weak ones. You NEVER edit any file; you only emit proposals for a human to review later.
+Be conservative, specific, and privacy-minimal. Propose only genuinely useful improvements grounded in what actually happened this session — do not invent, do not pad, and do not leak sensitive context merely to make the signal sound concrete. Two or three strong proposals beat ten weak ones. You NEVER edit any file; you only emit proposals for a human to review later.

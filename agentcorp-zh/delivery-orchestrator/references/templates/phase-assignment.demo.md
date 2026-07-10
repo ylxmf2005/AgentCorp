@@ -23,6 +23,15 @@ output_path: review/example-output.md
 
 - requirements/validated-requirements.md
 
+## Action Context
+
+- Source of truth：当前代码行为以仓库为准；已批准意图以已批准任务交付物为准。
+- 动手前必须读取的 context file：只列实际存在的具体路径；把每个必需文件逐一列出。
+- 允许编辑的根目录：列出精确的仓库或 task-root 路径。
+- 只读上下文：列出可读但不可编辑的路径。
+- 输出路径：使用 frontmatter 中的 `output_path`。
+- Artifact rules：用于约束被分配者的行为；不要把它们抄进输出交付物。
+
 ## 约束
 
 - 语言、范围、环境和风险约束。
@@ -34,4 +43,4 @@ output_path: review/example-output.md
 
 ## 停止条件
 
-- 所需输入缺失、目标不明确、环境不可用或风险不安全。
+- 必需 context file 缺失或已过期、来源交付物互相矛盾、目标不明确、环境不可用或风险不安全。点名受影响的阶段跃迁，以及仍可继续的独立工作。

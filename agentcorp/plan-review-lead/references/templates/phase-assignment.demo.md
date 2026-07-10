@@ -23,6 +23,14 @@ State the goal of this phase.
 
 - requirements/validated-requirements.md
 
+## Action Context
+
+- Source of truth: repository for current code behavior; listed artifacts for approved intent.
+- Context files to read: concrete existing paths only.
+- Allowed edit roots: `review/specialist-findings/` only.
+- Read-only context: Story Spec, design, requirements, TestPlan, and target code.
+- Artifact rules: constraints for judgment; do not copy them into the finding set.
+
 ## Constraints
 
 - Language, scope, environment, and risk constraints.

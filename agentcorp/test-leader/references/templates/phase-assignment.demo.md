@@ -23,6 +23,14 @@ State the goal of this phase.
 
 - requirements/validated-requirements.md
 
+## Action Context
+
+- Source of truth: named runtime environment for observed behavior; listed task artifacts for expected behavior.
+- Context files to read: concrete TestPlan/playbook, implementation, and review paths.
+- Allowed write roots: the assigned result path and explicitly authorized test data only.
+- Read-only context: product code unless the assignment explicitly authorizes a fixture or test edit.
+- Artifact rules: execution constraints; do not copy them into the result.
+
 ## Constraints
 
 - Language, scope, environment, and risk constraints.

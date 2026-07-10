@@ -24,6 +24,10 @@ so that the required outcome is met.
 - TestPlan/Test Strategy: test/test-plan.md
 - Design artifacts: design/impact-analysis.md
 - Plan Review status: pending
+- Source of truth: repository for current code behavior; approved task artifacts for approved intent.
+- Concrete context files read: list every existing file, no unresolved globs.
+- Allowed edit roots: exact paths.
+- Read-only context: exact paths.
 - Key facts needed right away for implementation:
   - Write only the facts the engineer needs immediately.
 

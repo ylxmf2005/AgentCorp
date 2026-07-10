@@ -23,6 +23,15 @@ State the goal of this phase.
 
 - requirements/validated-requirements.md
 
+## Action Context
+
+- Source of truth: repository for current code behavior; approved task artifacts for approved intent.
+- Context files to read before acting: concrete existing paths only; list every required file.
+- Allowed edit roots: list exact repository or task-root paths.
+- Read-only context: list paths that may be read but not edited.
+- Output path: use the frontmatter `output_path`.
+- Artifact rules: behavioral constraints for the assignee; do not copy them into the output artifact.
+
 ## Constraints
 
 - Language, scope, environment, and risk constraints.
@@ -34,4 +43,4 @@ State the goal of this phase.
 
 ## Stop Conditions
 
-- A required input is missing, the goal is unclear, the environment is unavailable, or the risk is unsafe.
+- A required context file is missing or stale, source artifacts contradict one another, the goal is unclear, the environment is unavailable, or the risk is unsafe. Name the affected transition and any independent work that can continue.

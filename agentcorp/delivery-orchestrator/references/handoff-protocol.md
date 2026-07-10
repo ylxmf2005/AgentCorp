@@ -9,6 +9,9 @@ Keep protocol fields, `artifact_type`, the `status` enum, paths, code identifier
 Every delegated owner treats your assignment file as its task input and resolves it by these rules — write assignments so they hold:
 
 - The owner treats the assignment file as the task input.
+- The owner reads every concrete path listed under Source Artifacts and Action Context before acting. An unresolved glob, conventional filename, or summary is not a substitute for a required file.
+- The assignment's source of truth, allowed edit roots, and read-only context are hard action boundaries. Constraints guide behavior but are not content to copy into the output artifact.
+- If a required context file is missing, stale, or contradictory, the owner names the affected artifact or transition and returns the mismatch instead of guessing; independent work outside that dependency may continue.
 - The owner resolves `output_path` relative to `task_root`.
 - If the assignment has no `task_root`, the owner derives it from the assignment file's location: it finds the enclosing `handoffs/` directory and takes its parent as the task root.
 - The owner writes the phase's primary persistent artifact at `output_path`, and doesn't scatter extra artifacts unless its role's instructions call for creating a tester assignment, sub-results, or an acceptance package.

@@ -47,6 +47,7 @@ SESSION_ID="${SESSION_ID//[^A-Za-z0-9_-]/-}"
 # keeps cost and noise off unrelated sessions.
 grep -q "AGENTCORP_SESSION_CONTEXT" "$TRANSCRIPT" 2>/dev/null || exit 0
 
-# The shared runner spawns the detached analysis (claude, falling back to codex) and
-# returns instantly; it degrades silently when no CLI or prompt file is present.
+# The shared runner spawns the detached analysis (claude, falling back to codex), pipes the
+# result through the privacy redactor, and returns instantly; it degrades silently when no
+# CLI, prompt file, or redactor is present.
 exec "${SCRIPT_DIR}/run-capture-analysis" "$SESSION_ID" "$TRANSCRIPT" "$REASON"

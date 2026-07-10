@@ -23,6 +23,14 @@ output_path: review/example-output.md
 
 - requirements/validated-requirements.md
 
+## Action Context
+
+- Source of truth：当前代码行为以仓库为准；已批准意图以所列交付物为准。
+- 待读 context file：只列实际存在的具体路径。
+- 允许编辑的根目录：仅 `review/specialist-findings/`。
+- 只读上下文：Story Spec、设计、需求、TestPlan 和目标代码。
+- Artifact rules：用于约束判断；不要抄进 finding set。
+
 ## 约束
 
 - 语言、范围、环境和风险约束。

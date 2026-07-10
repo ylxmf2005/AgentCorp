@@ -14,6 +14,12 @@ source_artifacts:
 
 implementation/implementation-story.md
 
+## 进度台账
+
+| 工作单元 | 状态 | 证据或 blocker |
+| --- | --- | --- |
+| T1 | completed | file:line 或命令 + 观察到的输出 |
+
 ## 已完成任务
 
 - 任务 -> 证据句柄（file:line，或命令 + 观察到的输出）。
@@ -41,6 +47,13 @@ implementation/implementation-story.md
 ## 与计划的偏差
 
 - 如果没有，写 "None"。
+
+## 交付物一致性影响
+
+- 发现的事实：无。
+- 可能已过期的交付物：无。
+- 可继续工作：其余全部范围内工作。
+- 下一位 Owner：无。
 
 ## 阻塞项
 

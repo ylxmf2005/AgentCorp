@@ -26,6 +26,8 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PLUGIN_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 PROMPT_FILE="${SCRIPT_DIR}/skill-evolution-analyze.md"
 [ -f "$PROMPT_FILE" ] || exit 0
+REDACTOR="${SCRIPT_DIR}/redact-skill-evolution.py"
+[ -f "$REDACTOR" ] || exit 0
 
 OUT_DIR="${AGENTCORP_EVOLUTION_DIR:-${PLUGIN_ROOT}/teamspace/skill-evolution/pending}"
 LOG_DIR="${PLUGIN_ROOT}/teamspace/skill-evolution/.logs"
@@ -53,9 +55,11 @@ END_REASON: ${REASON}"
   else
     result="$(AGENTCORP_EVOLUTION_CAPTURE=1 codex exec "$prompt" 2>"${LOG_DIR}/${SESSION_ID}.err")"
   fi
-  if [ -n "$result" ] && ! printf '%s' "$result" | grep -q "NO_PROPOSALS"; then
+  # Privacy-minimize before anything is persisted; a redactor failure drops the proposal.
+  redacted="$(printf '%s' "$result" | python3 "$REDACTOR")" || exit 0
+  if [ -n "$redacted" ] && ! printf '%s' "$redacted" | grep -q "NO_PROPOSALS"; then
     ts="$(date -u +%Y%m%dT%H%M%SZ 2>/dev/null || date +%s)"
-    printf '%s\n' "$result" > "${OUT_DIR}/${ts}-${SESSION_ID}.md"
+    printf '%s\n' "$redacted" > "${OUT_DIR}/${ts}-${SESSION_ID}.md"
   fi
 ) </dev/null >/dev/null 2>&1 &
 disown 2>/dev/null || true

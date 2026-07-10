@@ -5,6 +5,7 @@ author_agent: delivery-orchestrator
 status: active
 current_phase: validate-requirements
 workflow_mode: partial-delegation
+interaction_cadence: continuous
 ---
 
 # Task: Example Task
@@ -29,6 +30,10 @@ workflow_mode: partial-delegation
 
 - partial-delegation (choose one of: direct | partial-delegation | full-delegation)
 
+## Interaction Cadence
+
+- continuous (choose one of: continuous | guided)
+
 ## Phase Sequence
 
 - validate-requirements -> test-plan -> test-plan-review -> impact-analysis -> implementation-plan -> plan-review -> implement -> code-review -> review-research -> fix -> verify -> acceptance-review -> deliver
@@ -36,6 +41,27 @@ workflow_mode: partial-delegation
 ## Gate History
 
 - Requirements gate: approved | skipped | revised | blocked
+- Standing sponsor preference: none | continue without routine pauses | <specific instruction>
+
+## Active Constraint
+
+- Blocked transition: None.
+- Reason: None.
+- Continueable work: All work permitted by current gates.
+- Sponsor decision needed: None.
+
+## Artifact Coherence
+
+- State: coherent | needs_revision
+- Triggering revision: None.
+- Affected artifacts: None.
+- Next owner: None.
+
+## Execution Progress
+
+| Work unit | Status | Owner | Evidence or blocker |
+| --- | --- | --- | --- |
+| Example | pending | example-agent | None. |
 
 ## Decision Log
 

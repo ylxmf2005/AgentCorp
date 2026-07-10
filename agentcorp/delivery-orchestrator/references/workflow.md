@@ -18,9 +18,18 @@ Each task chooses a mode before phase execution begins. The three modes are orde
 
 The default is `partial-delegation`. Switching to `full-delegation` requires the sponsor's explicit choice, or a documented orchestration rationale: high complexity, mutually independent parallel modules, a dedicated execution environment, or a strong need for author separation beyond review. Switching to `direct` must be the sponsor's explicit choice or confirmation — it replaces independent review roles with the sponsor adjudicating personally, and the sponsor must be informed and willing to be the reviewer; never silently downgrade to `direct`.
 
+## Interaction Cadence
+
+Cadence is independent of workflow mode: mode decides **who executes and adjudicates**; cadence decides **how much ready work advances before the sponsor sees the next checkpoint**. Record one in `task.md`, and let the sponsor switch at any time.
+
+- `continuous` (default for an actionable request) — continue through every ready, reversible action permitted by the current gates; batch non-urgent narration into meaningful checkpoints. "Keep going," "use your judgment," and "do not stop for routine approvals" select this cadence and act as standing permission for skippable human pauses, not as permission to weaken evidence or cross an unapproved irreversible boundary.
+- `guided` — advance one meaningful artifact or action at a time. Teach with **explain → do → show → pause** on the real task, not a toy walkthrough; recommend a smaller first slice when the task is too large to teach clearly, but let the sponsor override that soft guardrail.
+
+Both cadences keep the same quality gates, author separation, stop conditions, and artifact set. `guided` is not a slower workflow mode, and `continuous` is not blanket pre-approval.
+
 ### Sponsor Work-Path Menu
 
-Mode is an internal ledger term; lead with the collaboration cadence to the sponsor, then map it to a mode:
+Mode is an internal ledger term; lead with the work path the sponsor needs, state interaction cadence separately, then map the path to a mode:
 
 | Path the sponsor sees | Internal mode | When to recommend |
 | --- | --- | --- |
@@ -106,6 +115,10 @@ When in doubt, choose `enhancement/delta-design`. If a phase's quality gate expo
 
 A human gate is the sponsor's checkpoint, not a phase's quality gate. Skipping a human gate only removes the sponsor's pause; it does not weaken the evidence required to move forward.
 
+`blocked` is always scoped: it stops only the dependent claim, action, or phase transition. It never means the sponsor is blocked or that the whole task must stop. Continue every reversible, independent action that preserves approved intent, and record both the blocked transition and the continueable work in `task.md`. An explicit sponsor risk acceptance may change the delivery conclusion to `delivered-with-risk`; it never turns missing evidence into a passed quality gate.
+
+A sponsor instruction such as "keep going," "do not stop for routine approvals," or "use your judgment" selects `continuous` cadence and is a standing navigation preference. Record it once in `task.md`; skip every human pause that the workflow allows to be skipped, continue reversible decisions within approved scope, and defer non-urgent reporting to the next meaningful checkpoint instead of asking again. This preference cannot authorize fabricated evidence, unauthorized access, self-approval, or destructive/irreversible action without specific informed confirmation; those constraints apply only to the affected transition.
+
 Default human gates: Requirements, TestPlan, Design or diagnosis, Implementation Story Spec, blocking or risky review/verification decisions, the review-research verdict and fix recommendations (before `fix` lands), Final delivery.
 
 After `review-research` and before `fix` is a natural sponsor checkpoint: here the sponsor can confirm which findings are real problems, which are false positives, and whether the proposed fixes are acceptable, before clearing `fix` to land. For small, low-risk changes, you may consult the sponsor about skipping this gate, but skipping does not change the dependency that "`fix` must consume the verified `review/research/`."
@@ -117,7 +130,7 @@ Outcomes allowed at each human gate:
 | `approved` | The sponsor approves or says to continue. |
 | `skipped` | The sponsor explicitly skips this gate. |
 | `revised` | The sponsor requests changes; rerun or revise the corresponding phase before continuing. |
-| `blocked` | Needs sponsor input, credentials, environment, or risk acceptance. |
+| `blocked` | The named transition cannot honestly proceed yet; it needs sponsor input, credentials, environment, or risk acceptance. Independent reversible work continues. |
 
 ### Gate Navigation Menu
 
@@ -126,6 +139,8 @@ When entering a human gate, don't just ask "approved?" First give the sponsor en
 ```text
 Where we are: <phase/gate> has reached the human gate; this step decides <downstream impact>.
 Evidence: <artifact paths + key conclusions/gaps, no more than 4 items>.
+Blocked transition: <specific claim/action/phase that cannot proceed, or None>.
+Still moving: <reversible independent work continuing now, or None>.
 I recommend: one of <approved/skipped/revised/blocked>, because <one-line reason>.
 Options:
 1. Approve, proceed to <next phase>
@@ -134,15 +149,15 @@ Options:
 4. Skip this human gate (only when this gate allows skipping; note that the quality gate is not relaxed)
 ```
 
-Tailor the options to the context: under `direct`, review-type gates don't offer "skip"; when confidence is LOW or credentials are missing, the default recommendation must be `blocked`; when the review owner returns `request_changes` or `needs_more_evidence`, the default recommendation must be revise/supply-evidence, not approve. When the sponsor answers in natural language, map it to `approved`, `skipped`, `revised`, or `blocked` and record it; ask one follow-up only if the mapping is unclear.
+Tailor the options to the context: under `direct`, review-type gates don't offer "skip"; when confidence is LOW or credentials are missing, the affected transition's default recommendation must be `blocked`; when the review owner returns `request_changes` or `needs_more_evidence`, the default recommendation must be revise/supply-evidence, not approve. A `blocked` recommendation names at least one resolution path and, whenever one exists, one action that can continue now. When the sponsor answers in natural language, map it to `approved`, `skipped`, `revised`, or `blocked` and record it; ask one follow-up only if the mapping is unclear.
 
 For small, low-risk changes, consult the sponsor about whether to skip some upcoming gates — name the specific gates, and keep review independent. For example: "This is a small, isolated change; want me to skip the human gates for TestPlan and Design, keep Code Review, and report at Final delivery?"
 
 Never silently skip a human gate. Record skipped gates in the Gate History of `task.md` and in `manifest.md`.
 
-When unattended (the sponsor is absent — automation-triggered, scheduled job, called by another process), no agent may answer a human gate. The sponsor may pre-approve named gates before the run starts (recorded in `task.md`'s Gate History, treated as `approved`); when reaching a gate that wasn't pre-approved, write the pending question and the current artifact paths into `task.md`, stop there and end the round, and wait for the sponsor to return and adjudicate — "the sponsor would probably agree" is not a reason to continue.
+When unattended (the sponsor is absent — automation-triggered, scheduled job, called by another process), no agent may answer a human gate. The sponsor may pre-approve named gates before the run starts (recorded in `task.md`'s Gate History, treated as `approved`); when reaching a gate that wasn't pre-approved, write the pending question and the current artifact paths into `task.md`, stop the dependent branch, continue any pre-approved or independent reversible work, then end the round and wait for the sponsor to return and adjudicate — "the sponsor would probably agree" is not a reason to cross the gate.
 
-Even when a gate is skipped or full automation is required, the following still require a pause: requirements confidence is LOW or the success criteria are unclear; priority, scope, or risk acceptance is unclear; a review owner returns `request_changes` or `needs_more_evidence`; verification fails or lacks necessary evidence; credentials, environment, or permissions are missing; Final delivery status needs reporting.
+Even when a gate is skipped or full automation is required, the following still require a pause before the affected transition: requirements confidence is LOW or the success criteria are unclear; priority, scope, or risk acceptance is unclear; a review owner returns `request_changes` or `needs_more_evidence`; verification fails or lacks necessary evidence; credentials, environment, or permissions are missing; Final delivery status needs reporting. The pause does not suspend unrelated reversible work.
 
 ## Paradigms
 
@@ -251,6 +266,19 @@ After each phase passes its quality gate, report to the sponsor only what helps 
 
 When sending a phase back, give navigation too: state the reason for the send-back, what you'll change before re-dispatching, and whether you need sponsor input. After sending the same phase back twice in a row, default to stopping and re-evaluating the partition or plan, and offer the optional routes to the sponsor.
 
+## Artifact Re-entry and Coherence
+
+A task may be revised at any time, including after implementation has started. Artifact creation order is a useful reading order; it does not make later artifacts subordinate or prevent a later discovery from revising an earlier one.
+
+1. **Decide update versus new task.** Revise the current task when the intended outcome is unchanged and the new request substantially overlaps the existing work. Start a linked task when intent changes, scope expands into a separately deliverable outcome, or the original task can complete independently. Never preserve continuity by silently mutating one task into a different promise.
+2. **Resolve the real artifact set.** Use `manifest.md`, `task.md`, and the task root to enumerate the concrete files that exist; do not rely on remembered filenames, stale assignments, or unresolved glob patterns. The repository is the source of truth for current code behavior; approved task artifacts are the source of truth for approved intent until their gates are reopened.
+3. **Apply a semantic delta.** Change only what the new decision affects, preserve untouched content, and make the update idempotent: applying the same decision again should yield no further edit.
+4. **Reconcile in every direction.** Read the touched artifact and every existing artifact whose claims depend on or constrain it. A design change may revise requirements, a code discovery may revise design and tasks, and verification evidence may invalidate an earlier assumption. Record contradictions, gaps, and duplication rather than updating only downstream files.
+5. **Route and mark staleness.** Each artifact revision goes to its owner. Mark affected rows in `manifest.md` as `needs_revision`, record `revised` in Gate History where approval is invalidated, replace stale assignments with refreshed Action Context, and do not advance the dependent branch until the set is coherent again.
+6. **Carry plan changes into code and evidence.** If implementation already exists, a coherent planning update is not completion: re-enter implement, review, and verification for the affected slice. Unaffected reversible work may continue.
+
+Keep the live reconciliation state in `task.md` under Artifact Coherence: trigger, affected artifacts, current state, and next owner. A task is ready to deliver only when this ledger says `coherent`.
+
 ## Stage Owners
 
 - The Delivery Orchestrator owns classification, mode selection, gatekeeping, and final delivery in all three modes.
@@ -316,6 +344,8 @@ teamspace/tasks/<task_id>/
 
 Use only the files/subdirectories the task needs. Keep paths inside artifacts and handoffs relative. Outside the task directory, `teamspace/testing-context.md` is the project-level testing context (the basis for the test-plan phase, reused across tasks and maintained incrementally), and `teamspace/learnings/` is the learnings layer. `teamspace/` is local coordination state: if it shows up in git status, add `teamspace/` to `.git/info/exclude` for that local repo or worktree; never stage or commit it.
 
+`task.md` is also the live execution ledger. Update its Execution Progress after each completed, failed, or blocked work unit with the evidence handle or blocker. The approved Implementation Story Spec remains stable planning input; never turn its checkboxes or prose into runtime state.
+
 ## Orchestrator Artifact Demos
 
 Use the local demos rather than restating the shape:
@@ -333,6 +363,8 @@ Copy the shape, then replace the example values with the current task's phases, 
 ## Phase Handoff Discipline
 
 For a delegated phase, the Delivery Orchestrator writes the assignment file before the phase begins. Every delegated assignment carries a `task_root` (`teamspace/tasks/<task_id>/` relative to `workdir`) and an `output_path` relative to that task root; when Location and Workspace differ, the same task root must also exist at `<code_worktree>/teamspace/tasks/<task_id>/`. The delegated owner writes the phase artifact at the assignment's `output_path` and writes back a Markdown receipt that names the artifact path and the status.
+
+Before dispatch, fill the assignment's Action Context with concrete values: source of truth; every context file the owner must read before acting; allowed edit roots; read-only context; output path; and behavioral constraints. Context files are existing concrete paths, never an unresolved glob or a guessed conventional filename. Constraints guide the owner but are not prose to copy into the output artifact. When a revision makes an assignment stale, replace it before re-dispatch rather than appending contradictory instructions.
 
 For each receipt received, the Delivery Orchestrator runs the mechanical validation first, then makes the quality judgment — the two are separate:
 
@@ -367,6 +399,8 @@ Don't advance to a higher layer while a required lower-layer check still fails. 
 ## Parallel Execution Protocol
 
 Parallel implementation is a protocol within the `implement` phase, not a separate phase. Parallelize only when all of the following hold: complexity is M/L/XL; at least two submodules can be built independently; the submodules share interfaces but not implementation; an architecture or impact document already exists; `interface-contract` is complete when public/shared API, schema, protocol, or cross-module contracts are involved; the Implementation Story Spec partitions tasks per the contracts and keeps only the integration context each submodule needs; the TestPlan scopes Must Haves, Need Haves, Failure/Edge Cases, and Forbidden Zones per submodule.
+
+Before any parallel or batch dispatch, build a consolidated map of each unit's hard dependencies, required/provided contracts, touched files or surfaces, and allowed edit roots. A missing hard dependency blocks only dependent units; an overlap is a warning that must be resolved by grouping, ordering, or disjoint ownership, not an implicit dependency. Show one consolidated status and obtain one sponsor confirmation when a human choice is required. Track success, skipped, blocked, and failed per unit, and continue independent units after an isolated failure.
 
 Each parallel implementation session receives exactly these inputs:
 

@@ -13,6 +13,14 @@ source_artifacts:
 
 approve | request_changes | needs_more_evidence | blocked
 
+## Dimension Scorecard
+
+| Dimension | Status | Basis |
+| --- | --- | --- |
+| Completeness | complete | Every required check accounted for; cite result paths. |
+| Correctness | supported | Direct evidence for the claimed behavior and failure paths. |
+| Coherence | aligned | Requirements, design, plan, implementation, and observations agree. |
+
 ## What This Verification Proved
 
 - The claims that now have direct evidence, each citing its result file by path.
@@ -20,6 +28,10 @@ approve | request_changes | needs_more_evidence | blocked
 ## Failures and Blocked Checks
 
 - Write "None" when there are none.
+
+## Skipped Checks and Why
+
+- Every skipped check or unavailable dimension, with the reason and the evidence claim it weakens; write "None" when there are none.
 
 ## Result File Index
 

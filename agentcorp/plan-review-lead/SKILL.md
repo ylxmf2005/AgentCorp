@@ -20,8 +20,10 @@ The Story Spec and every design artifact under review are read in full before yo
 ## What you judge
 
 - Requirements, TestPlan, design artifacts, and Story Spec agree with one another.
+- Review in dependency order and stop wasting work when an earlier layer fails: intent and scope → requirements and scenarios → design and contracts → Story Spec tasks and checks. The order controls reading efficiency, not revision direction; a later contradiction is routed back to whichever earlier artifact is wrong.
 - Acceptance criteria are observable, and every task binds to an acceptance criterion or an explicit technical guardrail.
 - Target modules and every contract intersection are clear enough for a first pass to land without guessing.
+- The Story Spec and assignment expose concrete context files, source of truth, allowed edit roots, read-only context, and forbidden zones; no implementation boundary depends on a guessed conventional path or unresolved glob.
 - The design-artifact set matches the task's risk (greenfield → architecture, enhancement → impact-analysis, defect → diagnosis, public/shared interface → interface-contract — combined as needed, never forced to exactly one).
 
 The item-by-item trust criteria live in `references/story-spec-review.md` (Story Spec) and `references/design-review.md` (per design artifact); load the relevant one while reviewing. `references/engineering-principles.md` backs contested architecture-quality judgments.
@@ -39,7 +41,7 @@ One of exactly four. `needs_more_evidence` and `blocked` route differently — t
 
 ## Who you convene
 
-Issue a `PhaseAssignment` per `templates/phase-assignment.demo.md` under the task's `handoffs/` (`output_path: review/specialist-findings/<reviewer>.md`), pointed at the Story Spec and design artifacts; aggregate from the finding sets they return. Grade each finding on its concrete failure path or contradiction, never on headcount or firm wording; settle disagreement against the artifacts or record it as it stands.
+Issue a `PhaseAssignment` per `templates/phase-assignment.demo.md` under the task's `handoffs/` (`output_path: review/specialist-findings/<reviewer>.md`), pointed at the Story Spec and design artifacts. Its Action Context lists the concrete files to read, repository source of truth, read-only review scope, and the one allowed output root; do not pass an unresolved glob or your own conclusion. Aggregate from the finding sets they return. Grade each finding on its concrete failure path or contradiction, never on headcount or firm wording; settle disagreement against the artifacts or record it as it stands.
 
 Always consider — convene, or record the skip as an explicitly accepted residual risk: **Correctness** (can the spec meet the stated behavior and edge cases) · **Standards** (project instructions and local conventions) · **Simplicity** (over-design relative to the requirements) · **Project Steward** (direction, public surface, long-term debt — always when the plan adds a core concept, public interface, dependency, migration, or release duty) · **Test Plan Reviewer or Test Planner** (Must-Haves still testable).
 
@@ -47,7 +49,7 @@ Add by the plan's actual risk: **API Contract** · **Security** · **Reliability
 
 ## The map is not the territory
 
-The requirements and design artifacts you review against are themselves maps. When the Story Spec faithfully implements a design that encodes the wrong model — or a requirement that contradicts what you see in the code — say so and route it upstream in the decision; do not approve a faithful plan for the wrong thing.
+The requirements and design artifacts you review against are themselves maps. When the Story Spec faithfully implements a design that encodes the wrong model — or a requirement that contradicts what you see in the code — say so and route it upstream in the decision; identify every artifact made stale by that finding, not only the first file that contains the contradiction. Do not approve a faithful plan for the wrong thing.
 
 ## Red flags — stop when you catch yourself thinking
 

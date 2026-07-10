@@ -42,6 +42,8 @@ diagrams must be honest, use real components, and let labels state what each ste
 
 ## Recommended Specialist Reviews
 
+## Artifact Coherence Impact
+
 ## Open Questions
 
 ## Handoff to Implementation Planner
