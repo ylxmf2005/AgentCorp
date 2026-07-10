@@ -72,20 +72,20 @@ the full pipeline — classifying the work, routing each phase to the right role
 and gating on evidence. Parameters can be combined to fit the task:
 
 ```text
-/agentcorp:delivery-orchestrator mode:direct pace:guided effort:low fix the null check in config.py and explain each step
-/agentcorp:delivery-orchestrator mode:partial pace:continuous effort:high add rate limiting to the public API and verify it under load
-/agentcorp:delivery-orchestrator mode:full pace:continuous effort:max lang:en-US redesign payment webhooks across three services and verify the migration
+/agentcorp:delivery-orchestrator mode:direct pace:guided effort:low fix a null check
+/agentcorp:delivery-orchestrator mode:partial pace:continuous effort:high rate-limit an API
+/agentcorp:delivery-orchestrator mode:full effort:max lang:en-US migrate webhooks
 ```
 
 Omit a parameter when you want the orchestrator to recommend it. You can also
 call any single skill directly when you only need that one capability:
 
 ```text
-/agentcorp:code-review-lead depth:full review the current diff before I merge
-/agentcorp:parallel-researcher scope:both depth:source-verified compare the leading durable-workflow engines for this repository
-/agentcorp:probe output:inline map the authentication module before we decide what to change
-/agentcorp:walkthrough format:html quiz:on teach me this branch before I approve the merge
-/agentcorp:replay session:last focus:friction output:inline show where the previous session kept getting stuck
+/agentcorp:code-review-lead depth:full review this diff
+/agentcorp:parallel-researcher scope:both depth:source-verified compare workflow engines
+/agentcorp:probe output:inline map the auth module
+/agentcorp:walkthrough format:html quiz:on teach me this branch
+/agentcorp:replay session:last focus:friction output:inline find repeated stalls
 ```
 
 ### First Use
