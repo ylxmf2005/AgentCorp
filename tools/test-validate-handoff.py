@@ -121,8 +121,29 @@ CASES = [
 ]
 
 
+def test_sweep_orphan_assignment():
+    """--sweep must warn about an assignment that has no receipt (S2-F8)."""
+    with tempfile.TemporaryDirectory() as root:
+        os.makedirs(os.path.join(root, "handoffs"))
+        os.makedirs(os.path.join(root, "review"))
+        with open(os.path.join(root, "handoffs", "001-x.md"), "w") as fh:
+            fh.write(GOOD["assignment"])
+        with open(os.path.join(root, "handoffs", "001-x-receipt.md"), "w") as fh:
+            fh.write(GOOD["receipt"])
+        with open(os.path.join(root, "review", "impl.md"), "w") as fh:
+            fh.write(GOOD["artifact"])
+        with open(os.path.join(root, "handoffs", "002-orphan.md"), "w") as fh:
+            fh.write(GOOD["assignment"].replace("phase: implement", "phase: verify"))
+        proc = subprocess.run([sys.executable, VALIDATOR, "--sweep", "--task-root", root],
+                              capture_output=True, text=True)
+        ok = proc.returncode == 0 and "no receipt" in proc.stderr
+        print(f"{'ok ' if ok else 'FAIL'} [WARNED] sweep flags assignment without receipt")
+        return ok
+
+
 def main():
     results = [run_case(*case[:2], case[2]) for case in CASES]
+    results.append(test_sweep_orphan_assignment())
     failed = results.count(False)
     print(f"\n{len(results) - failed}/{len(results)} expectations hold")
     return 1 if failed else 0

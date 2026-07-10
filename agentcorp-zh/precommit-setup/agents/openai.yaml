@@ -1,4 +1,4 @@
 interface:
   display_name: "Precommit 配置"
   short_description: "设置实用的 pre-commit 检查"
-  default_prompt: "使用 $precommit-setup 为这个仓库添加实用的 pre-commit 检查和可选的 AI 提交审查。"
+  default_prompt: "使用 $precommit-setup 为这个仓库添加实用的 pre-commit 检查和可选的 AI 提交审查。(options: runtime:claude|codex|both)"

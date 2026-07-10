@@ -1,4 +1,4 @@
 interface:
   display_name: "探测"
   short_description: "侦察不熟悉的领地并揭示未知未知"
-  default_prompt: "使用 $probe 先调查这片不熟悉的领地，并教我地形、意外之处以及剩余未知项，然后再开始工作。"
+  default_prompt: "使用 $probe 先调查这片不熟悉的领地，并教我地形、意外之处以及剩余未知项，然后再开始工作。(options: output:artifact|inline)"

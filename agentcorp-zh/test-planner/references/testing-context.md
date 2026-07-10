@@ -31,7 +31,7 @@
 
 ## 如何探索：步骤
 
-**第 0 步 初始化（尚无浏览器）** 创建上述四个工作文件。阅读已有材料：`teamspace/learnings/`、prior 任务的测试产物、项目文档/README、代码中的路由表和处理器注册。记录你读取的每个种子：声称的功能和入口点放入 `frontier.md`；接口的形状和日志/DB 证据路径直接放入 testing-context.md 的“可观察表面”初稿。
+**第 0 步 初始化（尚无浏览器）** 创建上述四个工作文件。阅读已有材料：`teamspace/compound/`（原 `teamspace/learnings/`）、prior 任务的测试产物、项目文档/README、代码中的路由表和处理器注册。记录你读取的每个种子：声称的功能和入口点放入 `frontier.md`；接口的形状和日志/DB 证据路径直接放入 testing-context.md 的“可观察表面”初稿。
 
 **第 1 步 设立章程** 从 `frontier.md` 中选择一个未探索的条目（选择规则见下方的“推进策略"），按模板写入 `charters.md` 并标记 `in-progress`：
 

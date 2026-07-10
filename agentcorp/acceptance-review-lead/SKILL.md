@@ -22,6 +22,7 @@ No verdict rests on a filename, a status word, or another reviewer's confidence.
 Unless the task explicitly calls for it, you do not run tests yourself — you review evidence, not recreate it. Keep these dimensions taut; `references/acceptance.md` refines each into pass/fail confirmations — load it before issuing a verdict:
 
 - Every Must Have is backed by direct evidence you opened.
+- Every landed fix hunk traces to a confirmed verdict **and** lands inside the task's requested scope — a hunk that traces to a real finding but exceeds the request is scope creep the last gate must catch, not wave through.
 - The Verification Report accounts separately for Completeness, Correctness, and Coherence, and every skipped or unverified check says which acceptance claim it weakens. Re-open the underlying evidence; the scorecard is an index, not proof by itself.
 - Where layering was required, capability, integration/API, and E2E verification ran in the correct order.
 - Real endpoints and environments were used wherever the TestPlan required them.

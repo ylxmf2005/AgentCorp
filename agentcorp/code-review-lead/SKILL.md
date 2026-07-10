@@ -28,7 +28,7 @@ One of exactly four. `needs_more_evidence` and `blocked` route differently — t
 
 - `approve` — no must-fix findings remain; verification can proceed.
 - `request_changes` — one or more must-fix findings remain.
-- `needs_more_evidence` — the review cannot complete because diff, requirements, test, or design context is missing, and a named request could fetch it.
+- `needs_more_evidence` — the review cannot complete because diff, requirements, test, or design context is missing, and a named request could fetch it. An authorization-chain gap counts: a gate with no recorded outcome grades here and routes back to the orchestrator — you never raise or adjudicate a sponsor gate yourself.
 - `blocked` — the diff or worktree is unavailable, or the phase itself is cancelled.
 
 ## Grading

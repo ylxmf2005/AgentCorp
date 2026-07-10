@@ -1,0 +1,4 @@
+interface:
+  display_name: "拷问"
+  short_description: "步步紧逼地拷问一份现有的计划或设计"
+  default_prompt: "使用 $grill 一次一个难题地压力测试这份计划、设计、提案或论证。(options: mode:interview|readiness)"

@@ -64,3 +64,8 @@ This is how author/reviewer separation lands in this phase: you (the Orchestrato
 ## Output
 
 Write to `requirements/validated-requirements.md`, following the demo's shape. When it contains Mermaid, check syntax and readability item by item per the "Mermaid validation" checklist at the end of the demo. These requirements are only complete when intent and implementation are kept distinct, the acceptance criteria are observable, the confidence is honest, and the sponsor has confirmed.
+
+## Two recording duties the gate depends on
+
+- **Archive what the sponsor chose from.** When you present multi-path options or gate questions, the presented text (or an immutable copy) enters `task.md`'s Gate History or a requirements appendix before any draft is overwritten — a choice whose option set no longer exists cannot be reviewed.
+- **Backfill after a gate override.** When a gate answer overrides a stated default (a test freeze, a scope cut), sweep this artifact's own sections — Scope/MVP, Non-Goals, Constraints, acceptance criteria — in the same edit, so no section still carries the pre-ruling text. An internally contradictory requirements artifact propagates both versions downstream.

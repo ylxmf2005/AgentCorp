@@ -13,6 +13,7 @@
 - **target**：现有技能名称（例如 `delivery-orchestrator`）或 `NEW: <topic>` 表示要构建的新技能。
 - **trigger**：`user-noticed` | `agent-trial-and-error` | `external-research`。
 - **signal**：来自会话的具体、隐私最小化证据——实际发生了什么。脱敏 secret、个人绝对路径、身份、邮箱和 private URL；只引用最小必要片段。
+- **failing trajectory**：语料库文字具体在哪个瞬间失效的——故障落在哪个 phase/gate 上，症结是触发措辞（description/router）、SKILL.md 正文规则，还是跨技能契约。"这样写会更好看"不算一条 trajectory；没有 failing trajectory 的提案，分诊阶段就直接拒掉。
 - **proposed change**：具体的编辑，或要运行的研究；优先选择执行/结构而非会被忽略的文字。
 - **blast radius**：`wording` | `behavior` | `structural` | `new-skill`。
 - **suggested lane**：`fast`（措辞/执行，一个或少量文件） | `full`（结构性变更或新技能——交付流水线）。

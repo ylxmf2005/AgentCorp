@@ -1,4 +1,4 @@
 interface:
   display_name: "Explain"
   short_description: "按读者水平解释 AgentCorp 工作，附带证据"
-  default_prompt: "使用 $explain 将这份 AgentCorp 输出以平实语言解释给没有项目上下文、领域术语、行话或技术背景的人。聚焦它意味着什么、为什么重要、以及还有什么未知；当能降低认知负荷时，使用具体示例或 Mermaid 图表。"
+  default_prompt: "使用 $explain 将这份 AgentCorp 输出以平实语言解释给没有项目上下文、领域术语、行话或技术背景的人。聚焦它意味着什么、为什么重要、以及还有什么未知；当能降低认知负荷时，使用具体示例或 Mermaid 图表。(options: output:inline|artifact, reader:<who>)"

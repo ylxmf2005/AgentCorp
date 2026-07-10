@@ -1,4 +1,4 @@
 interface:
   display_name: "Comment Optimizer"
   short_description: "直接改好配得上留下的注释"
-  default_prompt: "使用 $comment-optimizer 直接优化 AgentCorp 注释。"
+  default_prompt: "使用 $comment-optimizer 直接优化 AgentCorp 注释。(options: mode:edit|review)"

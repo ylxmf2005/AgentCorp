@@ -1,4 +1,4 @@
 interface:
   display_name: "Parallel Researcher"
   short_description: "跨来源建立可驱动决策的证据"
-  default_prompt: "使用 $parallel-researcher 运行多来源研究并综合可驱动决策的证据。"
+  default_prompt: "使用 $parallel-researcher 运行多来源研究并综合可驱动决策的证据。(options: scope:external|repo|both, depth:desk|source-verified|hands-on)"

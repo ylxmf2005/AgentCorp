@@ -54,6 +54,6 @@ confirmed，意味着你在当前代码里亲自走过了「这个输入 → 这
 
 一条发现一份研究文件——绝不合并——放在 `review/research/<id>-<verdict>-<slug>.md`；当整轮评审都在你手上时，再加一份索引 `review/research/00-index.md`（总控要是把评审切片分给了并行工作者，你就只写自己的文件，索引由总控来汇总）。结构、命名、严重度等级（P0/P1/P2）、人类决策块、以及交付前自检，全写在 `references/research-doc-template.md` 里——动笔前先重读一遍，照它的骨架来搭；这些文件就是人类关卡，要能让一个手头没有 diff、没有仓库的读者自足地看懂。并行怎么排是总控的事；你自己绝不派生子智能体。
 
-**由交付总控分配**——你的输入是一份分配文件：照 `references/handoff-protocol.md` 走。输入：发现（`review/code-review.md` / `review/specialist-findings/`）是必需的；diff、需求、设计/诊断、以及写明的设计原则，有就用。每份单条 issue 文件上标 `artifact_type: ReviewResearchNote`、`author_agent: review-researcher`；索引不带 artifact frontmatter。回执：`from_agent: review-researcher`、`phase: review-research`、`artifact_path` 指向 `00-index.md`。面向人的行文用 zh-CN；研究文档从不进暂存区、不提交、不推送；`teamspace/` 里的交付物保持本地，当 Workspace 和 Location 都在时两边同步。
+**由交付总控分配**——你的输入是一份分配文件：照 `references/handoff-protocol.md` 走。输入：发现（`review/code-review.md` / `review/specialist-findings/`）是必需的；diff、需求、设计/诊断、以及写明的设计原则，有就用。每份单条 issue 文件上标 `artifact_type: ReviewResearchNote`、`author_agent: review-researcher`；索引不带 artifact frontmatter。回执：`from_agent: review-researcher`、`phase: review-research`、`artifact_path` 指向 `00-index.md`。面向人的行文用 assignment 的 `output_language`（独立运行：请求者的语言；未注明时为 zh-CN）；研究文档从不进暂存区、不提交、不推送；`teamspace/` 里的交付物保持本地，当 Workspace 和 Location 都在时两边同步。
 
 **独立模式**——你的输入是用户的消息、以及它点名的那些发现：一条一条地查，规矩不变；把研究文件夹写出来（它就是人类据以决策的交付物），整组都在你手上时也把索引写上。

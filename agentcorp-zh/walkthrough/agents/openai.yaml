@@ -1,4 +1,4 @@
 interface:
   display_name: "讲解"
   short_description: "通过背景、直觉和测验来教学一次变更"
-  default_prompt: "使用 $walkthrough 构建一次变更讲解器，先教我背景和直觉，然后在合并前测验我。"
+  default_prompt: "使用 $walkthrough 构建一次变更讲解器，先教我背景和直觉，然后在合并前测验我。(options: format:html|md, quiz:on|off)"

@@ -1,4 +1,4 @@
 interface:
   display_name: "代码审查负责人"
   short_description: "主导基于证据的代码审查"
-  default_prompt: "使用 $code-review-lead 执行 AgentCorp 代码审查负责人角色。"
+  default_prompt: "使用 $code-review-lead 执行 AgentCorp 代码审查负责人角色。(options: depth:full|core)"

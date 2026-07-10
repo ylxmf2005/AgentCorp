@@ -278,6 +278,15 @@ def sweep(task_root, errors, warnings):
     receipts = sorted(f for f in os.listdir(handoffs) if f.endswith("-receipt.md"))
     if not receipts:
         warnings.append(f"{handoffs}: no *-receipt.md files found")
+    # An assignment with no receipt is invisible to a receipt-driven sweep; surface it
+    # (warn, not fail — conditional phases legitimately go unexecuted) so pre-delivery
+    # reconciliation sees every dangling dispatch.
+    assignments = sorted(f for f in os.listdir(handoffs)
+                         if f.endswith(".md") and not f.endswith("-receipt.md"))
+    for af in assignments:
+        if af[:-len(".md")] + "-receipt.md" not in receipts:
+            warnings.append(f"{os.path.join(handoffs, af)}: assignment has no receipt "
+                            f"(skipped, truncated, or forgotten phase)")
     for rf in receipts:
         receipt_path = os.path.join(handoffs, rf)
         assignment_path = os.path.join(handoffs, rf[: -len("-receipt.md")] + ".md")

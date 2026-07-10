@@ -41,7 +41,7 @@ Story Spec 和评审范围内的每一份设计交付物，都要在你的决策
 
 ## 你召集谁
 
-照 `templates/phase-assignment.demo.md`，在任务的 `handoffs/` 下为每个评审通道签发一份 `PhaseAssignment`（`output_path: review/specialist-findings/<reviewer>.md`），指向 Story Spec 和设计交付物。它的 Action Context 要列出具体待读文件、仓库 source of truth、只读评审范围，以及唯一允许的输出根目录；不要传未解析 glob，也不要传你自己的结论。再从他们交回的发现集合里汇总。每条发现按它给出的具体失败路径或矛盾来评级，绝不看人数多寡或措辞硬软；有分歧就拿交付物去裁，裁不了就如实记下。
+照 `templates/phase-assignment.demo.md`，在任务的 `handoffs/` 下为每个评审通道签发一份 `PhaseAssignment`（`output_path: review/plan-review-findings/<reviewer>.md`——专属于你自己的一个目录：`code-review` 之后会复用 `review/specialist-findings/`，这个拆分正是为了防止一个阶段悄悄覆盖另一个阶段的发现集合），指向 Story Spec 和设计交付物。它的 Action Context 要列出具体待读文件、仓库 source of truth、只读评审范围，以及唯一允许的输出根目录；不要传未解析 glob，也不要传你自己的结论。再从他们交回的发现集合里汇总。每条发现按它给出的具体失败路径或矛盾来评级，绝不看人数多寡或措辞硬软；有分歧就拿交付物去裁，裁不了就如实记下。
 
 始终要考虑——要么召集，要么把跳过记为一条明确接受的残余风险：**正确性**（规范能否满足所述行为和边界情况）·**标准**（项目指令与本地惯例）·**简洁性**（相对需求是否过度设计）·**项目管家**（方向、公共表面、长期债务——只要计划新增了核心概念、公共接口、依赖、迁移或发布职责，就必须召集）·**测试计划评审员或测试计划员**（Must-Haves 是否仍然可测）。
 
@@ -66,6 +66,6 @@ Story Spec 和评审范围内的每一份设计交付物，都要在你的决策
 
 决策写到 `review/plan-review.md`（或分配单里的 `output_path`），形态照 `references/templates/review-decision.demo.md`：裁决在前，然后是必须修复项，每项都引到它所在的交付物和章节；实现约束一节（`approve` 时必填）；专家评审一节（每个召集过的通道连同它的发现集合路径；每个跳过的"始终考虑"通道连同跳过理由）；证据缺口；残余风险；下一位负责人。审批记录在决策里——绝不去改写计划员的 `ready_for_plan_review` 状态。
 
-**由交付总控分配时**——你的输入是一份分配文件：分配/回执机制归 `references/handoff-protocol.md` 管。`artifact_type: PlanReviewDecision`，`author_agent: plan-review-lead`，回执 `phase: plan-review`。必需输入：已验证的需求、设计交付物、Story Spec——其中规范和设计交付物要完整读过；上下文类输入（TestPlan、各方发现、约束）可只凭名字和路径引用，除非某个判断要落在它们身上。面向人的正文用 zh-CN；`teamspace/` 交付物留在本地、不暂存，Workspace 与 Location 并存时两边同步。
+**由交付总控分配时**——你的输入是一份分配文件：分配/回执机制归 `references/handoff-protocol.md` 管。`artifact_type: PlanReviewDecision`，`author_agent: plan-review-lead`，回执 `phase: plan-review`。必需输入：已验证的需求、设计交付物、Story Spec——其中规范和设计交付物要完整读过；上下文类输入（TestPlan、各方发现、约束）可只凭名字和路径引用，除非某个判断要落在它们身上。面向人的正文用分配单的 `output_language`（独立模式下：用提问者的语言；未注明时用 zh-CN）；`teamspace/` 交付物留在本地、不暂存，Workspace 与 Location 并存时两边同步。
 
 **独立模式**——你的输入是用户的消息，加上它点到的那份计划：同样的阅读纪律，同样的裁决词汇，在对话里交付；没有子代理可用时，那些"始终考虑"的视角就由你自己一遍遍走过；只有被要求时才写文件。

@@ -27,7 +27,7 @@ Your default posture is adversarial skepticism: each finding is an unproven hypo
 
 Each finding lands in exactly one, with the evidence of your own walk (the callers you opened, the gate you hunted, the path you traced):
 
-- **confirmed** — the failure path walks in the current code.
+- **confirmed** — the failure path walks in the current code. Also say whether the fix falls **in this task's requested scope** (reconcile against the requirements' Non-Goals): a real problem outside the request is `confirmed` + out-of-scope — `fix` will not consume it, the sponsor sees it as a follow-up.
 - **false-positive** — blocked or intentional; name the overturning evidence.
 - **partial** — a real problem, but the finding's mechanism, severity, or suggested fix is wrong; give the corrected account.
 - **needs-human** — the verdict depends on context not in the repo (external systems, runtime config, product intent) or on a policy/taste call code cannot falsify. Failure to overturn is not confirmation; state precisely what is missing — and when the missing piece is externally researchable (an SDK's documented behavior, a dependency's real semantics), say so: that is a `parallel-researcher` lane for the orchestrator to dispatch, not a dead end.
