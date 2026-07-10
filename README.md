@@ -96,21 +96,7 @@ traces every decision.
 
 ## How a Delivery Runs
 
-```mermaid
-flowchart LR
-    A[intake] --> B[validate-requirements]
-    B -.human gate.-> C[test-plan + review]
-    C --> D[design / diagnosis]
-    D --> E[implementation-plan + review]
-    E --> F[implement]
-    F --> G[code-review<br/>12 specialist lanes]
-    G --> H[review-research<br/>the circuit breaker]
-    H -.human gate.-> I[fix]
-    I --> J[verify<br/>API / E2E / regression]
-    J --> K[acceptance-review]
-    K -.human gate.-> L[compound<br/>distill the lessons]
-    L --> M[deliver]
-```
+[![AgentCorp delivery workflow](docs/assets/delivery-workflow.png)](docs/assets/delivery-workflow.excalidraw)
 
 Hand the Delivery Orchestrator a task and it classifies the work for the sponsor (the human this pipeline answers to — you), picks a
 paradigm (greenfield / enhancement / bugfix / simple addition), announces the
