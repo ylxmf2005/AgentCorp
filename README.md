@@ -29,7 +29,7 @@ who is allowed to approve it, and what evidence has to exist before work moves.
   block, and repeated failure forces replanning instead of a third identical retry.
 - **Understandable** — every phase leaves a structured artifact recording who
   decided what on which evidence. Review findings are explained to the level of
-  *"you can judge this without having read the code."*
+  "you can judge this without having read the code."
 - **Verifiable** — no role approves its own output, tests are decided before
   implementation, and every review finding is treated as a possible false
   positive until an independent role has walked the failure path itself.
@@ -101,8 +101,8 @@ traces every decision.
 Hand the Delivery Orchestrator a task and it classifies the work for the sponsor (the human this pipeline answers to — you), picks a
 paradigm (greenfield / enhancement / bugfix / simple addition), announces the
 phase sequence as a commitment, and drives it — stopping at human gates with a
-navigable summary (*where we are → what I see → what I recommend → your
-options*) instead of a bare "approve?". Between phases, work moves by
+navigable summary (where we are → what I see → what I recommend → your
+options) instead of a bare "approve?". Between phases, work moves by
 **assignment/receipt files with YAML contracts**, mechanically validated: a
 receipt claiming an artifact that doesn't exist, an empty deliverable, a phase
 nobody recognizes — caught by `validate-handoff.py` before any human reads a word.
@@ -117,7 +117,7 @@ every downstream assignment:
 | `rigor:` | `light` \| `balanced` \| `standard` \| `strict` | how much redundancy and optional coverage the task buys |
 | `lang:` | any | the language every human-facing artifact is written in |
 
-`rigor:light` gets you speed by trading *redundancy* — one review round, focused
+`rigor:light` gets you speed by trading redundancy — one review round, focused
 verification, optional phases skipped. It never trades honesty: no tier can
 fabricate evidence, approve its own work, or skip re-running the original
 failing input — and a security/permission/data-loss surface **auto-upgrades its
@@ -135,12 +135,12 @@ where wrongness is expensive.
 Every mechanism below exists because the naive version failed somewhere real:
 
 - **No role approves its own artifact.** Author/reviewer separation holds in
-  every mode — even solo (`direct`) mode keeps the review gates and makes *you*
+  every mode — even solo (`direct`) mode keeps the review gates and makes you
   the reviewer, informed and explicitly willing.
 - **Review findings are hypotheses, not facts.** The most expensive failure in
   multi-agent work is a confident-but-wrong finding taken downstream as truth.
   `review-researcher` is the circuit breaker: it re-walks every finding
-  adversarially (null hypothesis: *false positive*), kills the fakes with named
+  adversarially (null hypothesis: false positive), kills the fakes with named
   evidence, and only confirmed, in-scope items ever reach `fix`.
 - **Claims need handles.** "Tests pass" counts only with something you can
   open — a path, a log, a rendered screenshot. A behavior that can only be
@@ -149,11 +149,11 @@ Every mechanism below exists because the naive version failed somewhere real:
   verbatim and append-only.
 - **Gates speak a closed vocabulary.** Human gates resolve to
   `approved / skipped / revised / blocked` — recorded, never silently passed. A
-  sponsor reply that doesn't address the question maps to *no outcome*: nothing
+  sponsor reply that doesn't address the question maps to no outcome: nothing
   in the pipeline may invent a "default-approve convention".
 - **High-stakes changes get a second opinion from a different model family.**
   On a security boundary, public contract, or irreversible release, the verdict
-  owner takes an independent cold-read from the *other* runtime family (Codex
+  owner takes an independent cold-read from the other runtime family (Codex
   checking Claude-family work, and vice versa) before concluding — two families
   rarely share one blind spot.
 - **The mechanical layer is fuzz-tested.** `validate-handoff.py`'s known
