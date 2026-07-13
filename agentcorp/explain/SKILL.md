@@ -31,6 +31,8 @@ Default reader: a smart sponsor with zero context — they may not know the repo
 - `output:artifact` — persist under the task root and return a short pointer. Right for multi-point sets the reader will re-open, annotate, or decide item by item; also whenever the user says "落库", "write it down", "make a doc", or "方便看". Load `references/artifact-format.md` for paths, set/index structure, and frontmatter.
 - unspecified (auto, the default) — choose yourself, except two conditions **force** `artifact`: the explanation warrants a diagram or anything else a terminal cannot render (shipping unrendered source is not delivery, and dropping a warranted diagram to stay inline is not an option either); or the request is a multi-point set the reader will work through item by item.
 
+Unknown keys get a one-line note and are otherwise ignored; a missing load-bearing value gets one short question, never a guess.
+
 ## Default shape
 
 Use this shape unless the user asks for another; merge sections into natural paragraphs for small answers rather than forcing headings.

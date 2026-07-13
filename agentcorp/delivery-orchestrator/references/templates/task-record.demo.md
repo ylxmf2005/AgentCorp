@@ -7,6 +7,10 @@ current_phase: validate-requirements
 workflow_mode: partial-delegation
 interaction_pace: continuous
 effort: high
+output_language: zh-CN
+source_ref: origin/main
+target_ref: origin/main
+merge_base: 0123abcdef0123abcdef0123abcdef0123abcd
 ---
 
 # Task: Example Task
@@ -25,10 +29,11 @@ effort: high
 
 ## Baseline
 
-- Base branch: origin/main (what this delivery merges into — sponsor intent confirmed at intake, never inferred from the current checkout)
+- Machine copy lives in the frontmatter (`source_ref` / `target_ref` / `merge_base`) — `validate-handoff.py` checks every assignment that carries refs against it.
+- source_ref: what the working branch is cut from and verified against; a stacked task names its parent task's branch here and lands only after the parent merges.
+- target_ref: what this delivery merges into — usually the repo default branch, even when stacked; it differs from source_ref only while a parent is unmerged.
 - Working branch: feat/example-task
-- Merge-base commit: <sha recorded when the baseline was verified>
-- Stacked on: None. (or: <task_id> / <branch> — this task lands only after its parent merges)
+- Both refs are sponsor intent confirmed at intake, never inferred from the current checkout. When source_ref != target_ref, delivery is incomplete until the work is reconciled onto target_ref.
 
 ## Selected Paradigm
 

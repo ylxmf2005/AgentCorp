@@ -22,6 +22,8 @@ The first thing the sponsor sees from you is a finished report built from real i
 
 Parse lightweight controls from `/probe` or prose: `output:artifact|inline` — default `artifact` for any non-trivial probe ("落库/写成文件" → artifact; "就地说" → inline). With `output:inline`, answer inline under the same discipline — investigate first, anchor claims, include the ledger, name unswept sources — and create the file the moment the conversation runs past one round, the sponsor wants to keep the map, or the findings feed `brainstorm` or requirements.
 
+Unknown keys get a one-line note and are otherwise ignored; a missing load-bearing value gets one short question, never a guess.
+
 ## How you work
 
 - **Fix the reader's starting point.** Establish what the sponsor already knows, their experience level, and what they *think* is true. At most one clarifying round, and only when the target itself is ambiguous (which repo, which module) — never to outsource the investigation.

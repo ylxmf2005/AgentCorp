@@ -155,6 +155,67 @@ CASES = [
 ]
 
 
+TASK_RECORD = """---
+artifact_type: TaskRecord
+task_id: 20260709-120000-fuzz
+author_agent: delivery-orchestrator
+status: active
+source_ref: origin/main
+target_ref: origin/main
+merge_base: 0123abcdef0123abcdef0123abcdef0123abcd
+---
+Success criteria, baseline, gate history — a real ledger body.
+"""
+
+
+def run_single(name, expect, content):
+    """Validate one standalone file (shape-only mode)."""
+    with tempfile.TemporaryDirectory() as root:
+        path = os.path.join(root, "task.md")
+        with open(path, "w") as fh:
+            fh.write(content)
+        proc = subprocess.run([sys.executable, VALIDATOR, path], capture_output=True, text=True)
+        warned = "WARN:" in proc.stderr
+        if expect == "WARNED":
+            ok = proc.returncode == 0 and warned
+        else:  # CLEAN
+            ok = proc.returncode == 0 and not warned
+        print(f"{'ok ' if ok else 'FAIL'} [{expect:6}] {name}")
+        if not ok:
+            print(textwrap.indent(proc.stderr.strip(), "      "))
+        return ok
+
+
+def test_baseline_mismatch(mutated_ref, expect_caught):
+    """A pair whose assignment baseline disagrees with task.md must be CAUGHT."""
+    with tempfile.TemporaryDirectory() as root:
+        os.makedirs(os.path.join(root, "handoffs"))
+        os.makedirs(os.path.join(root, "review"))
+        a = os.path.join(root, "handoffs", "001-x.md")
+        r = os.path.join(root, "handoffs", "001-x-receipt.md")
+        art = os.path.join(root, "review", "impl.md")
+        assignment = GOOD["assignment"].replace(
+            "effort: high", f"effort: high\nsource_ref: {mutated_ref}\ntarget_ref: origin/main")
+        for path, content in ((a, assignment), (r, GOOD["receipt"]), (art, GOOD["artifact"]),
+                              (os.path.join(root, "task.md"), TASK_RECORD)):
+            with open(path, "w") as fh:
+                fh.write(content)
+        proc = subprocess.run([sys.executable, VALIDATOR, "--pair", a, r, "--task-root", root],
+                              capture_output=True, text=True)
+        if expect_caught:
+            ok = proc.returncode == 1 and "baseline drift" in proc.stderr
+            label = "CAUGHT"
+        else:
+            ok = proc.returncode == 0
+            label = "CLEAN "
+        name = ("assignment source_ref disagrees with task.md" if expect_caught
+                else "assignment baseline matching task.md stays clean")
+        print(f"{'ok ' if ok else 'FAIL'} [{label}] {name}")
+        if not ok:
+            print(textwrap.indent(proc.stderr.strip(), "      "))
+        return ok
+
+
 def test_sweep_orphan_assignment():
     """--sweep must warn about an assignment that has no receipt (S2-F8)."""
     with tempfile.TemporaryDirectory() as root:
@@ -177,6 +238,15 @@ def test_sweep_orphan_assignment():
 
 def main():
     results = [run_case(*case[:2], case[2]) for case in CASES]
+    results.append(run_single("task record with baseline refs stays clean", "CLEAN", TASK_RECORD))
+    results.append(run_single("task record without baseline refs", "WARNED",
+                              TASK_RECORD.replace("source_ref: origin/main\n", "")
+                                         .replace("target_ref: origin/main\n", "")))
+    results.append(run_single("merge_base not a sha", "WARNED",
+                              TASK_RECORD.replace("merge_base: 0123abcdef0123abcdef0123abcdef0123abcd",
+                                                  "merge_base: my-branch-tip")))
+    results.append(test_baseline_mismatch("feat/other-parent", True))
+    results.append(test_baseline_mismatch("origin/main", False))
     results.append(test_sweep_orphan_assignment())
     failed = results.count(False)
     print(f"\n{len(results) - failed}/{len(results)} expectations hold")

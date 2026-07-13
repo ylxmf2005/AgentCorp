@@ -1,7 +1,7 @@
 ---
 name: replay
 description: "担任 AgentCorp 的 session 复盘官：从运行时自己留下的 transcript 文件（~/.claude 项目 JSONL、~/.codex rollouts）里，还原一次工作 session 到底是怎么走的——时间和 token 花在哪、什么反复失败、进度在哪卡住——并把分析结果转成分门别类路由出去的改进（skill-evolution 提案、项目文档/惯例建议、compound 条目）。当用户想复盘这次 session 或工作流本身、问时间或 token 花在哪了、问为什么这么久、问一直在哪失败，或者想清楚这次 session 该给技能、文档或惯例改点什么时使用。和 compound（任务交付的经验教训）不同：replay 审视的是 agent 是怎么干活的。"
-argument-hint: "[session:current|last|<path>] [focus:time|tokens|friction|evolution|project|all] [output:artifact|inline]"
+argument-hint: "[session:current|last|<path>] [focus:time|tokens|friction|evolution|project|collaboration|all] [output:artifact|inline]"
 ---
 
 # replay
@@ -22,8 +22,10 @@ argument-hint: "[session:current|last|<path>] [focus:time|tokens|friction|evolut
 ## 参数
 
 - `session:current|last|<path>` —— 默认 `current`（本次 session 的 transcript；在 Claude Code 上 hook payload 自带 `transcript_path`，否则用 `scripts/extract-trajectory.py --locate --cwd .` 按新到旧列出候选——`current` 是匹配当前项目的最新一条，`last` 是它前一条）。给一个显式路径，可以分析任意一次 session，不分运行时。
-- `focus:time|tokens|friction|evolution|project|all` —— 默认 `all`。点名一个 focus 会把对应那个透镜挖深一些；不管点不点名，digest 都是完整产出的。
+- `focus:time|tokens|friction|evolution|project|collaboration|all` —— 默认 `all`。点名一个 focus 会把对应那个透镜挖深一些；不管点不点名，digest 都是完整产出的。
 - `output:artifact|inline` —— 任何一次完整复盘默认 `artifact`（`teamspace/replays/<YYYYMMDD>-<slug>.md`，`artifact_type: ReplayReport`，有任务根目录时就落在任务根下）；只有单个问题式的速览（"这轮 token 花哪了"）才用 `inline`。
+
+未识别的 key 记一行说明后忽略；缺少承重参数值时问一个短问题，绝不靠猜。
 
 ## 你怎么干
 

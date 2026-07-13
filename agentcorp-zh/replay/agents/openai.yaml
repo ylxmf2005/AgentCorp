@@ -1,4 +1,4 @@
 interface:
   display_name: "回放"
   short_description: "回放 session 轨迹，从中挖出可以改进的地方"
-  default_prompt: "使用 $replay 分析这次 session 记录下来的轨迹——时间和 token 花在哪、一直在哪失败、该改进什么 (options: session:current|last|<path>, focus:time|tokens|friction|evolution|project|all, output:artifact|inline)。"
+  default_prompt: "使用 $replay 分析这次 session 记录下来的轨迹——时间和 token 花在哪、一直在哪失败、该改进什么 (options: session:current|last|<path>, focus:time|tokens|friction|evolution|project|collaboration|all, output:artifact|inline)。"

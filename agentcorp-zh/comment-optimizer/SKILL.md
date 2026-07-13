@@ -22,6 +22,8 @@ argument-hint: "[mode:edit|review]"
 
 `mode:edit|review` —— 默认 `edit`（直接在工作树里优化注释）。`review` 只产出发现，落在 `review/specialist-findings/comment-optimizer.md`——code-review 阶段的分配文件必须点名这个 mode。
 
+未识别的 key 记一行说明后忽略；缺少承重参数值时问一个短问题，绝不靠猜。
+
 ## 什么配有一条注释
 
 - 历史数据兼容：脏数据、缺字段、旧 API 形状、migration gap。

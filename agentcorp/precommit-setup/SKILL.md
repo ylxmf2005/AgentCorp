@@ -16,7 +16,9 @@ A HOOK YOU HAVE NOT RUN IS A HOOK YOU DO NOT HAVE — RUN IT, OR REPORT UNVERIFI
 
 ## Parameters
 
-`runtime:claude|codex|both` — which runtime's hook mounting to install; default `both` when both are configured in the host repo, otherwise the one that is present.
+`runtime:claude|codex|both` — which runtime's hook mounting to install; default `both` when both are configured in the host repo, otherwise the one that is present; when neither is configured, ask one short question (which runtime to wire) instead of guessing.
+
+Unknown keys get a one-line note and are otherwise ignored; a missing load-bearing value gets one short question, never a guess.
 
 ## Workflow
 

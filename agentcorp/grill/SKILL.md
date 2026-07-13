@@ -22,6 +22,8 @@ Ten questions at once is a questionnaire the owner fills on autopilot; one hard 
 
 `mode:interview|readiness` — default `interview` (the full one-question-at-a-time session). `readiness` skips to the verdict: one `ready|needs-evidence|needs-redesign|blocked` with the weakest assumption and the evidence that would change it.
 
+Unknown keys get a one-line note and are otherwise ignored; a missing load-bearing value gets one short question, never a guess.
+
 ## The interview
 
 Target selection beats question quality: aim each question with the lenses in `references/grill-lenses.md` (goal reality, success signal, non-goal boundary, evidence, knowledge matrix, counterexample, simpler alternative, cost of wrongness, dependency, user behavior, verification) — load it at session start and use only the lenses that fit this plan. An answer of "I don't know" is a finding, not a failure: convert it to a named unknown with a resolution path (ask, inspect, research via `parallel-researcher`, experiment, or an explicit assumption with a revisit point) rather than letting it stay poetic.

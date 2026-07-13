@@ -23,6 +23,8 @@ TO THE SPECIFIC PRESENTED DIFF — PER PROPOSAL, WITH NO SIZE THRESHOLD.
 
 `proposal:<id>|all` — which pending proposal(s) to process; default: summarize the pending set and ask. `all` triages every pending proposal — each still lands or is rejected one by one through the human gate.
 
+Unknown keys get a one-line note and are otherwise ignored; a missing load-bearing value gets one short question, never a guess.
+
 ## Operating principles
 
 - **Enforcement over prose.** Prefer changes that make a rule unavoidable — a mechanical check, a gate cell, a structural change — over another sentence that gets ignored. A rule that exists but is not followed needs its enforcement fixed, not firmer wording.

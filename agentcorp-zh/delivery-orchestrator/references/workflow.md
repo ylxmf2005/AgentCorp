@@ -29,18 +29,28 @@ Pace 与工作流模式相互独立：模式决定**谁执行、谁裁决**；pa
 
 ## Effort
 
-第三个正交旋钮：mode 决定**谁执行**，pace 决定**每次推进到检查点之间能走多远**，effort 决定**这个任务能买到多少冗余和可选覆盖**。`effort:low|medium|high|max`——默认 `high`——在 intake 阶段选定（发起人说"赶时间/尽快"提示 `low` 或 `medium`；"从严/别出错"提示 `max`；说清楚你选了哪档、为什么），记录进 `task.md`，并作为 `effort` 贯穿写入每个 assignment。下表是唯一的映射来源；各消费者直接读自己那一行，不要自己重新推导：
+第三个正交旋钮：mode 决定**谁执行**，pace 决定**每次推进到检查点之间能走多远**，effort 决定**这个任务召集多大的团队、走多少道流程步子**——但绝不决定任何被召集角色有多用心。`effort:low|medium|high|max`——默认 `high`——在 intake 阶段按此优先级选定：显式给出的 `effort:` 参数最优先；否则当宿主暴露 session 档位时继承之（替换行写在总控 SKILL 里；`xhigh` 归一为 `max`）；发起人的话仍可调整选择（"赶时间/尽快"→`low`/`medium`，"从严/别出错"→`max`）。说清楚你选了哪档、为什么，并记录进 `task.md`。
+
+**总控是这张表唯一的读者——编译，不转发。** 派发时，把档位翻译成每个 assignment 的 Action Context 里明确的数量和开关：召集哪几条 lane、跑哪几层、轮次上限、收录哪些条目类别。自带旋钮的角色通过自己的旋钮收到编译结果（Code Review Lead 收 `depth:core|lean|full`，researcher 收 `depth:desk|source-verified|hands-on`，Test Leader 收点名的层级和 tester）；specialist 只收到"上场/不上场"。任何 worker 都不解读档位名——信封里的 `effort` 字段只是审计元数据，共享交接协议对每个 worker 也这么说。到 `deliver` 时，报告要带上 **effort 台账**：档位、本表为它承诺了什么、实际跑了什么、每处偏差及原因——档位是契约，不是心情。
 
 |维度|`low`（赶时间）|`medium`|`high`（默认）|`max`|
 |---|---|---|---|---|
-|评审轮次|一轮，`depth:core`（主管独自评审）；之后只走限定范围的修订|一轮完整评审；之后只走限定范围的修订|一轮完整评审 + 限定范围修订；第二轮完整评审需要记录理由|最多两轮完整评审，`depth:full`，之后升级给发起人|
-|review-research|只处理 must-fix 项|只处理 must-fix 项|主管路由过来的项|must-fix + 建议项|
-|verify|聚焦检查 + 改动面上的回归|聚焦检查 + 回归；只在 TestPlan 标了风险的地方才上更高层|按需走完整的 Verification Hierarchy|走完整层级；环境要求严格照办|
+|Intake 与路线|0 组问题——直接提路线；micro **和 small** 变更都走快速路径|micro 变更走快速路径|至多一组会改变路线的问题|一组问题 + 成功标准逐条确认；micro 也走全范式（记录理由）|
+|probe / brainstorm 召集|仅当发起人点名未知领域|模块明显陌生时|发起人或你不熟悉该领域时|任何陌生模块必 `probe`；方向开放必 `brainstorm` 出 4 条路径|
 |可选阶段（impact-analysis / interface-contract / test-plan 可选时）|除非动了共享/公开契约，否则跳过|只在触发条件明确成立时产出|按各自文档里写明的条件|只要说得过去就产出|
+|设计产物集|最近的单产物；跨类型决定折叠进去并标注|该任务类的典型组合|典型组合 + 共享面必出 contract|全风险匹配集 + 外部证据派 researcher lane|
+|plan-review|明示 tiny 且低风险时跳过；否则只召集 Correctness lane|5 条 always-consider lane 里的 3 条（Correctness、Simplicity、TestPlan）|全 5 条 + 按条件匹配的风险 lane|全 5 条 + 全部风险 lane + adversarial|
+|code-review|一轮，`depth:core`（主管独审）；之后只走限定范围的修订|一轮，`depth:lean`（主管 + Correctness lane + 仅 diff 明确要求的表面 lane）；之后只走限定范围的修订|一轮完整评审 + 限定范围修订；第二轮完整评审需要记录理由；lane 按名册条件召集——明确不需要的 lane 记录在案而不召集|最多两轮完整评审，`depth:full`，之后升级给发起人；边界面 lane 也召集；大 diff 按轴拆分 lane|
+|review-research|只处理 must-fix 项；1 个 worker|must-fix 项；worker 数按量|主管路由过来的项|must-fix + 建议项；按簇并行；可外部查证的缺口派 `parallel-researcher` lane|
+|fix|仅 P0 fix-now 项；1 组|P0+P1 fix-now|全部 confirmed/partial fix-now，并行不相交组|同 high + 合并验证跑全量相关套件|
+|verify|1 个 tester；capability 检查 + 改动面回归；e2e 不跑，跳过的层点名标 unverified|2 个 tester；capability + 便宜的 integration；贵的 e2e（绑环境、多表面）除非 TestPlan 把该旅程标为风险否则跳过——单元/简单检查始终保留；跳过的层点名标 unverified，绝不隐式算绿|tester 与层级按 TestPlan / 按需走 Verification Hierarchy|全部 tester + 风险域 reviewer lane；完整层级；环境要求严格照办|
+|Fix-loop 还是重进流水线|入口条件成立就走 fix-loop|窄的单表面缺陷走 fix-loop|fix-loop 需发起人同意且诊断仍然成立|推荐重进完整流水线；走 fix-loop 需记录理由|
 |人工门禁|一次性、提前建议跳过所有可跳过的门禁|建议跳过低风险的门禁|按人工门禁策略|不提出跳过建议|
-|跨家庭第二意见|高风险规则依然适用|高风险规则依然适用|高风险规则（主动提供）|高风险时提供，倾向于采用|
+|跨家庭第二意见|高风险规则依然适用|高风险规则依然适用|高风险规则（主动提供）|高风险时提供，倾向于采用；边界性共享契约变更也提供|
+|acceptance-review|主管独自裁决；Must-Have 与范围内风险的证据文件必开（底线）|+ 每个有争议维度 1 条 lane|1–2 条 lane；验证报告索引的每个文件都打开|每个有争议或单薄的维度 1 条 lane；跨家族冷读；列出的每份产物都亲自打开|
+|compound / walkthrough|诚实的一行"无可沉淀"合法；walkthrough 仅应请求|回归测试问题必问|三个资产问题全问|三问全问 + 中途碎片清扫；walkthrough 主动提供并保活到 merge|
 
-**硬底线——任何档位都不能越过。** effort 交易的是冗余和可选覆盖，从不交易诚实：（1）证据绝不能捏造，`unverified` 绝不能通过任何门禁；（2）作者/评审分离必须成立——在 `low` 档下，由发起人亲自裁决本该由独立评审者裁决的部分；（3）一个缺陷的"做完"始终意味着原始失败输入被重跑过；（4）**高风险面自动升档**：安全/权限边界、公开/共享契约、或数据丢失/不可逆的变更，其受影响阶段一律按 `max` 跑，不管任务本身定的是哪一档，而且这次升档要大声说出来，不能悄悄套用。档位是预算，不是质量的免责条款——档位和底线冲突时，底线赢，发起人要听到这份代价。
+**硬底线——任何档位都不能越过。** effort 交易的是冗余和可选覆盖，从不交易诚实：（1）证据绝不能捏造，`unverified` 绝不能通过任何门禁；（2）作者/评审分离必须成立——在 `low` 档下，由发起人亲自裁决本该由独立评审者裁决的部分；（3）一个缺陷的"做完"始终意味着原始失败输入被重跑过；（4）**高风险面自动升档**：安全/权限边界、公开/共享契约、或数据丢失/不可逆的变更，其受影响阶段一律按 `max` 跑，不管任务本身定的是哪一档，而且这次升档要大声说出来，不能悄悄套用。档位是预算，不是质量的免责条款——档位和底线冲突时，底线赢，发起人要听到这份代价。而且 effort 永远伸不进一个已被召集的角色内部：specialist 没有"不那么仔细"这一档——档位只决定召不召集、召集几个实例，从不决定它们看得多认真。
 
 ### 发起人工作路径菜单
 
@@ -288,7 +298,7 @@ Options:
 
 范围增生是一次修订事件，不是对话里的背景音。三种到达方式一出现就触发本协议：发起人在讨论中随口提到一个新想法（"对了，能不能也……"）、一轮评审或设计讨论冒出一个没人下过单的改进、或某位 worker 上报说自己手上这个修复/能力值得的做法超出了本任务能承载的范围。这三者都不是拓宽现有交付物的许可——最常见的膨胀路径恰恰是这种滴灌：每轮评审吸收一个"合理"的添加，到交付时架构和需求已经覆盖了一个没人过过关卡的任务。可独立交付的范围，默认走 **spin-off**——一项有关联的新任务，落在自己的分支/MR 上——而且主动把这个建议说出口是总控的本分（"这个值得自己的流程；一条分支承载一份交付物"），绝不是要发起人来逼出的让步。把新范围吸收进当前任务，是一次记录在案的关卡决策，要在增量上核对需求（含 Non-Goals）、TestPlan 和设计；发起人的一句顺口提及是探索的意向，绝不自动构成这个决策。每次到达连同答复（按关卡第 N 行吸收 / 拆到 <task> / 暂不做）都记进 `task.md`——没记账的"以后再说"，就是"以后"悄悄变成"现在"的方式。
 
-Baseline 漂移同样是修订事件：base 分支在同一片代码上前移了、发起人改换了 base、或发现 `task.md` 的 Baseline 与实际检出对不上。先更新 Baseline（新的 merge-base commit），再按本协议核对——点名需求、设计或验证里哪些声称是在旧 baseline 上读出的、现已不成立——之后依赖阶段才能推进。
+Baseline 漂移同样是修订事件，两个 ref 各有各的漂法。**Source 漂移**：`source_ref` 在本任务碰到的代码上前移或被 rebase 了、堆叠的父分支变了、或 `merge_base` 不再是工作分支的祖先。**Target 漂移**：发起人改换了 `target_ref`，或 `target_ref` 在同一片代码上前移了。先更新 frontmatter 里的 refs（新的 `merge_base`），再按本协议核对——点名需求、设计或验证里哪些声称是在旧 baseline 上读出的、现已不成立——之后依赖阶段才能推进；且当 `source_ref` != `target_ref` 时，交付还额外要求把工作对齐到 `target_ref`。
 
 1. **判断更新当前任务还是新开任务。** 目标意图不变、而新请求与已有工作高度重合时，修订当前任务。意图改变、范围膨胀成可独立交付的结果，或原任务可以独立完成时，新开一项有关联的任务。拿不准时，建议新开关联任务，并把这个建议说出口。绝不能为了维持表面连续性，悄悄把一项任务变成另一份承诺。
 2. **解析真实交付物集合。** 用 `manifest.md`、`task.md` 和 task root 枚举实际存在的具体文件；不要依赖记忆中的文件名、过期 assignment 或未解析 glob。仓库是当前代码行为的 source of truth；已批准任务交付物在 gate 被重开之前，是已批准意图的 source of truth。
@@ -313,7 +323,7 @@ Baseline 漂移同样是修订事件：base 分支在同一片代码上前移了
 
 在铸造新任务之前，先侦察一遍 `teamspace/tasks/`：同一个意图上如果已经有一个进行中或被中断的任务，就恢复它，或者显式地把它标记为已被取代（在新的 `task.md` 里链接过去），绝不能悄悄地再开一份重复的——前一个任务的回执和 manifest，就是重启时不该被贴上”来源不明”标签、随手抹掉的那份记忆。然后，当确实没有现有任务时，将”task_id”设置为”<YYYYMMDD-HHMMSS>-<desc-slug>”（时间戳在前，因此按名称列出的目录按时间顺序浏览），将”task_root”设置为相对于”workdir”的”teamspace/tasks/<task_id>/”，然后根据演示创建”task.md”和”manifest.md”。
 
-每个任务在 intake 时、在任何交付物读代码之前，就要在 `task.md` 里钉住 **Baseline**：base 分支（本次交付要合入哪里）、工作分支、以及核实时的 merge-base commit；叠在父任务分支上的 spin-off 在 Stacked on 里记录这一点，且只在父任务合入之后才落地。base 是发起人意图，不是检出状态：默认是仓库的默认分支；当前检出是别的东西时——尤其是一条陈旧的或看起来临时的分支——就带着证据（当前分支、相对默认分支的 ahead/behind）说出口并确认后再继续，因为站在 HEAD 恰好所在的分支上开工，正是任务被交付到一条发起人早已放弃的分支上的方式。需求、设计和每一个 diff 都隐含地声称"是在这个 baseline 上读的"；这个声称只有被记录下来才可核对。
+每个任务在 intake 时、在任何交付物读代码之前，就要在 `task.md` 里钉住 **Baseline**——以 frontmatter metadata（`source_ref`、`target_ref`、`merge_base`）的形式，让 `validate-handoff.py` 能机械地拿台账核对每份携带 refs 的 assignment，正文里再记工作分支。`source_ref` 是工作分支从哪切出、对着谁核实——叠在父任务上的 spin-off 在这里写父任务的分支，且只在父任务合入后才落地；`target_ref` 是本次交付要合入哪里——通常是仓库默认分支，即使堆叠时也是。两个 ref 都是发起人意图，不是检出状态：默认是仓库的默认分支；当前检出是别的东西时——尤其是一条陈旧的或看起来临时的分支——就带着证据（当前分支、相对默认分支的 ahead/behind）说出口并确认后再继续，因为站在 HEAD 恰好所在的分支上开工，正是任务被交付到一条发起人早已放弃的分支上的方式。需求、设计和每一个 diff 都隐含地声称"是在 `source_ref` 的 `merge_base` 上读的"；这个声称只有被记录下来才可核对。
 
 当任务产生持久注释、设计、提示、屏幕截图、日志、评论、验证证据或交接时，在编写之前找到工件的位置。所有持久协作工件都位于“<workdir>/teamspace/”下；当存在单独的“code_worktree”/“code_location”时，它们必须同步到“<code_worktree>/teamspace/”下的相同相对路径 - 创建或更新工件时，首先写入当前端，并在报告完成之前将相同的相对路径复制到另一端。记录相对于“workdir”的工件路径；不要将 `<workdir>` 重写为特定于计算机的位置路径。默认任务运行时布局：```text
 teamspace/tasks/<task_id>/
@@ -385,7 +395,7 @@ teamspace/tasks/<task_id>/
 
 对于委派阶段，交付编排者会在阶段开始之前写入分配文件。每个委托分配都带有一个“task_root”（相对于“workdir”的“teamspace/tasks/<task_id>/”）和一个相对于该任务根的“output_path”；当位置和工作空间不同时，相同的任务根也必须存在于`<code_worktree>/teamspace/tasks/<task_id>/`中。委托所有者将阶段工件写入分配的“output_path”，并写回指定工件路径和状态的 Markdown 收据。
 
-派发前，在 assignment 的 Action Context 中填入具体值：source of truth；Owner 动手前必须读取的每个 context file；允许编辑的根目录；只读上下文；输出路径；当该 phase 需要读取、diff 或编辑代码时，任务的 Baseline（来自 `task.md` 的 base 分支 + merge-base commit）；`output_language`（记录在 `task.md` 中的发起人语言）；行为约束。Context file 必须是实际存在的具体路径，不能是未解析 glob 或按惯例猜出的文件名。约束用于指导 Owner，不能原样抄进输出交付物。修订让 assignment 过期时，先替换它再重新派发，不要在旧 assignment 后面追加互相矛盾的指令。预先写好的 assignment，对门禁结果只能引用台账指针（比如"见 task.md Gate History 第 N 行"），绝不能当成形容词式的既定事实来写（比如"那份已批准的 TestPlan"）——一份点名了某个门禁前置条件的 assignment，在 Gate History 里真正记上那个门禁结果之前，不能派发出去。收到回执后，把它点名的每一项延后交接事项（上游回写、门禁记账、后续跟进）都转录进 `task.md` 的 Execution Progress 并标上负责人——没记账的延后事项，正是同一个 P2 被反复验证三次的原因。
+派发前，在 assignment 的 Action Context 中填入具体值：source of truth；Owner 动手前必须读取的每个 context file；允许编辑的根目录；只读上下文；输出路径；当该 phase 需要读取、diff 或编辑代码时，任务的 Baseline（从 `task.md` 抄进 assignment frontmatter 的 `source_ref`/`target_ref`/`merge_base`）；`output_language`（记录在 `task.md` 中的发起人语言）；行为约束。Context file 必须是实际存在的具体路径，不能是未解析 glob 或按惯例猜出的文件名。约束用于指导 Owner，不能原样抄进输出交付物。修订让 assignment 过期时，先替换它再重新派发，不要在旧 assignment 后面追加互相矛盾的指令。预先写好的 assignment，对门禁结果只能引用台账指针（比如"见 task.md Gate History 第 N 行"），绝不能当成形容词式的既定事实来写（比如"那份已批准的 TestPlan"）——一份点名了某个门禁前置条件的 assignment，在 Gate History 里真正记上那个门禁结果之前，不能派发出去。收到回执后，把它点名的每一项延后交接事项（上游回写、门禁记账、后续跟进）都转录进 `task.md` 的 Execution Progress 并标上负责人——没记账的延后事项，正是同一个 P2 被反复验证三次的原因。
 
 对于收到的每张收据，交付编排者首先运行机械验证，然后进行质量判断 - 两者是分开的：
 
@@ -472,6 +482,7 @@ teamspace/tasks/<task_id>/
 2. 交付内容：代码位置、关键工件路径、密钥验证。
 3、偏差和残余风险：无则写无；否则给予归属者或验收条件。
 3.5. Compound：一句话说明本轮沉淀了什么（测试/规则/提案），或“无可沉淀”。
+3.6. Effort 台账：档位、Effort 表为它承诺了什么、实际跑了什么、每处偏差及原因（自动升档要点名）——档位在这里被审计，而不是只在 intake 时宣布一次。
 4. 建议下一步：一项明确的建议。
 5. 可选后续措施：根据需要列出 2-4，例如关闭任务，创建后续任务，运行“演练”（发起人理解+测验门禁）或“变更逐块审阅者”（对本地 forge 的每个大块审核评论），进行另一轮验证，查看 compound 结果，返回门禁进行修改。
 

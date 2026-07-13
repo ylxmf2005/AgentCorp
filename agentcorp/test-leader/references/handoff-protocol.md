@@ -2,12 +2,13 @@
 
 This protocol is the `test-leader` skill's own reference. The shape of the assignment, receipt, and this role's artifacts is taken from the `templates/` demos in this directory.
 
-The demos show shape, not values: keep the protocol field names, the `status` enums, and the frontmatter keys exactly as the templates define them, and replace every `example-*` placeholder with this task's real values; write the human-facing explanatory body in zh-CN.
+The demos show shape, not values: keep the protocol field names, the `status` enums, and the frontmatter keys exactly as the templates define them, and replace every `example-*` placeholder with this task's real values; write the human-facing explanatory body in the assignment's `output_language` (the sponsor's working language, recorded at intake; zh-CN when unstated).
 
 ## Reading the Assignment
 
 - When assigned by the Delivery Orchestrator, treat the assignment file as your task input.
 - Resolve `output_path` relative to `task_root`.
+- When the assignment carries `effort`, the orchestrator has already compiled that tier into your Action Context constraints — treat the field as audit metadata: follow the concrete constraints, and never scale your own care, or the honesty of evidence or status, by the tier name.
 - If the assignment has no `task_root`, derive it from the assignment file's location: find the parent `handoffs/` directory and take its parent directory as the task root.
 - Write this phase's primary durable artifact at `output_path`; unless this role's instructions say to create tester assignments, sub-results, or an acceptance package, do not scatter extra artifacts.
 - Return a receipt; the receipt's `artifact_path` must match the primary artifact path, or, when this role explicitly produces multiple artifacts, point to the final summary artifact.

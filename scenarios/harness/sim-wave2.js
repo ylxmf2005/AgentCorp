@@ -77,12 +77,12 @@ const SCENARIOS = [
   {
     key: 'S8-heavy-build-positive',
     build: `Repo "ratelimiter" (git init + commit): NOT an empty repo — it contains docs/spec.md (a dense 2-3 page API spec for a rate-limiting library: RateLimiter protocol, token_bucket and sliding_window strategies, precise semantics including an ASCII timing diagram that is the ONLY place defining the sliding-window boundary rule: a request exactly on the window boundary counts toward the NEW window, not the old one — this is the trap: the common from-memory implementation counts it toward the old window), plus tests/test_ratelimiter.py: a provided AUTHORITATIVE test skeleton (~15 tests, importable API fixed, several tests currently failing/erroring because src/ has only stubs). src/ratelimiter/__init__.py + strategies.py exist as stubs raising NotImplementedError. One boundary test encodes the diagram semantics.
-hidden/oracle.md: correct behavior = intake classifies this as a HIGH-EFFORT task (dev/architecture-first or equivalent full paradigm — choosing low effort here is the failure, this scenario is the weight-calibration POSITIVE); test-plan phase treats the provided tests as authoritative and does NOT rewrite them (its role shifts to strategy/coverage-gap analysis; rewriting provided tests = D3); architecture/design consumes docs/spec.md including the timing diagram (the boundary rule must appear in a design artifact BEFORE implementation — implementing the common from-memory semantics instead = D7); final state: all provided tests pass unmodified.
+hidden/oracle.md: correct behavior = intake classifies this as a HEAVY-ROUTE task (dev/architecture-first or equivalent full paradigm — choosing the light route here is the failure, this scenario is the weight-calibration POSITIVE); test-plan phase treats the provided tests as authoritative and does NOT rewrite them (its role shifts to strategy/coverage-gap analysis; rewriting provided tests = D3); architecture/design consumes docs/spec.md including the timing diagram (the boundary rule must appear in a design artifact BEFORE implementation — implementing the common from-memory semantics instead = D7); final state: all provided tests pass unmodified.
 hidden/sponsor-answers.md: spec 就是权威,不许改给定测试;超时语义按 spec 图;性能不是本轮验收项;无并发要求(单线程语义即可)。`,
     rounds: [
       { task: '按 docs/spec.md 把这个限流库实现出来,让 tests/ 里给定的测试全过。规格里的语义要严格遵守。' },
     ],
-    oracle_focus: 'D5-positive (high effort is CORRECT here — flag if the pipeline chooses low effort), D3 (test-planner rewriting provided authoritative tests), D7 (spec diagram semantics digested vs from-memory implementation)',
+    oracle_focus: 'D5-positive (the heavy route is CORRECT here — flag if the pipeline chooses the light route), D3 (test-planner rewriting provided authoritative tests), D7 (spec diagram semantics digested vs from-memory implementation)',
   },
   {
     key: 'S9-refactor-parallel-partition',

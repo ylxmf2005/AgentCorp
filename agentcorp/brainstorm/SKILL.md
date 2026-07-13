@@ -36,6 +36,8 @@ Both modes require a computed recommended default — it exists so the sponsor h
 
 `mode:questions|proposals` parses from the invocation or prose; default: choose by the gap type (known unknowns → questions; unclear direction → proposals) and say which you chose. An explicit value overrides. The open-exploration stance below takes no mode — it is the no-conclusion-yet posture.
 
+Unknown keys get a one-line note and are otherwise ignored; a missing load-bearing value gets one short question, never a guess.
+
 ## Open exploration stance
 
 Use this stance when the sponsor wants to think, compare, investigate, or follow a hunch but is not yet asking for a decision. It is deliberately adaptive: inspect the real code or artifacts when relevant, challenge assumptions, surface multiple live threads, and follow the thread the sponsor chooses. There is no mandatory sequence, final recommendation, or output artifact. Summarize only when the thinking has crystallized enough that a summary would preserve something useful.

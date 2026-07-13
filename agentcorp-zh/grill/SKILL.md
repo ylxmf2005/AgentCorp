@@ -22,6 +22,8 @@ argument-hint: "[mode:interview|readiness]"
 
 `mode:interview|readiness`——默认 `interview`（完整的一次一个问题的访谈）。`readiness` 直接跳到裁定：给出一个 `ready|needs-evidence|needs-redesign|blocked`，附上最薄弱的假设，以及能改变它的证据。
 
+未识别的 key 记一行说明后忽略；缺少承重参数值时问一个短问题，绝不靠猜。
+
 ## 访谈
 
 瞄准目标比问题本身的精巧更重要：用 `references/grill-lenses.md` 里的透镜给每个问题定位（目标真实性、成功信号、非目标边界、证据、知识矩阵、反例、更简单的替代方案、犯错代价、依赖、用户行为、验证）——会话开始时就加载它，只用适合这个计划的透镜。回答"我不知道"是一条发现，不是一次失败：把它转成一条有名字的未知项，附上解决路径（询问、查证、通过 `parallel-researcher` 研究、做实验，或给出一个明确标注、附带重访节点的假设），而不是任由它含糊收场。

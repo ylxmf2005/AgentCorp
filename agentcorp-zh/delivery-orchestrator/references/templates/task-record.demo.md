@@ -7,6 +7,10 @@ current_phase: validate-requirements
 workflow_mode: partial-delegation
 interaction_pace: continuous
 effort: high
+output_language: zh-CN
+source_ref: origin/main
+target_ref: origin/main
+merge_base: 0123abcdef0123abcdef0123abcdef0123abcd
 ---
 
 # 任务：示例任务
@@ -25,10 +29,11 @@ effort: high
 
 ## Baseline
 
-- Base 分支：origin/main（本次交付要合入哪里——intake 时确认的发起人意图，绝不从当前检出推断）
+- 机器可读副本在 frontmatter（`source_ref` / `target_ref` / `merge_base`）——`validate-handoff.py` 会用它核对每一份携带 refs 的 assignment。
+- source_ref：工作分支从哪切出、对着谁核实；堆叠任务在这里写父任务的分支，且只在父任务合入后才落地。
+- target_ref：本次交付要合入哪里——通常是仓库默认分支，即使堆叠时也是；只有父任务尚未合入时它才与 source_ref 不同。
 - 工作分支：feat/example-task
-- Merge-base commit：<核实 baseline 时记录的 sha>
-- Stacked on：无。（或：<task_id> / <branch>——本任务只在父任务合入后才落地）
+- 两个 ref 都是 intake 时确认的发起人意图，绝不从当前检出推断。当 source_ref != target_ref 时，工作没有对齐到 target_ref 之前交付不算完成。
 
 ## 选定范式
 

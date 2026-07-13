@@ -51,6 +51,14 @@ KNOWN_EFFORT = {"low", "medium", "high", "max"}
 KNOWN_VERDICTS = {"confirmed", "false-positive", "partial", "needs-human"}
 KNOWN_DISPOSITION = {"fix-now", "defer"}
 
+# Baseline refs: source_ref is what the working branch is cut from and verified against
+# (a stacked task names its parent's branch); target_ref is what the delivery merges into
+# (usually the repo default branch, even when stacked); merge_base is the source_ref commit
+# the baseline was verified at. The ledger (task.md) is the source of truth; an assignment
+# carrying different refs is stale or drifted and must be replaced, not worked from.
+BASELINE_KEYS = ("source_ref", "target_ref", "merge_base")
+MERGE_BASE_SHAPE = re.compile(r"^[0-9a-f]{7,40}$")
+
 # A TestExecutionResult with one of these statuses actually ran, so it must carry an
 # inspectable evidence handle in its body — not just a green/red status word.
 TEST_STATUS_NEEDS_EVIDENCE = {"passed", "failed", "partial", "completed"}
@@ -163,7 +171,8 @@ def check_shape(path, errors, warnings):
         warnings.append(f"{path}: status '{status}' not in known set (typo? or update KNOWN_STATUS)")
     effort = scalars.get("effort", "")
     if effort and effort not in KNOWN_EFFORT:
-        warnings.append(f"{path}: effort '{effort}' not in known set low|medium|high|max")
+        warnings.append(f"{path}: effort '{effort}' not in known set low|medium|high|max "
+                        f"(xhigh is an intake synonym — the orchestrator normalizes it to max before threading)")
     if atype == "PhaseReceipt" and status in RECEIPT_NOT_CONCLUDED:
         errors.append(f"{path}: a receipt with status '{status}' reports work that never concluded "
                       f"(receipts carry an outcome, not a start marker)")
@@ -173,6 +182,15 @@ def check_shape(path, errors, warnings):
     if phase and phase not in KNOWN_PHASES:
         warnings.append(f"{path}: phase '{phase}' not in known set (typo? or update KNOWN_PHASES)")
     check_research_vocab(path, scalars, warnings)
+    if atype == "TaskRecord":
+        for key in ("source_ref", "target_ref"):
+            if not scalars.get(key):
+                warnings.append(f"{path}: TaskRecord carries no {key} (baseline refs live in the "
+                                f"ledger frontmatter; a task without them is building on whatever "
+                                f"happened to be checked out)")
+    mb = scalars.get("merge_base", "")
+    if mb and not MERGE_BASE_SHAPE.match(mb):
+        warnings.append(f"{path}: merge_base '{mb}' is not a commit sha (expected 7-40 hex chars)")
     for agent_key in ("from_agent", "to_agent", "author_agent"):
         val = scalars.get(agent_key, "")
         if val and val not in KNOWN_AGENTS:
@@ -237,6 +255,19 @@ def check_pair(assignment_path, receipt_path, task_root, errors, warnings):
         ok = art == out or (out.endswith("/") and art.startswith(out)) or art.startswith(out + "/")
         if not ok:
             errors.append(f"{receipt_path}: artifact_path '{art}' does not match assignment output_path '{out}'")
+    # an assignment's baseline refs must agree with the ledger — a mismatch is a stale
+    # assignment or baseline drift, and working from it lands the phase on the wrong base
+    root = task_root or derive_task_root(receipt_path)
+    task_md = os.path.join(root, "task.md") if root else None
+    if task_md and os.path.exists(task_md) and any(a.get(k) for k in BASELINE_KEYS):
+        t, terr = parse_frontmatter(task_md)
+        if not terr:
+            for k in BASELINE_KEYS:
+                av, tv = a.get(k, ""), t.get(k, "")
+                if av and tv and av != tv:
+                    errors.append(f"{assignment_path}: {k} '{av}' != task.md {k} '{tv}' "
+                                  f"(stale assignment or baseline drift — replace the assignment, "
+                                  f"do not work from it)")
     check_artifact_exists(receipt_path, r, task_root, errors, warnings)
 
 

@@ -22,6 +22,8 @@ Every comment you add or keep is a claim about the code: verify the boundary it 
 
 `mode:edit|review` — default `edit` (optimize comments directly in the working tree). `review` produces findings only, at `review/specialist-findings/comment-optimizer.md` — the mode a code-review assignment must name.
 
+Unknown keys get a one-line note and are otherwise ignored; a missing load-bearing value gets one short question, never a guess.
+
 ## What earns a comment
 
 - Historical data compatibility: dirty records, missing fields, old API shapes, migration gaps.

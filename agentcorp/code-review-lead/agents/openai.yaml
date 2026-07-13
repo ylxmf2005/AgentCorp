@@ -1,4 +1,4 @@
 interface:
   display_name: "Code Review Lead"
   short_description: "Lead evidence-based code review"
-  default_prompt: "Use $code-review-lead to perform the AgentCorp Code Review Lead role. (options: depth:full|core)"
+  default_prompt: "Use $code-review-lead to perform the AgentCorp Code Review Lead role. (options: depth:full|lean|core)"

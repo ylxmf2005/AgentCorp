@@ -18,6 +18,12 @@ NAME_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 SKILL_REF_RE = re.compile(r"\$[a-z0-9]+(?:-[a-z0-9]+)*")
 MIN_SHORT_DESCRIPTION = 25
 MAX_SHORT_DESCRIPTION = 64
+# Claude Code reserves these SKILL.md frontmatter fields for host behavior (effort
+# overrides the session reasoning level, model swaps the model, context/agent fork a
+# subagent). An AgentCorp skill declaring one would silently change host behavior —
+# our pipeline knobs live in the invocation text (key:value), never in frontmatter.
+RESERVED_FRONTMATTER = ("effort", "model", "context", "agent")
+HINT_KEY_RE = re.compile(r"\[([a-z][a-z0-9_-]*):")
 
 
 def parse_scalar_block(text: str) -> dict[str, str]:
@@ -90,6 +96,23 @@ def validate_skill(skill_dir: Path) -> list[str]:
     if len(description) > 1024:
         errors.append(f"{rel}/SKILL.md: description is too long ({len(description)} > 1024)")
 
+    for key in RESERVED_FRONTMATTER:
+        if key in frontmatter:
+            errors.append(
+                f"{rel}/SKILL.md: frontmatter key '{key}' is reserved by Claude Code "
+                f"(it silently changes host behavior); pipeline knobs go in the invocation text"
+            )
+
+    body = skill_md.read_text(encoding="utf-8")
+    hint = frontmatter.get("argument-hint", "")
+    hint_keys = HINT_KEY_RE.findall(hint)
+    for key in hint_keys:
+        if f"{key}:" not in body.split("---", 2)[-1]:
+            errors.append(
+                f"{rel}/SKILL.md: argument-hint declares '{key}:' but the body never "
+                f"defines it — a hinted parameter the skill cannot act on"
+            )
+
     interface, error = read_interface(skill_dir / "agents" / "openai.yaml")
     if error:
         errors.append(f"{rel}/agents/openai.yaml: {error}")
@@ -116,6 +139,12 @@ def validate_skill(skill_dir: Path) -> list[str]:
         errors.append(f"{rel}/agents/openai.yaml: default_prompt must mention ${name}")
     elif not SKILL_REF_RE.search(default_prompt):
         errors.append(f"{rel}/agents/openai.yaml: default_prompt must include a $skill-name reference")
+
+    if hint_keys and not any(f"{key}:" in default_prompt for key in hint_keys):
+        errors.append(
+            f"{rel}/agents/openai.yaml: SKILL.md hints parameters ({', '.join(hint_keys)}) but "
+            f"default_prompt names none of them — Codex users cannot discover the options"
+        )
 
     return errors
 

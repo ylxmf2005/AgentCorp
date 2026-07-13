@@ -16,7 +16,9 @@ argument-hint: "[runtime:claude|codex|both]"
 
 ## 参数
 
-`runtime:claude|codex|both` —— 装哪个运行时的 hook 挂载；宿主仓库两个都配了时默认 `both`，否则用现有的那个。
+`runtime:claude|codex|both` —— 装哪个运行时的 hook 挂载；宿主仓库两个都配了时默认 `both`，否则用现有的那个；两个都没配置时，问一个短问题（接哪个 runtime）而不是猜。
+
+未识别的 key 记一行说明后忽略；缺少承重参数值时问一个短问题，绝不靠猜。
 
 ## 工作流
 

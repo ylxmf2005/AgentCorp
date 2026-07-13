@@ -1,7 +1,7 @@
 ---
 name: replay
 description: "Act as AgentCorp's session replay: reconstruct how a work session actually went from the runtime's own transcript files (~/.claude project JSONL, ~/.codex rollouts) — where the time and tokens went, what failed repeatedly, where progress stalled — and turn the analysis into routed improvements (skill-evolution proposals, project docs/convention suggestions, compound entries). Use when the user wants to 复盘 the session or workflow itself, asks where time or tokens were spent, why something took so long, what kept failing, or what this session should change about skills, docs, or conventions. Distinct from compound (task-delivery lessons): replay examines how the agent worked."
-argument-hint: "[session:current|last|<path>] [focus:time|tokens|friction|evolution|project|all] [output:artifact|inline]"
+argument-hint: "[session:current|last|<path>] [focus:time|tokens|friction|evolution|project|collaboration|all] [output:artifact|inline]"
 ---
 
 # replay
@@ -22,8 +22,10 @@ A replay written from what you remember is a vibes essay wearing a report's clot
 ## Parameters
 
 - `session:current|last|<path>` — default `current` (this session's transcript; on Claude Code the hook payloads carry `transcript_path`, otherwise `scripts/extract-trajectory.py --locate --cwd .` lists candidates newest-first — `current` is the newest entry matching this project, `last` the one before it). An explicit path analyzes any session, either runtime.
-- `focus:time|tokens|friction|evolution|project|all` — default `all`. A named focus deepens one lens; the digest is produced whole either way.
+- `focus:time|tokens|friction|evolution|project|collaboration|all` — default `all`. A named focus deepens one lens; the digest is produced whole either way.
 - `output:artifact|inline` — default `artifact` for any full replay (`teamspace/replays/<YYYYMMDD>-<slug>.md`, `artifact_type: ReplayReport`, or under the task root when one exists); `inline` only for a single-question look ("这轮 token 花哪了").
+
+Unknown keys get a one-line note and are otherwise ignored; a missing load-bearing value gets one short question, never a guess.
 
 ## How you work
 
