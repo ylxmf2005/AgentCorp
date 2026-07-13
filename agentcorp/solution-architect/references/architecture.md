@@ -22,7 +22,19 @@ The mindset: pull complexity inward into modules, don't push it onto callers. Th
 
 ## What this artifact must achieve
 
-After the requirements, this is the most human-facing artifact. The originator must be able to trust the design from it, and the planner must be able to build downstream on top of it without reverse-engineering the code. So it must make clear (organize it in whatever structure best serves the design):
+After requirements, this is the normative structural contract for downstream agents and reviewers. The sponsor still needs a compact decision surface, but a separate walkthrough teaches the design when human comprehension needs more than that summary. The architecture must let a planner or engineer retrieve the approved rules without searching through research narration.
+
+Prefer this order unless the design has a stronger reason:
+
+1. Decision Summary.
+2. Unchanged Contracts.
+3. Invariants and scope boundaries.
+4. Target components, schema, and interfaces.
+5. Changed flows only.
+6. Migration and compatibility.
+7. Complexity, risks, non-goals, coherence impact, and open questions.
+
+It must make clear:
 
 - the problem to solve, and the intent behind this design;
 - the key decisions, and why they are made this way;
@@ -33,7 +45,9 @@ After the requirements, this is the most human-facing artifact. The originator m
 - how much complexity it introduces, and how this structure holds that complexity down;
 - plus the risks, constraints, and anything that affects verification.
 
-Give as much detail as it takes for someone to trust the design, no more; where detail is dense, use code blocks, tables, or bullet lists. Use diagrams per the guidance in `references/mermaid.md`: wherever a view expresses structure, flow, state, ownership, or a before/after change more clearly than prose, draw one — but keep the set to the smallest that conveys the design (usually 2–3); for change-annotated diagrams and data-flow sequences, see `references/mermaid.md`.
+State each normative rule once. Put code-reading evidence in Source References or `design/evidence/`; do not turn the artifact into a research transcript. Do not include task slicing, implementation order, reviewer recommendations, or review history unless one of them changes the architecture itself. Distinguish approved decisions from proposals and assumptions. When a refactor includes a rename or cleanup, price its concrete benefit and migration cost; omit it when it does not change behavior, ownership, or long-term maintenance.
+
+Give as much normative detail as implementation needs, no more. Exact DDL and shared contracts belong here; exhaustive caller inventories, command transcripts, and unchanged system tours do not. Use diagrams per `references/mermaid.md`, usually 2–3, and draw only the changed structure or guarantee.
 
 If the requirements or existing code are too vague to design with confidence, return `blocked` and name the specific evidence you are missing, rather than inventing it.
 

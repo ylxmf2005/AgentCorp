@@ -24,36 +24,34 @@ Self-check before delivery:
 - When several artifacts were produced, the receipt lists every path.
 -->
 
-## Design Intent
+## Decision Summary
 
 ## Source References
 
-## Current Context
+## Unchanged Contracts
 
-## Components or Affected Modules
+## Invariants and Scope Boundaries
 
-## Interfaces and Contracts
+## Target Components and Ownership
 
 ## Tables and Data Model
 
-## Data or State Flow
+## Interfaces and Contracts
 
-## Existing Behavior That Must Be Preserved
+## Changed Data or State Flows
 
-## Technical Approach
+## Migration and Compatibility
 
 ## Complexity
 
 ## Risks
 
-## Notes for Verification
+## Non-goals and Deferred Work
 
 ## Implementation Constraints
 
-## Recommended Specialized Reviews
+## Notes for Verification
 
 ## Artifact Coherence Impact
 
 ## Open Questions
-
-## Handoff to the Implementation Planner

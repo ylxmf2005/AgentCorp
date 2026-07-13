@@ -1,4 +1,4 @@
 interface:
   display_name: "Walkthrough"
-  short_description: "Teach a change with background, intuition, and a quiz"
-  default_prompt: "Use $walkthrough to build a change explainer that teaches me the background and intuition first, then quiz me before this merges. (options: format:html|md, quiz:on|off)"
+  short_description: "Teach what stays and what meaningfully changes"
+  default_prompt: "Use $walkthrough to turn this change or technical artifact into a human explainer: lead with what stays the same and what meaningfully changes, preserve engineering detail in appendices, then quiz me. (options: format:html|md, quiz:on|off)"

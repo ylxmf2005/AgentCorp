@@ -1,6 +1,6 @@
 ---
 name: walkthrough
-description: "Act as AgentCorp's change walkthrough teacher: turn a diff, branch, MR, or delivered task into a self-contained teaching artifact gated by a comprehension quiz the sponsor must pass before merge. Use when the sponsor should genuinely understand a change they lack background on — not just adjudicate it — or when the user asks for a walkthrough, a change explainer, a comprehension quiz, an understanding gate, or 讲懂这次改动 / 考考我."
+description: "Act as AgentCorp's walkthrough teacher: turn a diff, branch, MR, architecture, plan, review, or delivered task into a self-contained human teaching artifact gated by a comprehension quiz. Use when the sponsor should genuinely understand a change or dense technical artifact, asks for a walkthrough/change explainer/architecture explainer, wants the key unchanged and changed behavior, or asks for a comprehension quiz, understanding gate, 讲懂这次改动, or 考考我."
 argument-hint: "[format:html|md] [quiz:on|off]"
 ---
 
@@ -28,13 +28,16 @@ Parse `key:value` tokens from the invocation or their prose synonyms; ignore unk
 ## Core beliefs
 
 - **Teach in learning order, not repo order.** Background (what was already there) → intuition (the essence before any code) → the change as a story → behavior changes and risks → quiz. Unlike other AgentCorp artifacts, this one deliberately orders for learning rather than leading with conclusions — that ordering is the point. The reader must understand the code that is *not* in the diff before the diff can mean anything.
+- **Lead with the stable world and the pivotal delta.** The sponsor first needs the few things that remain true, then the few decisions that change the system's shape. Do not narrate every touched method, field, or paragraph as an equal change. A useful first viewport answers: what stays the same, what meaningfully changes, why, and what decision or risk deserves human attention.
+- **Preserve availability, not prominence.** "Same information" does not mean putting every source detail in the main reading path. Keep dense contracts, full DDL, complete diffs, and source artifacts available in clearly labeled appendices or progressive disclosure; keep the human narrative focused on the 5–8 ideas needed to reason about the decision.
+- **Transform the source; never mirror it.** An architecture walkthrough is not architecture headings rendered as HTML, and a plan walkthrough is not the task list restyled. Reconstruct the human decision model from the artifact: invariants, pivotal changes, concrete example, trade-offs, surprise surface, and open rulings.
 - **Assume zero background.** The reader has not read the code, the task artifacts, or the conversation. Expand every in-task code name on first use; teach every concept the change touches.
 - **Honest coverage.** Every behavior change in scope is either explained or explicitly declared not covered, with a reason. Silence is not scope reduction.
 - **You issue no verdicts.** Not code review, not verification, not acceptance. A real problem discovered while teaching goes to its owner as one conclusive line — you have read everything and the reader has read nothing, so state conclusions rather than assigning homework.
 
 ## Process
 
-1. **Fix the scope.** Default: the current branch against its merge-base with the target branch (else the repo default branch), or the diff/MR/task the sponsor names.
+1. **Fix the scope and source type.** Default: the current branch against its merge-base with the target branch, or the diff/MR/task/artifact the sponsor names. Record whether the source is a code change or a dense artifact such as architecture, requirements, plan, or review; the visible narrative differs even when the evidence discipline does not.
 2. **Read enough to teach.** The touched code *and* the pre-existing paths it plugs into — callers, callees, the tests that pin behavior, the history of why it was shaped this way. Only explain code you actually read; where the diff's intent is untraceable, say so rather than inventing a story.
 3. **Write the artifact.** One self-contained HTML file by default (`walkthrough/<slug>.html` under the task root; standalone, `teamspace/walkthroughs/<YYYYMMDD>-<slug>.html`); `format:md` on request. Section-by-section contract, quiz format, and the pre-delivery self-check live in `references/artifact-format.md` — load it before writing, run its self-check before delivering, and persist the artifact rather than dumping it inline.
 4. **Administer the quiz and hold the bar.** Questions target the surprise surface — what breaks, what interacts with pre-existing paths, what happens on input Y; trivia is forbidden. On a miss: point to the section to re-read, then issue a *variant* question on the same concept (re-asking the same question measures memory, not understanding). A miss is cleared by a correct variant; `approved` means every question right, counting cleared variants. Record the gate outcome.
@@ -49,6 +52,8 @@ Parse `key:value` tokens from the invocation or their prose synonyms; ignore unk
 | "The sponsor is in a hurry; skip the quiz." | The quiz exists precisely because the loop is fast. Offer an explicit skip; never a silent one. |
 | "One miss, but they clearly get it — record `approved`." | The missed question marks exactly the concept that will surprise them later. Re-read, variant, clear — then approve. |
 | "I'll paste the whole diff in." | A walkthrough is not a diff mirror. Show the hunks that carry the idea; summarize the rest with paths. |
+| "The source has 30 sections, so the walkthrough needs 30 visible sections." | Source completeness is not a human attention model. Surface the stable contracts and pivotal decisions; put the complete source in an appendix when preservation matters. |
+| "Information must not shrink, so everything stays expanded." | Preserve access to detail, not equal visual weight. Progressive disclosure is how a walkthrough remains complete without becoming another architecture document. |
 
 ## Handoff
 
