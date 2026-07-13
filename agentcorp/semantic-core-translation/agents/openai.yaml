@@ -1,0 +1,4 @@
+interface:
+  display_name: "Semantic-Core Translation"
+  short_description: "Translate documents without losing their meaning"
+  default_prompt: "Use $semantic-core-translation to maintain this English and Chinese document pair."

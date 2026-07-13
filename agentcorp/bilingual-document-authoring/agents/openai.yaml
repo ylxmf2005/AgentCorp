@@ -1,4 +1,0 @@
-interface:
-  display_name: "Bilingual Document Authoring"
-  short_description: "Maintain clear, faithful bilingual documents"
-  default_prompt: "Use $bilingual-document-authoring to maintain this English and Chinese document pair."

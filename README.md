@@ -189,7 +189,7 @@ scenario and its wired partners.
 | **Code review** | `code-review-lead` + 12 lanes: `correctness` · `security` · `performance` · `reliability` · `adversarial` · `simplicity` · `taste` · `change-hygiene` · `standards` · `comment-optimizer` · `project-steward` · `api-contract`, then `review-researcher` (the circuit breaker) · `review-fixer` |
 | **Verification** | `test-leader` · `e2e-tester` · `api-contract-tester` · `regression-tester` |
 | **Acceptance** | `acceptance-review-lead` |
-| **Support** | `probe` · `brainstorm` · `grill` · `replay` · `explain` · `walkthrough` · `authenticated-browser-session` · `precommit-setup` · `skill-evolution` · `bilingual-document-authoring` |
+| **Support** | `probe` · `brainstorm` · `grill` · `replay` · `explain` · `walkthrough` · `authenticated-browser-session` · `precommit-setup` · `skill-evolution` · `semantic-core-translation` |
 
 One-line description of every skill: [docs/skills.md](docs/skills.md).
 

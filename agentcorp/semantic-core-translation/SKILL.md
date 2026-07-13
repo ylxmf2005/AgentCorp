@@ -1,9 +1,9 @@
 ---
-name: bilingual-document-authoring
+name: semantic-core-translation
 description: "Create, revise, and maintain bilingual English-Chinese documentation with an explicit source of truth and semantic-preservation workflow. Use when translating English technical documents into Chinese, updating paired `*.md` and `*_CN.md` files, deciding whether a new Chinese document needs a maintained English source, or authoring a coordinated bilingual document pair."
 ---
 
-# Bilingual document authoring
+# Semantic-core translation
 
 Treat a bilingual document as two maintained artifacts, not a literal sentence-for-sentence conversion. Preserve what the source commits to while making the target document natural for its readers.
 

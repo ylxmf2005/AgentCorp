@@ -121,7 +121,7 @@ AgentCorp 把自己的技能也当作被测系统：
 | **代码评审** | `code-review-lead` + 12 条车道：`correctness` · `security` · `performance` · `reliability` · `adversarial` · `simplicity` · `taste` · `change-hygiene` · `standards` · `comment-optimizer` · `project-steward` · `api-contract`，以及 `review-researcher`（熔断器）· `review-fixer` |
 | **验证** | `test-leader` · `e2e-tester` · `api-contract-tester` · `regression-tester` |
 | **验收** | `acceptance-review-lead` |
-| **配套** | `probe` · `brainstorm` · `grill` · `replay` · `explain` · `walkthrough` · `authenticated-browser-session` · `precommit-setup` · `skill-evolution` · `bilingual-document-authoring` |
+| **配套** | `probe` · `brainstorm` · `grill` · `replay` · `explain` · `walkthrough` · `authenticated-browser-session` · `precommit-setup` · `skill-evolution` · `semantic-core-translation` |
 
 每个技能的一句话说明：[docs/skills_CN.md](docs/skills_CN.md)。
 

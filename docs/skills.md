@@ -65,4 +65,4 @@ needed to run it in real projects.
 - `walkthrough` — turns a change into a teaching artifact — background first, intuition before code, the change as a story rather than a file list — ending in a quiz the sponsor must pass before merge
 - `precommit-setup` — sets up commit-time guardrails: fast deterministic checks by default, optional AI review, explicit constraints, without slowing every commit
 - `skill-evolution` — turns a skill-improvement signal captured at session end into a reviewed, landed edit (or a new skill from research), keeping AgentCorp's own skills improving with a human in the loop
-- `bilingual-document-authoring` — maintains English-Chinese documentation as a coherent pair: it preserves meaning in translation, establishes the authoritative source, and asks whether a new Chinese document needs an English counterpart instead of assuming it does
+- `semantic-core-translation` — maintains English-Chinese documentation as a coherent pair: it preserves meaning in translation, establishes the authoritative source, and asks whether a new Chinese document needs an English counterpart instead of assuming it does
