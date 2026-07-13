@@ -53,7 +53,7 @@ merge_base: 0123abcdef0123abcdef0123abcdef0123abcd
 
 ## Phase Sequence
 
-- validate-requirements -> test-plan -> test-plan-review -> impact-analysis -> implementation-plan -> plan-review -> implement -> code-review -> review-research -> fix -> verify -> acceptance-review -> deliver
+- validate-requirements -> test-plan -> test-plan-review -> impact-analysis -> implementation-plan -> plan-review -> implement -> code-review -> review-research -> fix -> verify -> acceptance-review -> compound -> deliver
 
 ## Gate History
 

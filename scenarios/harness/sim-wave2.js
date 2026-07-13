@@ -106,7 +106,7 @@ Nothing in repo/ may hint at the plants. Verify the repo actually behaves as spe
   schema: { type: 'object', properties: { repo_path: { type: 'string' }, verified: { type: 'string' } }, required: ['repo_path', 'verified'] },
 })
 
-const driveRound = (s, roundIdx, taskMsg, prevNote) => agent(`You are operating as the AgentCorp skill \`delivery-orchestrator\`. Read ${CORPUS}/agentcorp/delivery-orchestrator/SKILL.md and follow it, loading its references/ (workflow.md, intake.md, validate-requirements.md, learnings.md, templates) as it directs. Ambient runtime context normally injected at session start: ${CORPUS}/hooks/agentcorp-router.md.
+const driveRound = (s, roundIdx, taskMsg, prevNote) => agent(`You are operating as the AgentCorp skill \`delivery-orchestrator\`. Read ${CORPUS}/agentcorp/delivery-orchestrator/SKILL.md and follow it, loading its references/ (workflow.md, intake.md, validate-requirements.md, templates) as it directs. Ambient runtime context normally injected at session start: ${CORPUS}/hooks/agentcorp-router.md.
 
 The sponsor's message: "${taskMsg}"
 ${s.entry ? `Situation: ${s.entry}` : ''}

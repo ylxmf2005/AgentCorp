@@ -1,8 +1,8 @@
 # Compound(沉淀)
 
-每完成一件事,都应该让下一件更容易——但一条没人重读的被动笔记什么也不会变容易。`compound` 是把本轮教训变成**自己会改变未来行为的资产**的 phase:一个 bug 变成一条回归测试,一个决定变成下个 agent 动手前会读到的规则,一个被证实的评审模式变成一条待 sponsor 批准的 reviewer 提案。它位于每条 paradigm 中 `acceptance-review` 与 `deliver` 之间,由 Delivery Orchestrator 亲自执行(与 `deliver`、`validate-requirements` 一样:不走 assignment/receipt,但要写 `manifest.md` 条目,做没做看得见)。
+每完成一件事,都应该让下一件更容易——但一条没人重读的被动笔记什么也不会变容易。`compound` 是把本轮教训变成**自己会改变未来行为的资产**的 phase:一个 bug 变成一条回归测试,一个决定变成下个 agent 动手前会读到的规则,一个被证实的评审模式变成一条待 sponsor 批准的 reviewer 提案。它位于每条 paradigm 中 `acceptance-review` 与 `deliver` 之间,由 `compound` skill 拥有,走和其它非评审 phase 一样的管线:`full-delegation` 下带 assignment/receipt 派发,`direct`/`partial-delegation` 下由 Delivery Orchestrator 按同一纪律亲自执行,任何模式都要写 `manifest.md` 条目,做没做看得见。
 
-它是**软 phase**:写进 phase 列表本身就是让它发生的机制(orchestrator 自然走到这一步,而不是靠埋在参考文件里的提醒),但 `deliver` 永远不因它被硬卡——被逼出来的沉淀是 theater,theater 比沉默更糟。跳过是可见的(delivery report 的 compound 一栏留空),但从不被 police。
+它是**软 phase**:写进 phase 列表本身就是让它发生的机制(orchestrator 自然走到这一步,而不是靠埋在参考文件里的提醒),但 `deliver` 永远不因它被硬卡——被逼出来的沉淀是 theater,theater 比沉默更糟。跳过是可见的(delivery report 的 compound 一栏留空,且任务的阶段序列有 `deliver` 无 `compound` 时 `validate-handoff.py` 会告警),但从不被 police。对本轮盘问用多大力气由 `sweep:` 参数决定(`line|core|full`),派发时由 orchestrator 从 effort 档位编译而来——见 SKILL.md。
 
 ## 三种主动资产
 
@@ -10,7 +10,7 @@
 | --- | --- | --- | --- |
 | 回归测试 | 本单修复或复现过的 bug | 目标仓的测试套件(遵循 `regression-tester` 同样的纪律:修前失败、修后通过) | 直接落——这本就是修好一个 bug 该交付的一部分 |
 | 规则 / 约定 | 本单发现的仓库陷阱或定下的约定 | 目标仓的 `CLAUDE.md` / `AGENTS.md` | 直接落 |
-| Reviewer 触发条目 | 本单确认的、可复用的评审发现模式 | AgentCorp 自己的 reviewer skill——**仅作为提案**:在 `deliver` 时向 sponsor 点名,得到明确同意后才落地(skill 修改权在人) | 提案 → sponsor 批准 → 落地 |
+| Reviewer 触发条目 | 本单确认的、可复用的评审发现模式 | AgentCorp 自己的 reviewer skill——**仅作为提案**:先按其 `proposal-format.md` 写进 `teamspace/skill-evolution/pending/`(附证据),再在 `deliver` 时向 sponsor 点名,得到明确同意后才落地(skill 修改权在人) | 提案入 `pending/` → sponsor 批准 → 落地 |
 
 三种都不匹配的教训仍写入下述持久条目——但先问一遍能否成为主动资产;笔记是兜底,不是默认。
 
@@ -39,7 +39,7 @@ tags: [module-name, error-keyword, domain-word]
 - 多次修复失败后才找到的根因;诊断揭示的非显然机制。
 - 仓库/系统特有、repo 文档和 CLAUDE.md 都没记的陷阱或约定。
 - 试过但不行的路,连同原因(`failed-approach`)。
-- 过程教训:某个 phase 的 artifact 形制不够用、某类 reviewer 的系统性假阳性模式、某道 gate 放行错误的原因。指向 skill 自身文本的教训,写成 **reviewer 触发条目 / skill 提案**交给 sponsor——绝不静默改 skill。
+- 过程教训:某个 phase 的 artifact 形制不够用、某类 reviewer 的系统性假阳性模式、某道 gate 放行错误的原因。指向 skill 自身文本的教训,写成 **reviewer 触发条目 / skill 提案**存入 `teamspace/skill-evolution/pending/` 交给 sponsor——绝不静默改 skill。
 
 不记:一次性琐事;repo 文档、CLAUDE.md 或 git 历史已有的内容;只对本任务有意义的细节。唯一判据:**换一个未来任务上的 agent,读了这条能不能少走一步弯路?** 不能就不写——诚实的"无可沉淀"胜过凑数。
 
@@ -63,4 +63,4 @@ tags: [module-name, error-keyword, domain-word]
 
 ## 产出
 
-按 `references/templates/compound-result.demo.md` 写 `teamspace/tasks/<task_id>/compound/compound-result.md`(`artifact_type: CompoundResult`,`author_agent: delivery-orchestrator`):落了哪些回归测试、写了哪些规则、提了哪些 reviewer 触发提案(或诚实的"无可沉淀"),每项带落点路径。在 delivery report 和给 sponsor 的最终回复里用一句话概括——例如"本轮沉淀:加了 1 条回归测试,给目标仓 CLAUDE.md 加了 1 条规则,有 1 条 reviewer 触发词建议待你确认。"
+按 `references/templates/compound-result.demo.md` 写 `teamspace/tasks/<task_id>/compound/compound-result.md`(`artifact_type: CompoundResult`,`author_agent: compound`——orchestrator 亲自执行该 phase 时写 `delivery-orchestrator`):落了哪些回归测试、写了哪些规则、提了哪些 reviewer 触发提案(或诚实的"无可沉淀"),每项带落点路径。在 delivery report 和给 sponsor 的最终回复里用一句话概括——例如"本轮沉淀:加了 1 条回归测试,给目标仓 CLAUDE.md 加了 1 条规则,有 1 条 reviewer 触发词建议待你确认。"

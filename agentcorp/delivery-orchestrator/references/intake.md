@@ -24,6 +24,8 @@ When an issue is a design dispute, a question, or depends on domain expertise yo
 
 Strong duplicate signals: identical reproduction steps; the same error message occurring on the same surface; the same failure on the same page, endpoint, command, or workflow; one report being a subset of another. When merging, keep the clearest title, the most complete reproduction, the highest severity, and all source issue IDs.
 
+Dedup against the past, not just the batch: grep `teamspace/compound/` by module, error message, and domain word (entries are self-describing — judge relevance from `applies_when`/`tags` frontmatter). A hit may mean the problem was already solved, already has a known dead end, or carries an invariant the fix must not break; feed relevant entries into the downstream assignment as path + one-line summary.
+
 ## Priority
 
 | Priority | Meaning |

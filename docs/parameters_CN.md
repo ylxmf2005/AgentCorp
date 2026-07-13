@@ -37,7 +37,7 @@ effort 缩放的是**组织**,从不缩放用心程度:被召集的 reviewer 没
 | Fix | 仅 P0 | P0+P1 | 全部 confirmed fix-now | + 合并后跑全量相关套件 |
 | Verify | 1 个 tester,单元/简单检查 + 改动面回归 | 2 个 tester;贵的 e2e 除非 TestPlan 标了风险否则跳过 | 按 TestPlan | 全部,真实环境,从严 |
 | 人工门禁 | 一次打包提议跳过 | 提议跳低风险门 | 按策略 | 零跳过提议 |
-| 收尾 | 一行诚实的"无可沉淀"即可 | 回归问题必问 | 三个沉淀问题全问 | + walkthrough 保活到 merge |
+| 收尾 | `sweep:line`——一行诚实的"无可沉淀"即可 | `sweep:core`——回归问题必问 | `sweep:full`——三个沉淀问题全问 | + 一次 session 轨迹加练;walkthrough 保活到 merge |
 
 成本锚:`low` ≈ 一次单 agent 会话;`max` 为每条 lane 各买一个独立会话。
 
@@ -50,6 +50,10 @@ effort 缩放的是**组织**,从不缩放用心程度:被召集的 reviewer 没
 | `brainstorm` | `mode:` | `questions` \| `proposals` | 按缺口类型选定并明说 | 逐问补事实 vs 多路径提案 |
 | `code-review-lead` | `depth:` | `full` \| `lean` \| `core` | `full` | 召集的 lane:全名册 / Correctness+明确需要 / 主管独审 |
 | `comment-optimizer` | `mode:` | `edit` \| `review` | `edit` | 就地改注释 vs 只出发现报告 |
+| `compound` | `sweep:` | `line` \| `core` \| `full` | 派发时由 effort 档位编译;独立运行默认 `full` | 对本轮盘问多用力:一行诚实的话 / 回归测试必问 / 三问全问 + 收拢便签 |
+| `compound` | `session:` | `current` \| `last` \| `<path>` | `current` | 复盘时回放哪份会话 transcript |
+| `compound` | `focus:` | `time` \| `tokens` \| `friction` \| `evolution` \| `project` \| `collaboration` \| `all` | `all` | 深挖哪个镜头 |
+| `compound` | `output:` | `artifact` \| `inline` | `artifact` | 仅独立运行:完整复盘报告 vs 单问速答 |
 | `explain` | `output:` | `inline` \| `artifact` | 自动(图示/多条目强制 artifact) | 解释落在哪 |
 | `explain` | `reader:` | 任何人 | 发起人 | 为谁而写 |
 | `grill` | `mode:` | `interview` \| `readiness` | `interview` | 完整逐问拷问 vs 单个就绪裁决 |
@@ -57,9 +61,6 @@ effort 缩放的是**组织**,从不缩放用心程度:被召集的 reviewer 没
 | `parallel-researcher` | `depth:` | `desk` \| `source-verified` \| `hands-on` | 按决策所需 | 引证深度,最深到装起来跑 |
 | `precommit-setup` | `runtime:` | `claude` \| `codex` \| `both` | 都配了取 both,否则取在场的,都没有则问 | 接哪个 runtime 的钩子 |
 | `probe` | `output:` | `artifact` \| `inline` | 非平凡探测默认 `artifact` | 地形报告成文件 vs 就地说 |
-| `replay` | `session:` | `current` \| `last` \| `<path>` | `current` | 回放哪个会话 |
-| `replay` | `focus:` | `time` \| `tokens` \| `friction` \| `evolution` \| `project` \| `collaboration` \| `all` | `all` | 深挖哪个镜头 |
-| `replay` | `output:` | `artifact` \| `inline` | `artifact` | 完整报告 vs 单问速答 |
 | `skill-evolution` | `proposal:` | `<id>` \| `all` | 汇总待处理集并询问 | 处理哪些待定提案 |
 | `walkthrough` | `format:` | `html` \| `md` | `html` | 自包含页面 vs markdown |
 | `walkthrough` | `quiz:` | `on` \| `off` | `on` | 理解度关卡;`off` 仅限发起人明确放弃 |

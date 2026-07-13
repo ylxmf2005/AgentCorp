@@ -1,0 +1,4 @@
+interface:
+  display_name: "Compound"
+  short_description: "Compound the round's lessons into assets; replay the session"
+  default_prompt: "Use $compound to turn this round's lessons into assets (regression tests, repo rules, sponsor-gated skill proposals) and, on 复盘, replay the session trajectory (options: sweep:line|core|full, session:current|last|<path>, focus:time|tokens|friction|evolution|project|collaboration|all, output:artifact|inline)."

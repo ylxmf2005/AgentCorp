@@ -18,6 +18,7 @@ teamspace/
 ├── probes/                               # Standalone terrain reports written before any task exists
 │   └── 20260620-billing-module.md
 ├── walkthroughs/                         # Standalone change walkthroughs (self-contained HTML) outside a task
+├── replays/                              # Standalone session replays (compound's 复盘 subject): ReplayReport per session
 └── tasks/20260622-invite-members/        # Current task root
     ├── task.md                           # Task record: request, success criteria, phase sequence, gate history, decisions
     ├── manifest.md                       # Audit ledger: phase, owner, status, human gate, quality gate, assignment, artifact, receipt

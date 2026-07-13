@@ -48,7 +48,7 @@ Pace 与工作流模式相互独立：模式决定**谁执行、谁裁决**；pa
 |人工门禁|一次性、提前建议跳过所有可跳过的门禁|建议跳过低风险的门禁|按人工门禁策略|不提出跳过建议|
 |跨家庭第二意见|高风险规则依然适用|高风险规则依然适用|高风险规则（主动提供）|高风险时提供，倾向于采用；边界性共享契约变更也提供|
 |acceptance-review|主管独自裁决；Must-Have 与范围内风险的证据文件必开（底线）|+ 每个有争议维度 1 条 lane|1–2 条 lane；验证报告索引的每个文件都打开|每个有争议或单薄的维度 1 条 lane；跨家族冷读；列出的每份产物都亲自打开|
-|compound / walkthrough|诚实的一行"无可沉淀"合法；walkthrough 仅应请求|回归测试问题必问|三个资产问题全问|三问全问 + 中途碎片清扫；walkthrough 主动提供并保活到 merge|
+|compound / walkthrough|`sweep:line`——诚实的一行"无可沉淀"合法；walkthrough 仅应请求|`sweep:core`——回归测试问题必问|`sweep:full`——三个资产问题全问，中途碎片也收拢|`sweep:full` 外加一次 session 轨迹加练（`session:current`）；walkthrough 主动提供并保活到 merge|
 
 **硬底线——任何档位都不能越过。** effort 交易的是冗余和可选覆盖，从不交易诚实：（1）证据绝不能捏造，`unverified` 绝不能通过任何门禁；（2）作者/评审分离必须成立——在 `low` 档下，由发起人亲自裁决本该由独立评审者裁决的部分；（3）一个缺陷的"做完"始终意味着原始失败输入被重跑过；（4）**高风险面自动升档**：安全/权限边界、公开/共享契约、或数据丢失/不可逆的变更，其受影响阶段一律按 `max` 跑，不管任务本身定的是哪一档，而且这次升档要大声说出来，不能悄悄套用。档位是预算，不是质量的免责条款——档位和底线冲突时，底线赢，发起人要听到这份代价。而且 effort 永远伸不进一个已被召集的角色内部：specialist 没有"不那么仔细"这一档——档位只决定召不召集、召集几个实例，从不决定它们看得多认真。
 
@@ -84,7 +84,7 @@ You can:
 
 角色分为两个运行时层，均根据上述运行时继承原则调用，无需指定额外的模型参数：
 
-- **Claude（决策层）**：交付编排者、测试计划员、测试计划审核员、解决方案架构师、实施计划员、计划审核主管、代码审核主管、测试主管、审核研究员、验收审核主管、对抗性审核员、并行研究员、简单性审核员、项目管理员审核员、品味审核员、注释优化器 — 遍历当前 Claude 环境的本机子代理/代理功能。
+- **Claude（决策层）**：交付编排者、测试计划员、测试计划审核员、解决方案架构师、实施计划员、计划审核主管、代码审核主管、测试主管、审核研究员、验收审核主管、对抗性审核员、并行研究员、简单性审核员、项目管理员审核员、品味审核员、注释优化器、Compound（沉淀） — 遍历当前 Claude 环境的本机子代理/代理功能。
 - **Codex（执行层）**：实施工程师、审核修复者、正确性审核者、安全审核者、性能审核者、可靠性审核者、标准审核者、API 合同审核者、API 合同测试者、E2E 测试者、回归测试者 - 遍历当前 Codex 环境的本机子代理/CLI/技能功能；当主机中不存在 Codex 通道时，降级为相同技能的本地子代理调用，协议不变。当主机**完全不暴露任何子代理通道**时，该阶段的协调者在同一技能与协议下亲自执行这项工作，在工件和回执中都披露 author=judge（把 `author_agent` 记为执行该工作的协调者），并由下一个独立关卡对这份证据做抽查复核——为某次分配临时发明一条授权条款，不能替代这条规则。
 
 三种模式中的任何一种都不能损害审查独立性；只有裁决者会发生变化：在“部分委托”/“完全委托”下，“测试计划审查”、“计划审查”、“代码审查”和“接受审查”始终转到其审查所有者；在“直接”下，这些阶段让交付编排者自行生成结论草案，但**草案并不意味着批准** - 每个审查阶段的人工门禁必须保持活动状态并由发起人裁决，并且在“直接”下不能跳过这些门禁。在任何模式下，交付编排者都不会批准自己的工件或证据。
@@ -278,7 +278,7 @@ Options:
 |`修复` |交付编排者 协调并行 Review Fixer 工作人员 |`审查/研究/`（必需，带有结论和修复建议）+人工评论；更改的文件列表 |每组 `review/fix-records/<group>.md` + 聚合 `review/fix-result.md` + 后端代码更改（留在工作树中）|找到并使用“review/research/”（如果丢失，请停止并首先要求“review-research”）；confirmed/partial 的项目按文件所有权划分为相互不重叠的组，派遣并行工作人员来处理它们，同一文件上没有并发；每个工人都忠实地落地，解决根本原因而不是修补；合并验证运行一次并通过；没有提交；除非发起人已在某个记录在案的 gate 上为本任务明确授权了前端范围、且 assignment 转达了这一豁免，否则不得触及前端 |
 |`验证` |测试负责人协调测试人员|实施、测试计划或诊断标准、环境规范；当跑过 `fix` 阶段时，还要加上 `review/fix-result.md` + `review/fix-records/`——验证所面对的代码树是修复后的树，光靠 Implementation Result 已经描述不全它 |按功能/集成/E2E/回归给出的验证结果 |所需检查通过；E2E按需运行；明显的差距；没有捏造或假设成功;每个通过/失败的结果都会命名其结果文件路径或输出摘录（例如，verification/test-results/<tester>.md），而不是纯粹的通过/失败；只能在本地盒子缺乏的环境中验证的行为声明（例如，真正的浏览器、无头渲染器、GPU 或类似产品的服务）必须在该环境中运行或标记为状态=未验证，并且可能不会通过任何门禁；用户口头确认并非证据|
 |`acceptance-review` |验收评审主管 |`acceptance/acceptance-package.md`——交付编排者在派发该阶段之前就把它组装好，因此负责人所需的这份输入始终有明确的生产者——加上需求、测试计划、故事规范、实施说明、代码审查决定、包含 `verification/verification-report.md` 在内的验证证据、跑过 `fix` 时的修复结果、残余风险|“接受”、“拒绝”、“需要更多证据”或“阻止” |证据支持每项必备条件和范围风险；对于缺陷类任务，原始失败输入已针对修复重新运行并产生正确的输出；剩余风险可接受|
-|`compound` |交付编排者（像 `deliver` 一样亲自撰写：无需 assignment/receipt，但需要 manifest 条目）|本轮已完成的工件（诊断、修复结果、审查研究）加上任务中途记下的沉淀笔记 |`compound/compound-result.md`（`artifact_type: CompoundResult`）：落地到目标仓库的回归测试、落地到目标仓库 `CLAUDE.md`/`AGENTS.md` 的规则、等待发起人拍板的评审者触发提案、`teamspace/compound/` 下的持久化条目——或者诚实给出“无可沉淀”并说明理由 |仅在交付这条路径上的软阶段：跳过是可见的（交付报告的 compound 一行会留空），但 `deliver` 绝不会被它硬性卡住；一行的改动就沉淀成一行；AgentCorp 自我修改类的资产只能作为提案落地，等待发起人明确点头（见 `references/compound.md`）|
+|`compound` |Compound（普通非评审阶段：`full-delegation` 下带 assignment/receipt，`direct`/`partial-delegation` 下由编排者亲自执行；任何模式都要写 manifest 条目）|本轮已完成的工件（诊断、修复结果、审查研究）加上任务中途记下的沉淀笔记；Action Context 带上编译好的 `sweep:` 值（`line|core|full`）和 Baseline——compound 要往目标仓落测试和规则，检出核对同样适用 |`compound/compound-result.md`（`artifact_type: CompoundResult`）：落地到目标仓库的回归测试、落地到目标仓库 `CLAUDE.md`/`AGENTS.md` 的规则、写进 `teamspace/skill-evolution/pending/` 等发起人拍板的评审者/技能提案、`teamspace/compound/` 下的持久化条目——或者诚实给出“无可沉淀”并说明理由 |仅在交付这条路径上的软阶段：跳过是可见的（交付报告的 compound 一行会留空；阶段序列有 `deliver` 无 `compound` 时 `validate-handoff.py` 会告警），但 `deliver` 绝不会被它硬性卡住；一行的改动就沉淀成一行；AgentCorp 自我修改类的资产只能作为提案落地，等待发起人明确点头（见 `compound` skill）|
 |`交付` |交付编排者|公认的实施和证据|交货报告 |报告和最终发起人回复明确列出了工件路径——代码位置、验证/测试结果路径、审查/MR路径——加上测试、偏差、后续和残留风险；任何没有可检查路径的声明都会被记录为差距，从未声明为通过 |
 
 ### 阶段完成提示
@@ -312,7 +312,7 @@ Baseline 漂移同样是修订事件，两个 ref 各有各的漂法。**Source 
 ## 舞台所有者
 
 - 交付编排者拥有所有三种模式的分类、模式选择、把关和最终交付。
-- 交付编排者直接拥有 `compound`（进入该阶段时加载“references/compound.md”）和“validate-requirements”并亲自编写工件 - 在进入后者阶段时，加载“references/validate-requirements.md”（置信度、何时阻止、由发起人裁定的门；每个演示的形状、每个阶段目录的条形）。
+- 交付编排者直接拥有 `validate-requirements` 并亲自编写工件——进入该阶段时，加载 `references/validate-requirements.md`（置信度、何时阻止、由发起人裁定的门；形制照 demo，门槛照阶段目录）。`compound` 归 `compound` skill 所有；模式要求编排者亲自执行时，也按该 skill 的纪律执行，绝不凭一个更松的转述。
 - 在“部分委托”下，交付编排者还亲自编写“测试计划”、需要时的设计/诊断/合同、“实施计划”、“实施”和“验证”工件。
 - 在“直接”下，交付编排者自行执行每个阶段；对于审查类型阶段，它会从相应的审查角度生成草案，并由发起人的人工门禁批准。
 - 在“完全委托”下，测试计划者拥有“测试计划”；解决方案架构师拥有设计/分析工件；实施规划者拥有实施故事规范；实施工程师拥有“实施”；测试负责人负责验证协调；API 合约测试人员、E2E 测试人员和回归测试人员执行其指定的验证。
@@ -389,7 +389,7 @@ teamspace/tasks/<task_id>/
 
 复制形状，然后将示例值替换为当前任务的阶段、所有者、状态和路径。
 
-`artifact_type` 值：Orchestrator 生成的是 `TaskRecord`、`TaskManifest`、`PhaseAssignment`、`AcceptancePackage`、`FixResult`（`review/fix-result.md`）、`CompoundResult`（`compound/compound-result.md`）或 `DeliveryReport`（`delivery/delivery-report.md`），以及 `author_agent：delivery-orchestrator`；委托阶段的收据由其所有者写回，“from_agent”是该所有者，“phase”是分配的阶段。在最终交付时，编写“delivery/delivery-report.md”，内容包括状态、代码/工件位置、交付内容、验证结果、差距、后续工作和关键工件路径。合并或推送产品代码不属于 `deliver` 的范围：除非发起人明确下令，否则这件事留给发起人自己去做；一旦下令推送，先跑 Fix-Loop 协议的预发布 SCM 关卡。
+`artifact_type` 值：Orchestrator 生成的是 `TaskRecord`、`TaskManifest`、`PhaseAssignment`、`AcceptancePackage`、`FixResult`（`review/fix-result.md`）或 `DeliveryReport`（`delivery/delivery-report.md`），以及 `author_agent：delivery-orchestrator`；`CompoundResult`（`compound/compound-result.md`）归 `compound` 阶段的 owner（`author_agent: compound`，编排者亲自执行时为 `delivery-orchestrator`）；委托阶段的收据由其所有者写回，“from_agent”是该所有者，“phase”是分配的阶段。在最终交付时，编写“delivery/delivery-report.md”，内容包括状态、代码/工件位置、交付内容、验证结果、差距、后续工作和关键工件路径。合并或推送产品代码不属于 `deliver` 的范围：除非发起人明确下令，否则这件事留给发起人自己去做；一旦下令推送，先跑 Fix-Loop 协议的预发布 SCM 关卡。
 
 ## 阶段切换规则
 
@@ -470,7 +470,7 @@ teamspace/tasks/<task_id>/
 
 ## Compound（沉淀）
 
-以前，经验教训活在一条几乎从不触发的静默内务记录里——不是阶段，不受任何门禁约束，跳过了也看不出来。`compound` 现在是每个范式里 `acceptance-review` 和 `deliver` 之间的一个**软阶段**：编排者会自然走到这里，它产出的资产会自己改变未来的行为（一个 bug 变成一条回归测试，一个决定变成一条仓库规则，一个被反复确认的评审模式变成一条需发起人批准的评审者提案），跳过它始终可见，但绝不会硬性卡住 `deliver`。门槛、三类活性资产、去重、回流和按规模伸缩的行为，都写在 `references/compound.md` 中。
+以前，经验教训活在一条几乎从不触发的静默内务记录里——不是阶段，不受任何门禁约束，跳过了也看不出来。`compound` 现在既是每个范式里 `acceptance-review` 和 `deliver` 之间的一个**软阶段**，也是一个独立 skill（用户直接说复盘/沉淀也能叫它，包括从运行时 transcript 文件回放 session 轨迹）：编排者会自然走到这里，它产出的资产会自己改变未来的行为（一个 bug 变成一条回归测试，一个决定变成一条仓库规则，一个被反复确认的评审模式变成一条写进 `teamspace/skill-evolution/pending/` 的提案），跳过它始终可见，但绝不会硬性卡住 `deliver`。派发时按 Effort 表把档位编译成 assignment 里的 `sweep:` 值——worker 绝不自己解读档位名。门槛、三类活性资产、去重、回流和按规模伸缩的行为，都在 `compound` skill 那里（其 `references/compound-discipline.md`）。
 
 阶段之外还有两个常设触点：在 `intake`/`validate-requirements` 开始时，按任务关键字**搜索** `teamspace/compound/`，把相关条目按路径喂给下游的 assignment；**任务进行中**，一旦出现可沉淀的时刻（一个反直觉的根本原因、一批被推翻的误报、一个仓库陷阱、重新起步前打上的 `FAILED:` 标记），当场记下这条轻量笔记——由该阶段来收拢这些碎片，而不是依赖任务结束时的记忆。
 
@@ -484,6 +484,6 @@ teamspace/tasks/<task_id>/
 3.5. Compound：一句话说明本轮沉淀了什么（测试/规则/提案），或“无可沉淀”。
 3.6. Effort 台账：档位、Effort 表为它承诺了什么、实际跑了什么、每处偏差及原因（自动升档要点名）——档位在这里被审计，而不是只在 intake 时宣布一次。
 4. 建议下一步：一项明确的建议。
-5. 可选后续措施：根据需要列出 2-4，例如关闭任务，创建后续任务，运行“演练”（发起人理解+测验门禁）或“变更逐块审阅者”（对本地 forge 的每个大块审核评论），进行另一轮验证，查看 compound 结果，返回门禁进行修改。
+5. 可选后续措施：根据需要列出 2-4，例如关闭任务、创建后续任务、运行 `walkthrough`（发起人理解 + 测验门禁）、再做一轮验证、查看 compound 结果、返回某道门禁进行修改。
 
 如果验收未通过或证据不足，建议的下一步不能“平仓”；它必须指出提供证据、修改、重新审查或发起人风险接受。

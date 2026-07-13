@@ -14,6 +14,7 @@ teamspace/
 ├── probes/                               # 独立地形报告：在任何任务存在之前就写下
 │   └── 20260620-billing-module.md
 ├── walkthroughs/                         # 任务之外的独立变更讲解（自包含 HTML）
+├── replays/                              # 独立 session 复盘（compound 的复盘对象）：一次 session 一份 ReplayReport
 └── tasks/20260622-invite-members/        # 当前任务根目录
     ├── task.md                           # 任务记录：请求、成功标准、阶段序列、门禁历史、决策
     ├── manifest.md                       # 审计台账：阶段、Owner、状态、人工门、质量门、分派单、产物、回执

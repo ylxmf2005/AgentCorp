@@ -67,7 +67,7 @@ codex plugin marketplace add ylxmf2005/AgentCorp
 /agentcorp:parallel-researcher scope:both depth:source-verified 比较几个工作流引擎
 /agentcorp:probe output:inline 摸清认证模块
 /agentcorp:walkthrough format:html quiz:on 把这条分支讲给我听
-/agentcorp:replay session:last focus:friction output:inline 找出反复出现的卡点
+/agentcorp:compound session:last focus:friction output:inline 找出反复出现的卡点
 ```
 
 任务需要一个已登录的浏览器时，AgentCorp 会用一个隔离的 profile——你手动登录一次即可，它绝不碰你本地的 Cookie。每单任务都以一份交付报告收尾，外加一份能追溯每个决定的审计记录。
@@ -105,11 +105,10 @@ codex plugin marketplace add ylxmf2005/AgentCorp
 AgentCorp 把自己的技能也当作一套被测系统：
 
 - **捕获 → 呈现 → 落地。** 一个会话结束的 hook 会从对话记录里挖掘技能改进的信号（先做隐私脱敏）；`skill-evolution` 起草那处编辑，而它只有在人对着具体那份 diff 明确说「是」时才落地。
-- **`compound`（沉淀）是一个 phase，不是一条随手记。** 交付之前，本轮的教训会变成资产：修好的一个 bug 变成一条回归测试，踩过的一个坑变成一条 `CLAUDE.md` 规则，一次被证实的漏检变成一份提给当初漏掉它的那位 reviewer 的提案。
-- **`replay` 回放会话本身。** 一个确定性的提取器把运行时自己的录制解析成一轮轮对话、时钟耗时、token 账目和卡壳点——每一个论断都锚定到对话记录里的一条条目。
+- **`compound`（沉淀）既是 phase 也是 skill。** 交付之前，本轮的教训会变成资产：修好的一个 bug 变成一条回归测试，踩过的一个坑变成一条 `CLAUDE.md` 规则，一次被证实的漏检变成一份替当初漏掉它的那位 reviewer 存档的提案。同一个技能也接得住一句「复盘」：一个确定性的提取器把运行时自己的录制解析成一轮轮对话、时钟耗时、token 账目和卡壳点——每一个论断都锚定到对话记录里的一条条目。
 - **编辑需要一条失败轨迹。** 不做纯措辞润色：一处技能改动必须援引一次具体的失败运行，以及它是在哪道门上断掉的。
 
-而且这套纪律本身也做了回归测试：`scenarios/` 随仓库发布着那套用来演化系统的**黄金集**——九个埋了陷阱的交付任务，仿照真实的 agent 失败模式建成（一个自信地点名错误修法的 issue，一套「改断言」就是最省力那抹绿的测试，一条藏在文档里、而目标状态恰恰违反了它的政策，一个只有真实浏览器才能验证的缺陷），外加 24 条路由探针和 validator 的 fuzz 套件。任何一处技能编辑，都会重放它对应的场景以及与它相连的伙伴。
+而且这套纪律本身也做了回归测试：`scenarios/` 随仓库发布着那套用来演化系统的**黄金集**——九个埋了陷阱的交付任务，仿照真实的 agent 失败模式建成（一个自信地点名错误修法的 issue，一套「改断言」就是最省力那抹绿的测试，一条藏在文档里、而目标状态恰恰违反了它的政策，一个只有真实浏览器才能验证的缺陷），外加 26 条路由探针和 validator 的 fuzz 套件。任何一处技能编辑，都会重放它对应的场景以及与它相连的伙伴。
 
 ## 38 项技能
 
@@ -121,7 +120,7 @@ AgentCorp 把自己的技能也当作一套被测系统：
 | **代码评审** | `code-review-lead` + 12 条车道：`correctness` · `security` · `performance` · `reliability` · `adversarial` · `simplicity` · `taste` · `change-hygiene` · `standards` · `comment-optimizer` · `project-steward` · `api-contract`，然后是 `review-researcher`（熔断器）· `review-fixer` |
 | **验证** | `test-leader` · `e2e-tester` · `api-contract-tester` · `regression-tester` |
 | **验收** | `acceptance-review-lead` |
-| **配套** | `probe` · `brainstorm` · `grill` · `replay` · `explain` · `walkthrough` · `authenticated-browser-session` · `precommit-setup` · `skill-evolution` · `semantic-core-translation` |
+| **配套** | `probe` · `brainstorm` · `grill` · `compound` · `explain` · `walkthrough` · `authenticated-browser-session` · `precommit-setup` · `skill-evolution` · `semantic-core-translation` |
 
 每个技能的一句话说明：[docs/skills_CN.md](docs/skills_CN.md)。
 

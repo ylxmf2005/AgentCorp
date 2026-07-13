@@ -57,7 +57,7 @@
 - `probe` — 在工作开始前侦察陌生地带，把地形讲给 sponsor：对他那张地图的修正、意外之处、本地的「好」长什么样，以及一份持续更新的未知项台账
 - `brainstorm` — 通过一次一问地压测意图、范围和可行性，把一个不清晰的请求变成经 sponsor 批准、可测试的需求
 - `grill` — 通过一场对 owner 一次一问、毫不留情的访谈，压测一份既有的计划、设计或论证，最终给出一个诚实的就绪裁定（`ready`/`needs-evidence`/`needs-redesign`/`blocked`）
-- `replay` — 用一个确定性提取器回放一次会话录下的轨迹（Claude Code JSONL / Codex rollouts）：时间和 token 花在了哪、一直在哪失败、该改进什么——并路由到 skill-evolution 提案、项目文档或 compound 条目
+- `compound` — 拥有 `compound` 阶段，也接独立的沉淀/复盘请求：把本轮教训变成落地的资产（回归测试、仓库规则、待发起人批准的技能提案）；需要时用确定性提取器回放会话录下的轨迹（Claude Code JSONL / Codex rollouts）——时间和 token 花在哪、一直在哪失败，每条论断锚定自己的证据源
 - `authenticated-browser-session` — 维持一个真实的已登录浏览器会话，以验证需登录的流程，既不读 Cookie 也不向用户要 token
 - `explain` — 按读者的水平讲解 bug、测试进展、评审发现和交付状态——默认面向零上下文的 sponsor——每个结论都带着它的状态与证据
 - `walkthrough` — 把一次变更做成教学产物——先讲背景、给出直觉再上代码、把变更讲成一个故事而非一张文件清单——最后以一份 sponsor 必须通过才能合并的测验收尾

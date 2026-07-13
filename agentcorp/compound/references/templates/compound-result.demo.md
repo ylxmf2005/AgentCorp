@@ -1,12 +1,12 @@
-# Demo:compound-result(`compound/compound-result.md`)
+# Demo: compound-result (`compound/compound-result.md`)
 
-本 demo 对应 `compound` phase 的产出。照抄形制,替换示例值。人读文字用 zh-CN;frontmatter 值、路径、标识符保持原样。
+This demo corresponds to the `compound` phase's output. Copy the shape, then replace the example values. Human-facing prose in zh-CN; frontmatter values, paths, and identifiers verbatim.
 
 ```markdown
 ---
 artifact_type: CompoundResult
 task_id: 20260603-120000-example-task
-author_agent: delivery-orchestrator
+author_agent: compound
 status: completed
 ---
 
@@ -33,4 +33,4 @@ status: completed
 - 没有时写:无可沉淀,并给一句原因(例:一行配置改动,无新知识)。
 ```
 
-交付前自检:上面每项资产都写明落点路径;reviewer skill 改动只能是提案(没有 sponsor 明确同意绝不落地);任务确实没产出时,诚实写"无可沉淀"——绝不为仪式感凑数。
+Self-check before delivery: every asset above names its landing path; reviewer-skill changes are proposals only (never landed without an explicit sponsor yes); an honest "无可沉淀" is written when the task genuinely yields nothing — never pad for ritual.

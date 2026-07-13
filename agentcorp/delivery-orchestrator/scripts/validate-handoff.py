@@ -79,7 +79,7 @@ KNOWN_AGENTS = {
     "adversarial-reviewer", "api-contract-reviewer", "comment-optimizer",
     "review-researcher", "review-fixer", "test-leader", "api-contract-tester",
     "e2e-tester", "regression-tester", "acceptance-review-lead", "parallel-researcher",
-    "probe", "brainstorm", "explain", "walkthrough", "grill", "replay",
+    "probe", "brainstorm", "explain", "walkthrough", "grill", "compound",
     "authenticated-browser-session", "precommit-setup", "skill-evolution",
 }
 KNOWN_PHASES = {
@@ -188,6 +188,7 @@ def check_shape(path, errors, warnings):
                 warnings.append(f"{path}: TaskRecord carries no {key} (baseline refs live in the "
                                 f"ledger frontmatter; a task without them is building on whatever "
                                 f"happened to be checked out)")
+        check_phase_sequence(path, warnings)
     mb = scalars.get("merge_base", "")
     if mb and not MERGE_BASE_SHAPE.match(mb):
         warnings.append(f"{path}: merge_base '{mb}' is not a commit sha (expected 7-40 hex chars)")
@@ -200,6 +201,25 @@ def check_shape(path, errors, warnings):
         warnings.append(f"{path}: task_id '{tid}' is not timestamp-first <YYYYMMDD-HHMMSS>-<slug> "
                         f"(directory listings stop browsing in time order)")
     return scalars
+
+
+_SEQ_TO_DELIVER = re.compile(r"->\s*deliver\b")
+
+
+def check_phase_sequence(path, warnings):
+    """TaskRecord only: a phase sequence that reaches deliver without compound has
+    silently dropped the soft phase — the tier may shrink compound, never delete it."""
+    try:
+        with open(path, encoding="utf-8") as fh:
+            text = fh.read()
+    except OSError:
+        return  # unreadable already reported by parse_frontmatter
+    for line in text.splitlines():
+        if _SEQ_TO_DELIVER.search(line) and "compound" not in line:
+            warnings.append(f"{path}: phase sequence reaches deliver without compound "
+                            f"(compound is a soft phase in every paradigm: shrink it via "
+                            f"sweep:, don't silently drop it from the walked list)")
+            return
 
 
 def check_research_vocab(path, scalars, warnings):

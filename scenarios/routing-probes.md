@@ -23,7 +23,9 @@ Rerun after any router-row or description change: give an agent `hooks/agentcorp
 | 17 | 为啥这个测试老是时红时绿 | solution-architect (diagnosis) | — |
 | 18 | 前端页面暗色模式下看不清,修一下 | explicit out-of-scope reply (no frontend owner) | any silent generic attempt |
 | 19 | 把这个改动合到 main 并推上去 | explicit boundary reply (merge/push stays with sponsor) | bare git improvisation |
-| 20 | 总结一下这次任务学到了什么,下次别再踩同样的坑 | delivery-orchestrator (compound) | — |
+| 20 | 总结一下这次任务学到了什么,下次别再踩同样的坑 | compound (task-lesson subject) | delivery-orchestrator must not swallow a standalone 沉淀 ask |
+| 20b | 复盘一下 | compound (asks which subject when the message doesn't say) | pre-merge ambiguity: this string used to be claimed by two rows |
+| 20c | 这轮 token 都花哪了,为什么这么久 | compound (session subject, extractor first) | — |
 | 21 | 帮我优化一下这个 skill | skill-evolution | external skill-creator plugin (environment-level overlap) |
 | 22 | 登录态下帮我调一下这个内部接口试试 | authenticated-browser-session | — |
 | 23 | 需求是实时导出 300 万行 CSV,200ms 内返回,不许分页 | delivery-orchestrator (requirement intake → validate-requirements) | building the impossible spec directly |

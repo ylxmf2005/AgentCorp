@@ -138,6 +138,6 @@ Session effort 档位，由宿主在加载时替换（此处若显示为字面 `
 - `explain` — 发起人需要理解某个发现、结果或概念才能决策，或出现盲目决策信号（基于错误模型的问题、未读报告）时：单概念内联，多项集用交付物。
 - `walkthrough` — 合并前或 `deliver` 收尾时，发起人需要真正理解变更；其测验关卡用标准词汇记入关卡历史（满分 `approved`，显式跳过 `skipped`）。
 - `references/fresh-start-handoff.md` — 当对话或工作空间可能污染后续工作，或发起人要求重新开始时。
-- `references/compound.md` — 进入 `compound` 阶段时；也在 `intake`/`validate-requirements` 开始时（搜索 `teamspace/compound/`）以及任务过程中出现可沉淀时刻时。
+- `compound`（skill）— 进入 `compound` 阶段时：像其它非评审阶段一样带着编译好的 `sweep:` 值派发，或按它的纪律亲自执行。回流仍归你：在 `intake`/`validate-requirements` 开始时搜索 `teamspace/compound/`，任务中途出现可沉淀时刻时当场记一笔轻量笔记。
 
 **宿主适配：** `references/claude-code.md` — 当宿主是 Claude Code 时。

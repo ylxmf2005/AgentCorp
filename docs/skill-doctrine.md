@@ -207,8 +207,8 @@ exactly; run nothing destructive. Return per-skill rewrite notes.
   solution-architect↔api-contract-reviewer/api-contract-tester (interface-contract is
   a named required input on both ends), review-researcher→parallel-researcher
   (needs-human research lane), implementation-engineer/review-fixer→comment-optimizer,
-  testers→authenticated-browser-session, replay→skill-evolution/compound (findings
-  route as proposals/entries; replay lands nothing itself).
+  testers→authenticated-browser-session, compound→skill-evolution (skill-touching
+  findings route as `pending/` proposals; only tests and repo rules land directly).
 - **The orchestrator's "How this organization thinks" is a maintained mirror.** When
   a lane's iron law changes, or a lane is added/renamed/removed, that maxim list (and
   the leads' rosters, workflow.md's Runtime Routing lists, router, READMEs, and the

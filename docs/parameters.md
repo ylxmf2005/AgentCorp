@@ -37,7 +37,7 @@ Effort scales the **organization**, never the diligence: a convened reviewer has
 | Fix | P0 only | P0+P1 | all confirmed fix-now | + full relevant suites after merge |
 | Verify | 1 tester, unit/simple checks + changed-surface regression | 2 testers; expensive e2e skipped unless the TestPlan marks the journey at-risk | per the TestPlan | everything, real environment, strictly |
 | Human gates | one batched skip proposal | skip low-risk gates | per policy | no skip proposals |
-| Wrap-up | honest one-line 无可沉淀 ok | regression question asked | all three compound questions | + walkthrough kept alive to merge |
+| Wrap-up | `sweep:line` — honest one-line 无可沉淀 ok | `sweep:core` — regression question asked | `sweep:full` — all three compound questions | + a session-trajectory pass; walkthrough kept alive to merge |
 
 Cost anchor: `low` ≈ one single-agent session; `max` buys an independent session per lane.
 
@@ -50,6 +50,10 @@ Cost anchor: `low` ≈ one single-agent session; `max` buys an independent sessi
 | `brainstorm` | `mode:` | `questions` \| `proposals` | chosen by gap type, stated | one-question-at-a-time fact finding vs multi-path proposals |
 | `code-review-lead` | `depth:` | `full` \| `lean` \| `core` | `full` | lanes convened: full roster / Correctness + clearly-demanded / lead alone |
 | `comment-optimizer` | `mode:` | `edit` \| `review` | `edit` | fix comments in place vs findings-only report |
+| `compound` | `sweep:` | `line` \| `core` \| `full` | compiled from the effort tier at dispatch; `full` standalone | how hard the round is interrogated for assets: one honest line / the regression question / all three questions + scraps |
+| `compound` | `session:` | `current` \| `last` \| `<path>` | `current` | which session transcript the 复盘 subject replays |
+| `compound` | `focus:` | `time` \| `tokens` \| `friction` \| `evolution` \| `project` \| `collaboration` \| `all` | `all` | which lens gets deepened |
+| `compound` | `output:` | `artifact` \| `inline` | `artifact` | standalone only: full replay report vs single-question answer |
 | `explain` | `output:` | `inline` \| `artifact` | auto (diagrams/multi-point force artifact) | where the explanation lands |
 | `explain` | `reader:` | anyone | the sponsor | who the explanation is written for |
 | `grill` | `mode:` | `interview` \| `readiness` | `interview` | full one-question interrogation vs a single readiness verdict |
@@ -57,9 +61,6 @@ Cost anchor: `low` ≈ one single-agent session; `max` buys an independent sessi
 | `parallel-researcher` | `depth:` | `desk` \| `source-verified` \| `hands-on` | what the decision needs | citation depth, up to install-and-run |
 | `precommit-setup` | `runtime:` | `claude` \| `codex` \| `both` | both if configured, else the present one, else ask | which runtime's hooks get wired |
 | `probe` | `output:` | `artifact` \| `inline` | `artifact` for non-trivial probes | terrain report as file vs inline |
-| `replay` | `session:` | `current` \| `last` \| `<path>` | `current` | which session transcript to replay |
-| `replay` | `focus:` | `time` \| `tokens` \| `friction` \| `evolution` \| `project` \| `collaboration` \| `all` | `all` | which lens gets deepened |
-| `replay` | `output:` | `artifact` \| `inline` | `artifact` | full report vs single-question answer |
 | `skill-evolution` | `proposal:` | `<id>` \| `all` | summarize pending and ask | which pending proposals get triaged |
 | `walkthrough` | `format:` | `html` \| `md` | `html` | self-contained page vs markdown |
 | `walkthrough` | `quiz:` | `on` \| `off` | `on` | the understanding gate; `off` only by explicit sponsor decline |

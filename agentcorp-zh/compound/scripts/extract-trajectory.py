@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Extract a normalized trajectory digest from a Claude Code or Codex session transcript.
 
-Deterministic preprocessing for the `replay` skill: the raw transcript can be
+Deterministic preprocessing for the `compound` skill's session lens (replay): the raw transcript can be
 megabytes; this script reduces it to an inspectable digest (turns, wall-clock, token
 economics, tool profile, friction signals) so the analysis reads facts, not memory.
 The digest cites entry indices — the skill opens raw ranges only where a signal points.

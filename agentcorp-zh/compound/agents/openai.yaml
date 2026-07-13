@@ -1,0 +1,4 @@
+interface:
+  display_name: "沉淀"
+  short_description: "把本轮教训沉淀成资产，需要时回放 session 轨迹"
+  default_prompt: "使用 $compound 把这一轮的教训变成资产（回归测试、仓库规则、待发起人批准的技能提案），说复盘时回放 session 轨迹 (options: sweep:line|core|full, session:current|last|<path>, focus:time|tokens|friction|evolution|project|collaboration|all, output:artifact|inline)。"

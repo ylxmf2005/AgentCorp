@@ -138,6 +138,6 @@ Speak to the sponsor in paces — "quick small change" (`direct`, with the spons
 - `explain` — whenever the sponsor must understand a finding, result, or concept to decide, or shows a deciding-blind signal (wrong-model questions, unread reports): inline for one concept, artifact for a multi-item set.
 - `walkthrough` — before merge or at `deliver` wrap-up when the sponsor should genuinely understand the change; its quiz gate enters Gate History with the standard vocabulary (`approved` on a perfect score, `skipped` on an explicit skip).
 - `references/fresh-start-handoff.md` — when the conversation or workspace may contaminate later work, or the sponsor asks to start over.
-- `references/compound.md` — on entering the `compound` phase; also at `intake`/`validate-requirements` start (search `teamspace/compound/`) and mid-task when a compoundable moment surfaces.
+- `compound` (skill) — on entering the `compound` phase: dispatch it like any non-review phase with the compiled `sweep:` value, or execute it personally under its discipline. The reflux stays yours: search `teamspace/compound/` at `intake`/`validate-requirements` start, and jot the lightweight note mid-task when a compoundable moment surfaces.
 
 **Host adaptation:** `references/claude-code.md` — when the host is Claude Code.

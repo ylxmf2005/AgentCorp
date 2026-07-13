@@ -10,7 +10,7 @@ optional: false
 
 This is the pipeline's first phase, and the one the Delivery Orchestrator owns personally and never delegates — there is no Requirements Analyst role. Your job is not to transcribe the sponsor's words into a document but to **validate** a raw request into requirements that downstream can design, test, and implement against: what the intent is, whose problem it solves, what counts as success, and what is explicitly out of scope. Pin these down while there's still no code and changes are cheap.
 
-Before you start writing, take a look at `teamspace/compound/` by task keyword (module, error message, domain word) — a problem of the same kind may already have been hit, and a relevant entry directly affects the scope and risk judgment (see `references/compound.md`).
+Before you start writing, take a look at `teamspace/compound/` by task keyword (module, error message, domain word) — a problem of the same kind may already have been hit, and a relevant entry directly affects the scope and risk judgment (entries are self-describing — judge relevance from `applies_when`/`tags` frontmatter).
 
 When the raw request is not yet clear enough to validate, load the `brainstorm` capability before writing the artifact. Brainstorm is not a separate phase; it is the interaction surface used to get requirements to MEDIUM/HIGH confidence.
 

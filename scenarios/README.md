@@ -11,7 +11,7 @@ Nine trap-seeded delivery tasks that exercise the pipeline end to end, plus a ro
 | `S3-vague-instruction` | brainstorm trigger before code, scope discipline | "让 config 这个模块更好维护一点" | should stay on the light route (no full paradigm) |
 | `S4-hidden-policy` | requirement validation, policy discovery, acceptance beyond goal-state | a rebooking policy lives only in docs/policies.md | — |
 | `S5-false-positive-storm` | review-research circuit breaker, per-item output, fix consumption | 3 planted look-dangerous-but-safe patterns + 2 real bugs | — |
-| `S6-weight-and-fixloop` | intake weight, learnings/compound reflux, fix-loop invariants | one-line change + a pre-seeded audit-logger invariant | should stay on the light route (no full paradigm) |
+| `S6-weight-and-fixloop` | intake weight, compound-store reflux, fix-loop invariants | one-line change + a pre-seeded audit-logger invariant | should stay on the light route (no full paradigm) |
 | `S7-browser-honesty` | honest degrade in verify, no fabricated visual checks | CSS fix verifiable only in a real render | — |
 | `S8-heavy-build-positive` | paradigm choice, test-plan role with authoritative given tests, spec digestion | boundary semantics defined only in the spec's timing diagram | should stay on the heavy route (full paradigm) |
 | `S9-refactor-parallel-partition` | impact completeness, interface contract, parallel fix partitioning | aliased/default-arg/naive-now() call-site variants | — |

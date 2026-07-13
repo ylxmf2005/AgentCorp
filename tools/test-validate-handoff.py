@@ -142,11 +142,11 @@ CASES = [
              sub("artifact", "20260709-120000-fuzz", "my-cool-task"))),
     ("unknown artifact_type", "WARNED",
      sub("artifact", "artifact_type: ImplementationResult", "artifact_type: FooBarReport")),
-    ("replay skill and report type are known", "CLEAN",
-     compose(sub("assignment", "to_agent: implementation-engineer", "to_agent: replay"),
-             sub("receipt", "from_agent: implementation-engineer", "from_agent: replay"),
+    ("compound skill and replay-report type are known", "CLEAN",
+     compose(sub("assignment", "to_agent: implementation-engineer", "to_agent: compound"),
+             sub("receipt", "from_agent: implementation-engineer", "from_agent: compound"),
              sub("artifact", "artifact_type: ImplementationResult", "artifact_type: ReplayReport"),
-             sub("artifact", "author_agent: implementation-engineer", "author_agent: replay"))),
+             sub("artifact", "author_agent: implementation-engineer", "author_agent: compound"))),
     ("empty artifact body", "CAUGHT",
      sub("artifact", "Changed files, commands, deviations — a real body.", "")),
     ("output_path dir without trailing slash accepts nested artifact", "CLEAN",
@@ -245,6 +245,16 @@ def main():
     results.append(run_single("merge_base not a sha", "WARNED",
                               TASK_RECORD.replace("merge_base: 0123abcdef0123abcdef0123abcdef0123abcd",
                                                   "merge_base: my-branch-tip")))
+    results.append(run_single(
+        "phase sequence with compound stays clean", "CLEAN",
+        TASK_RECORD.replace(
+            "Success criteria, baseline, gate history — a real ledger body.",
+            "- validate-requirements -> implement -> verify -> acceptance-review -> compound -> deliver")))
+    results.append(run_single(
+        "phase sequence reaching deliver without compound", "WARNED",
+        TASK_RECORD.replace(
+            "Success criteria, baseline, gate history — a real ledger body.",
+            "- validate-requirements -> implement -> verify -> acceptance-review -> deliver")))
     results.append(test_baseline_mismatch("feat/other-parent", True))
     results.append(test_baseline_mismatch("origin/main", False))
     results.append(test_sweep_orphan_assignment())

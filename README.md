@@ -86,7 +86,7 @@ call any single skill directly when you only need that one capability:
 /agentcorp:parallel-researcher scope:both depth:source-verified compare workflow engines
 /agentcorp:probe output:inline map the auth module
 /agentcorp:walkthrough format:html quiz:on teach me this branch
-/agentcorp:replay session:last focus:friction output:inline find repeated stalls
+/agentcorp:compound session:last focus:friction output:inline find repeated stalls
 ```
 
 When a task needs a logged-in browser, AgentCorp uses an isolated profile — you
@@ -161,13 +161,13 @@ AgentCorp treats its own skills as a system under test:
 - **Capture → surface → land.** A session-end hook mines the transcript for
   skill-improvement signals (privacy-redacted first); `skill-evolution` drafts
   the edit, which lands only on an explicit human yes to the specific diff.
-- **`compound` (沉淀) is a phase, not a note.** Before delivery, the round's
+- **`compound` (沉淀) is a phase *and* a skill.** Before delivery, the round's
   lessons become assets: a fixed bug becomes a regression test, a trap becomes
-  a `CLAUDE.md` rule, a confirmed miss becomes a proposal for the reviewer that
-  missed it.
-- **`replay` replays the session itself.** A deterministic extractor parses the
-  runtime's own recordings into turns, wall-clock, token economics, and stall
-  points — every claim anchored to a transcript entry.
+  a `CLAUDE.md` rule, a confirmed miss becomes a proposal filed for the
+  reviewer that missed it. The same skill answers a direct 复盘: a
+  deterministic extractor parses the runtime's own recordings into turns,
+  wall-clock, token economics, and stall points — every claim anchored to a
+  transcript entry.
 - **Edits need a failing trajectory.** No wording polish: a skill change must
   cite a concrete failed run and the gate where it broke.
 
@@ -175,7 +175,7 @@ And the discipline is regression-tested: `scenarios/` ships the **golden set**
 used to evolve the system — nine trap-seeded delivery tasks modeled on real
 agent-failure patterns (an issue that confidently names the wrong fix, a test
 suite where the cheapest green is editing the asserts, a policy hidden in docs
-that the goal-state violates, a defect only a real browser can verify), plus 24
+that the goal-state violates, a defect only a real browser can verify), plus 26
 routing probes and the validator fuzz suite. Any skill edit replays its
 scenario and its wired partners.
 
@@ -189,7 +189,7 @@ scenario and its wired partners.
 | **Code review** | `code-review-lead` + 12 lanes: `correctness` · `security` · `performance` · `reliability` · `adversarial` · `simplicity` · `taste` · `change-hygiene` · `standards` · `comment-optimizer` · `project-steward` · `api-contract`, then `review-researcher` (the circuit breaker) · `review-fixer` |
 | **Verification** | `test-leader` · `e2e-tester` · `api-contract-tester` · `regression-tester` |
 | **Acceptance** | `acceptance-review-lead` |
-| **Support** | `probe` · `brainstorm` · `grill` · `replay` · `explain` · `walkthrough` · `authenticated-browser-session` · `precommit-setup` · `skill-evolution` · `semantic-core-translation` |
+| **Support** | `probe` · `brainstorm` · `grill` · `compound` · `explain` · `walkthrough` · `authenticated-browser-session` · `precommit-setup` · `skill-evolution` · `semantic-core-translation` |
 
 One-line description of every skill: [docs/skills.md](docs/skills.md).
 

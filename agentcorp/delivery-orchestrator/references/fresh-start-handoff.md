@@ -26,7 +26,7 @@ If the sponsor explicitly wants a handoff prompt, just write it; otherwise ask o
 
 ## Producing the Handoff Prompt
 
-Before you start writing, capture the round's qualifying lessons into `teamspace/compound/` as event-driven compound notes, `failed-approach` entries first (see `references/compound.md`) — a restart should drop only the contaminated conversation, not the lessons along with it.
+Before you start writing, capture the round's qualifying lessons into `teamspace/compound/` as event-driven compound notes, `failed-approach` entries first (one file per entry, frontmatter `slug`/`date`/`task_id`/`type`/`applies_when`/`tags` — copy the shape of any existing entry) — a restart should drop only the contaminated conversation, not the lessons along with it.
 
 1. **Take stock of the current truth.** Trust the source, the tests, `git status`, the diff, the logs, and the sponsor's explicit instructions, not the conversation's memory; if you can query the repo, query first and write second, and if you can't, state the unknowns honestly.
 2. **Bucket the information.** Goal / definition of done / verified facts (with evidence) / relevant files and entry points / accepted constraints and decisions / failed attempts (as lessons and no-go zones, not a starting point to continue from) / suspect or unverified assumptions / working-tree state.
