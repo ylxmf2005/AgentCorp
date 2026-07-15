@@ -40,20 +40,23 @@ codex plugin add agentcorp@agentcorp
 
 ### 交给它一个任务
 
-在 Claude Code 中：
+默认从交付编排器进入。下面只写交付范式，不虚构具体产品需求：
 
 ```text
-/agentcorp:delivery-orchestrator 修复 webhook 重复投递，并证明这个回归已经关闭
+/agentcorp:delivery-orchestrator mode:full pace:continuous effort:high bugfix/hypothesis-driven
+/agentcorp:delivery-orchestrator mode:full pace:continuous effort:high enhancement/delta-design
+/agentcorp:delivery-orchestrator mode:full pace:continuous effort:high addition/simple
+/agentcorp:delivery-orchestrator mode:full pace:continuous effort:high dev/architecture-first
 ```
 
-在 Codex 中：
+`mode:full pace:continuous effort:high` 表示全阶段委派、在关键检查点之间持续推进，并采用
+高强度独立覆盖。省略这些参数时，由编排器替你推荐。
+
+只做一次独立代码评审：
 
 ```text
-使用 $agentcorp:delivery-orchestrator 修复 webhook 重复投递，并证明这个回归已经关闭。
+/agentcorp:code-review-lead depth:full 评审这份 diff
 ```
-
-改代码之前，编排器会先定义怎样才算完成，推荐一条工作路径，并展示准备执行的阶段。
-省略参数时由它替你推荐；需要明确控制时，再加上 `mode:`、`pace:`、`effort:` 或 `lang:`。
 
 ## 为什么选择 AgentCorp
 
@@ -75,34 +78,113 @@ AgentCorp 拆开这些职责，并让交接过程可以检查：
 
 ## 最终会留下什么
 
-经过编排的任务按设计会留下可导航的记录。一次典型交付包括：
+经过编排的任务按设计会留下可导航的记录。完整布局把跨任务知识与每项任务的决策、
+证据放在一起：
 
 ```text
-teamspace/tasks/<task>/
-├── task.md                              # 成功标准、路径、决策和门禁历史
-├── requirements/validated-requirements.md
-├── implementation/implementation-result.md
-├── review/code-review.md
-├── verification/verification-report.md
-├── acceptance/acceptance-decision.md
-└── delivery/delivery-report.md
+teamspace/
+├── testing-context.md                   # 跨任务运行与测试事实
+├── compound/                            # 历史任务沉淀的可复用经验
+│   └── <lesson>.md
+├── knowledge/                           # 可复用研究快照
+│   └── <technology>/INDEX.md
+├── probes/                              # 独立的领域探查报告
+│   └── <date>-<topic>.md
+├── walkthroughs/                        # 独立的教学产物
+│   └── <change>.html
+└── tasks/<task>/
+    ├── task.md                          # 成功标准、路径、决策和门禁历史
+    ├── manifest.md                      # 阶段、owner、质量门、产物、receipt
+    ├── probe/
+    │   └── 00-probe.md                  # 未知项与被纠正的假设
+    ├── handoffs/                        # 委派任务与回执
+    │   ├── <phase>.md
+    │   └── <phase>-receipt.md
+    ├── requirements/
+    │   └── validated-requirements.md
+    ├── design/
+    │   ├── architecture.md
+    │   ├── impact-analysis.md
+    │   ├── diagnosis.md
+    │   └── interface-contract.md
+    ├── test/
+    │   ├── test-plan.md
+    │   ├── api-test-plan.md
+    │   ├── e2e-test-plan.md
+    │   ├── regression-test-plan.md
+    │   ├── test-plan-review.md
+    │   └── exploration/
+    │       ├── charters.md
+    │       ├── frontier.md
+    │       └── journal.md
+    ├── implementation/
+    │   ├── implementation-story.md
+    │   └── implementation-result.md
+    ├── review/
+    │   ├── plan-review.md
+    │   ├── plan-review-findings/
+    │   ├── code-review.md
+    │   ├── specialist-findings/
+    │   │   └── <reviewer>.md
+    │   ├── research/
+    │   │   ├── 00-index.md              # 每条发现都会被重新核实
+    │   │   ├── 001-confirmed-....md
+    │   │   └── 002-false-positive-....md
+    │   ├── fix-records/
+    │   │   └── <file-group>.md
+    │   └── fix-result.md
+    ├── research/<topic>/                # 需要动手验证的研究包
+    │   ├── 00-report.md
+    │   ├── env/
+    │   ├── sources/
+    │   └── experiments/
+    ├── explain/                         # 持久化的决策解释
+    │   └── <topic>/
+    │       ├── 00-index.md
+    │       └── 001-context.md
+    ├── walkthrough/
+    │   └── <change>.html                # 背景、直觉、故事、测验
+    ├── verification/
+    │   ├── assignments/
+    │   │   └── <tester>.md
+    │   ├── test-results/
+    │   │   └── <tester>.md
+    │   └── verification-report.md
+    ├── acceptance/
+    │   ├── acceptance-package.md
+    │   └── acceptance-decision.md
+    ├── compound/
+    │   └── compound-result.md
+    └── delivery/
+        └── delivery-report.md
 ```
 
-AgentCorp 只创建当前任务需要的阶段。阶段产物都带结构化 frontmatter；任何委派交接的声明，
-在进入审计记录前都会先经过机械校验。完整结构见[运行时产物说明](docs/artifacts_CN.md)。
+不是每项任务都会创建所有可选文件，但每个实际运行的阶段都有明确归属。阶段产物带结构化
+frontmatter；委派交接的声明在进入审计记录前先经过机械校验。完整结构见
+[运行时产物说明](docs/artifacts_CN.md)。
 
 ## 如何运转
 
 [![AgentCorp 交付流程](docs/assets/delivery-workflow.png)](docs/assets/delivery-workflow.excalidraw)
 
-1. **先把工作说清楚。** 确认成功标准，决定必须验证什么，并在实现前完成设计或诊断。
-2. **实现，然后挑战它。** 按批准的 Story 实现，运行独立评审车道；任何被路由下来的发现，
-   都要先重新证实，才能进入修复。
-3. **证明、沉淀、交付。** 执行所需验证，为验收组装证据，把可复用的教训沉淀下来，
-   最后给出交付报告。
+AgentCorp 延续了
+[《判断力不是护城河，而是水源》](https://efgli.com/zh/posts/source-not-the-moat/)
+里的循环哲学：当 AI 让预测和执行都变得便宜，稀缺的是不断积累的上下文、持续练习的
+判断力，以及愿意为结果负责的人。目标不是把流程做得更长，而是提高反馈密度，让人参与
+完这一轮后，更有能力参与下一次决策。
 
-属于你的决策会停在人工门禁前。门禁结果只使用一套封闭词表
-（`approved`、`skipped`、`revised`、`blocked`），每次结果都会被记录，不靠静默推断。
+真正危险的是 **unknown unknown**：没人写下的约束、diff 外的耦合、只有看到错误方案后
+才显现的隐性偏好，或者一条听起来很自信、实际上并不成立的评审发现。AgentCorp 用五个
+动作降低这类不确定性：
+
+1. **先发现盲区。** 在实现前探查领域、暴露假设，把 unknown unknowns 变成可以回答的问题。
+2. **把判断写出来。** 需求、测试、设计决策、边界和取舍不再只是临时对话，而是可检查的契约。
+3. **挑战顺滑答案。** 独立 reviewer 从不同失败角度发难；评审发现经过重新研究，才进入修复。
+4. **裁定证据。** 验证、验收、解释和 walkthrough 让人保持理解与干预能力，而不只是点一下批准。
+5. **沉淀后果。** 偏差、失败假设和人的裁定变成测试、仓库规则、研究记忆和下一轮更好的约束。
+
+属于人的决策会停在人工门禁前，结果会被记录而不是静默推断。这样，上下文与判断力才能
+跨任务积累，而不是随着会话结束一起消失。
 
 ## 按风险调节流程
 
@@ -117,49 +199,6 @@ AgentCorp 只创建当前任务需要的阶段。阶段产物都带结构化 fro
 
 低 effort 用冗余换速度，但绝不拿证据换方便。遇到安全、权限、公开契约和数据丢失风险时，
 工作流要求相关阶段接受更深的审查。每一档和每个技能的准确行为见[参数目录](docs/parameters_CN.md)。
-
-## 单独调用某个技能
-
-交付编排器负责端到端任务，但每一项能力也可以单独调用。
-
-Claude Code：
-
-```text
-/agentcorp:code-review-lead depth:full 评审这份 diff
-/agentcorp:parallel-researcher scope:both depth:source-verified 比较几个工作流引擎
-/agentcorp:probe output:inline 改动前先摸清认证模块
-```
-
-Codex：
-
-```text
-使用 $agentcorp:code-review-lead 以 depth:full 评审这份 diff。
-使用 $agentcorp:parallel-researcher 以 scope:both、depth:source-verified 比较几个工作流引擎。
-使用 $agentcorp:probe 在改动前摸清认证模块，并采用 output:inline。
-```
-
-查看全部 [38 项技能](docs/skills_CN.md)：从规划、实现、12 条专项评审车道，到验证、验收、
-研究、解释、登录态浏览器测试和技能演化。
-
-## 这套系统本身也可检查
-
-- 同一套 38 项 Agent Skill 定义同时服务 Claude Code 与 Codex，并由少量辅助脚本负责校验、
-  回放、登录态浏览器会话与 hook。
-- `validate-handoff.py` 检查交接信封中的产物缺失、owner 或 phase 不一致及其他一致性错误。
-- 9 个埋有陷阱的交付场景模拟错误的 issue 诊断、通过改测试走捷径、隐藏的政策约束，
-  以及只能用真实浏览器验证的缺陷等失败模式。
-- 24 条路由探针守住相似技能之间的边界；一套包含 23 项预期的回归脚本覆盖 validator 边界情况。
-
-这些场景与检查都随仓库发布；项目不会要求你相信一张基准测试截图。
-
-## 诚实的局限
-
-- Markdown 契约可以约束模型行为、让违规显形，但无法让错误行为变得不可能。
-- 场景套件由本项目自行维护，并非独立基准；AgentCorp 不声称任何 SWE-bench 分数。
-- 独立评审会消耗真实的 token 和时间。用 `effort:` 把成本花在犯错代价高昂的地方。
-- AgentCorp 有意不设前端角色，也不负责 merge/push。前端工作需要明确豁免，
-  分支是否落地仍由你控制。
-- 校验器与轨迹提取器需要 Python 3.9+，且只使用标准库。
 
 ## 文档
 
