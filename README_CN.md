@@ -68,6 +68,15 @@ AgentCorp 拆开这些职责，并让交接过程可以检查：
 AgentCorp 不是新的 coding model、Agent runtime 或提示词合集，而是一套带契约的交付组织：
 谁产出每份材料、谁有权批准，以及工作继续推进前必须先存在哪些证据。
 
+## 一项任务如何组建交付团队
+
+AgentCorp 包含 38 项技能，但一项任务不会把它们全部运行一遍。Delivery Orchestrator
+会按任务范围与风险选择需要的角色；方向、评审争议和残余风险仍由人参与判断。
+
+[![AgentCorp 如何为任务组建交付团队](docs/assets/task-delivery-team.png)](docs/assets/task-delivery-team.excalidraw)
+
+[查看全部 38 项技能](docs/skills_CN.md)。
+
 ## 最终会留下什么
 
 经过编排的任务按设计会留下可导航的记录。完整布局把跨任务知识与每项任务的决策、

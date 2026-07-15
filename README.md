@@ -75,6 +75,16 @@ AgentCorp is not a coding model, agent runtime, or prompt pack. It is a delivery
 organization with contracts: who produces each artifact, who may approve it,
 and what evidence must exist before the work moves forward.
 
+## How a Task Assembles Its Team
+
+AgentCorp includes 38 skills, but a task does not run all of them. The Delivery
+Orchestrator selects the roles its scope and risk require, while human judgment
+stays involved in direction, disputed findings, and residual risk.
+
+[![How AgentCorp assembles a delivery team](docs/assets/task-delivery-team.png)](docs/assets/task-delivery-team.excalidraw)
+
+[Browse all 38 skills](docs/skills.md).
+
 ## What You Get
 
 An orchestrated task is designed to leave a navigable record. The full layout
