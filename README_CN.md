@@ -40,23 +40,15 @@ codex plugin add agentcorp@agentcorp
 
 ### 交给它一个任务
 
-默认从交付编排器进入。下面只写交付范式，不虚构具体产品需求：
+直接把工作交给对应技能。端到端任务由 Delivery Orchestrator 自己判断工作流参数；
+单独评审时，由 Code Review Lead 根据 diff 和风险自己判断深度：
 
 ```text
-/agentcorp:delivery-orchestrator mode:full pace:continuous effort:high bugfix/hypothesis-driven
-/agentcorp:delivery-orchestrator mode:full pace:continuous effort:high enhancement/delta-design
-/agentcorp:delivery-orchestrator mode:full pace:continuous effort:high addition/simple
-/agentcorp:delivery-orchestrator mode:full pace:continuous effort:high dev/architecture-first
+/agentcorp:delivery-orchestrator <your prompt>
+/agentcorp:code-review-lead <your diff or review request>
 ```
 
-`mode:full pace:continuous effort:high` 表示全阶段委派、在关键检查点之间持续推进，并采用
-高强度独立覆盖。省略这些参数时，由编排器替你推荐。
-
-只做一次独立代码评审：
-
-```text
-/agentcorp:code-review-lead depth:full 评审这份 diff
-```
+只有在你需要明确控制时才要写参数；默认让技能根据任务、仓库与风险面自行判断。
 
 ## 为什么选择 AgentCorp
 

@@ -41,25 +41,17 @@ step: [Codex setup](docs/codex-setup.md).
 
 ### Give it a task
 
-Use the Delivery Orchestrator as the default entry point. These examples name
-the delivery paradigm without inventing a product requirement:
+Pass the work directly to the relevant skill. The Delivery Orchestrator chooses
+the workflow parameters for an end-to-end task; the Code Review Lead chooses
+the review depth from the diff and its risk:
 
 ```text
-/agentcorp:delivery-orchestrator mode:full pace:continuous effort:high bugfix/hypothesis-driven
-/agentcorp:delivery-orchestrator mode:full pace:continuous effort:high enhancement/delta-design
-/agentcorp:delivery-orchestrator mode:full pace:continuous effort:high addition/simple
-/agentcorp:delivery-orchestrator mode:full pace:continuous effort:high dev/architecture-first
+/agentcorp:delivery-orchestrator <your prompt>
+/agentcorp:code-review-lead <your diff or review request>
 ```
 
-`mode:full pace:continuous effort:high` means full delegation, continuous
-progress between meaningful checkpoints, and high independent coverage. Omit
-the knobs when you want the orchestrator to recommend them.
-
-For a standalone code review:
-
-```text
-/agentcorp:code-review-lead depth:full review this diff
-```
+Parameters remain available when you need explicit control; otherwise the skill
+infers them from the task, repository, and risk surface.
 
 ## Why AgentCorp
 
