@@ -15,10 +15,7 @@
 
 [快速上手](#快速上手) · [一次交付如何运转](#一次交付如何运转) · [信任架构](#信任架构) · [技能一览](#38-项技能) · [诚实的局限](#诚实的局限)
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/pipeline-dark.svg">
-  <img src="docs/assets/pipeline-light.svg" alt="AgentCorp 交付流水线：你把任务交给总控，总控把每个 phase 路由到对应角色——规划、实现、12 条专项 lane 评审并由熔断器杀掉误报、用可打开的证据做验证、验收、交付——在人工门禁处停下，留下经过机械校验的完整记录，并把每单任务的经验沉淀回系统。" width="100%">
-</picture>
+[![AgentCorp 交付流程](docs/assets/delivery-workflow.png)](docs/assets/delivery-workflow.excalidraw)
 
 </div>
 

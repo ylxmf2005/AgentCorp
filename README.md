@@ -17,10 +17,7 @@ English · [简体中文](README_CN.md)
 
 [Quick Start](#quick-start) · [How a Delivery Runs](#how-a-delivery-runs) · [Trust Architecture](#the-trust-architecture) · [Skills](#the-38-skills) · [Limitations](#honest-limitations)
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/pipeline-dark.svg">
-  <img src="docs/assets/pipeline-light.svg" alt="AgentCorp delivery pipeline: you hand a task to the orchestrator, which routes every phase to a role — plan, build, review through 12 specialist lanes with a circuit breaker that kills false positives, verify with evidence you can open, accept, deliver — stopping at human gates, leaving a mechanically validated paper trail, and compounding each task's lessons back into the system." width="100%">
-</picture>
+[![AgentCorp delivery workflow](docs/assets/delivery-workflow.png)](docs/assets/delivery-workflow.excalidraw)
 
 </div>
 

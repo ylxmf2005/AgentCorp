@@ -7,14 +7,27 @@ SKILL.md covers the why; this covers the how. Load before writing the artifact.
 - **HTML (default):** one self-contained file — all CSS and JS inline, no network requests, no external fonts or CDNs. Long-form single page with section headers and a table of contents; do not use tabs for the top-level structure. Responsive enough to read on a phone. Code goes in `<pre>` blocks (if a styled `<div>` is used instead, it must set `white-space: pre-wrap`). Diagrams are inline HTML/SVG with example data — simplified UI mockups, system sketches, before/after pairs; never ASCII art. Use callout boxes for key concepts, definitions, and edge cases.
 - **Markdown (`output_format: md`):** the same five sections; diagrams in Mermaid (validate syntax before delivery); quiz options and answers inside collapsed `<details>` blocks so answers stay hidden until opened.
 - Naming: `walkthrough/<slug>.html` under the task root, or `teamspace/walkthroughs/<YYYYMMDD>-<slug>.html` standalone. The slug names the change, not the branch.
+- **Information layering:** the main reading path is the sponsor's decision model, not a lossless source rendering. When complete source coverage matters, embed or link a clearly labeled appendix after the human narrative. The appendix preserves availability; it does not justify repeating every source section above it.
 
 ## Section contract
 
-1. **Background** — teach what already exists, broad to narrow. Start where a newcomer to this subsystem would need to start (what it is for, who calls it, the normal path), then narrow to the exact context the change lands in. No detail of the change itself may appear before the reader can hold the old world in their head. Expand every in-task code (story IDs, finding IDs, internal artifact names) on first use, or better, do not use them.
+1. **Background and stable contracts** — teach what already exists, then state the 5–8 important things that remain true after the change. Start where a newcomer needs to start, but do not retell the whole subsystem. The reader must know which public behavior, ownership boundary, workflow, or safety contract is intentionally unchanged before evaluating the delta.
 2. **Intuition** — the essence of the change before any code. State the problem the change solves and the shape of the solution in plain language, then trace **one toy example end to end**: a concrete input, what the old code did with it, what the new code does, and why the difference is the point. Prefer a small figure with example data over prose where it is clearer.
-3. **The change, as a story** — narrate the change in the order the *idea* unfolds: the pivotal decision first or the data-shape change first, whatever order makes each following step feel inevitable. Never file order, never alphabetical. Prose carries the reader between hunks: why this piece exists, what it enables next. Every hunk shown cites its real `path:line` anchor (from the actual diff — do not count lines by hand); hunks that carry no idea (renames, mechanical fallout) are summarized in one line each, with paths, not pasted.
+3. **The pivotal changes, as a story** — select the few changes that alter the reader's mental model, usually 3–7. Narrate why each exists, what it enables, and what remains unchanged around it. Never file order, source-heading order, or an exhaustive field-by-field recital. For code changes, every shown hunk cites its real `path:line`; for design/plan/review walkthroughs, cite the source artifact section and show exact contracts only when they carry a decision.
 4. **Behavior changes and risks** — a compact, complete account of what now behaves differently: new/changed outputs, error behavior, performance or compatibility effects, and — most valuable — interactions with pre-existing code paths the diff does not show. Write "none" for categories with none. Coverage is honest: anything in scope but not explained is listed here as explicitly not covered, with a reason.
 5. **Quiz** — 5–8 multiple-choice questions, each with 3–4 options, answers hidden until the reader commits (HTML: click to reveal; md: `<details>`). Every option's reveal explains why it is right or wrong. Difficulty: substantive enough to require genuine understanding, no gotchas, no trivia.
+
+## Architecture and plan mode
+
+When the source is an architecture, requirements, implementation plan, or review artifact, the visible page begins with this compact decision surface:
+
+1. **Key unchanged** — contracts and user effects that stay stable.
+2. **Key changed** — only structural or behavioral changes that alter the mental model.
+3. **One end-to-end example** — before and after with real example values.
+4. **Why this shape** — rejected alternatives and their concrete cost.
+5. **Human rulings and risks** — accepted trade-offs, unresolved decisions, release consequences.
+
+Keep schema, full interfaces, complete migration conditions, module inventories, evidence references, and source text in progressively disclosed engineering appendices. Do not claim "same information" by duplicating the source into the main narrative.
 
 ## Quiz mechanics
 
@@ -26,6 +39,9 @@ SKILL.md covers the why; this covers the how. Load before writing the artifact.
 
 - The first code block appears before the reader has been taught what the surrounding system does.
 - Sections 3's ordering mirrors `git diff --stat` output rather than the idea's structure.
+- The visible page mirrors the source artifact's headings, or gives every touched field/method equal prominence.
+- The first viewport does not make both key unchanged and key changed behavior obvious.
+- A dense appendix exists, but the main narrative still repeats most of it instead of teaching the decision.
 - A shown hunk has no `path:line` anchor, or an anchor was estimated rather than taken from the diff.
 - A behavior change you know about appears in neither section 4 nor the not-covered list.
 - Any quiz question is answerable without reading the artifact (trivia), or none requires the Background section.
