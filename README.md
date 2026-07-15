@@ -2,220 +2,191 @@
 
 # AgentCorp
 
-### An entire software delivery org in 38 markdown files
+### Make coding agents prove their work.
 
-An orchestrator, planners, an engineer, **12 specialist review lanes**, testers,
-and an acceptance gate — plain-markdown Agent Skills that run on both
-**Claude Code** and **Codex**. No role approves its own work.
+**A software-delivery system for Claude Code and Codex.**
 
-[![GitHub stars](https://img.shields.io/github/stars/ylxmf2005/AgentCorp?style=flat&logo=github&color=6366f1)](https://github.com/ylxmf2005/AgentCorp/stargazers)
-[![Claude Code](https://img.shields.io/badge/Claude%20Code-plugin-d97757)](#quick-start)
-[![Codex](https://img.shields.io/badge/Codex-plugin-1f2328)](docs/codex-setup.md)
-[![Agent Skills](https://img.shields.io/badge/Agent%20Skills-open%20standard-6366f1)](#quick-start)
+AgentCorp organizes a task as a planned, independently reviewed, and verified
+delivery, with evidence you can inspect before you accept the result.
+
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-plugin-d97757)](#claude-code) [![Codex](https://img.shields.io/badge/Codex-plugin-1f2328)](#codex) [![Agent Skills](https://img.shields.io/badge/Agent%20Skills-open%20standard-6366f1)](docs/skills.md)
 
 English · [简体中文](README_CN.md)
 
-[Quick Start](#quick-start) · [How a Delivery Runs](#how-a-delivery-runs) · [Trust Architecture](#the-trust-architecture) · [Skills](#the-38-skills) · [Limitations](#honest-limitations)
-
-[![AgentCorp delivery workflow](docs/assets/delivery-workflow.png)](docs/assets/delivery-workflow.excalidraw)
+[Quick Start](#quick-start) · [Why AgentCorp](#why-agentcorp) · [How It Works](#how-it-works) · [38 Skills](docs/skills.md)
 
 </div>
 
-## Why this exists
-
-AI generates code faster every month, but the cost of verifying that code still
-lands on you. And the loop that follows is worse than the code: an agent's work
-is a black box, so you skip review; cognitive debt piles up; and eventually you
-no longer dare to hand it anything that matters.
-
-AgentCorp is a [loop-engineering](https://addyosmani.com/blog/loop-engineering/)
-system built to break that loop. Less a prompt pack than **an org chart with
-contracts** — who produces what, who is allowed to approve it, and what
-evidence has to exist before work moves:
-
-- **Controllable** — the process scales itself: a one-line change takes the
-  micro lane, a new system skips no critical phase, and repeated failure forces
-  replanning instead of a third identical retry.
-- **Understandable** — every phase leaves a structured artifact recording who
-  decided what on which evidence, explained so you can judge it without having
-  read the code.
-- **Verifiable** — no role approves its own output, tests are decided before
-  implementation, and every review finding is treated as a possible false
-  positive until independently re-proven.
-
 ## Quick Start
 
-**Claude Code:**
+### Claude Code
 
-```
+```text
 /plugin marketplace add ylxmf2005/AgentCorp
 /plugin install agentcorp@agentcorp
 ```
 
-Then run `/reload-plugins` or restart. Skills are namespaced, for example
-`/agentcorp:delivery-orchestrator`.
+Run `/reload-plugins` or restart Claude Code.
 
-**Codex:**
-
-```
-codex plugin marketplace add ylxmf2005/AgentCorp
-```
-
-Enable **AgentCorp** from the `/plugins` menu and restart — one skill body
-serves both runtimes (the open Agent Skills standard). Lifecycle-hook mounting
-differs on Codex: see [docs/codex-setup.md](docs/codex-setup.md).
-
-**Then hand it a task.** The Delivery Orchestrator confirms success criteria
-with you, recommends a route, and drives the pipeline — stopping at each gate
-to report. Parameters can be combined to fit the task:
+### Codex
 
 ```text
-/agentcorp:delivery-orchestrator mode:direct pace:guided effort:low fix a null check
-/agentcorp:delivery-orchestrator mode:partial pace:continuous effort:high rate-limit an API
-/agentcorp:delivery-orchestrator mode:full effort:max lang:en-US migrate webhooks
+codex plugin marketplace add ylxmf2005/AgentCorp
+codex plugin add agentcorp@agentcorp
 ```
 
-Omit a parameter when you want the orchestrator to recommend it. You can also
-call any single skill directly when you only need that one capability:
+Start a new Codex task. You can also install **AgentCorp** from the `/plugins`
+menu after adding the marketplace. Lifecycle hooks need one additional setup
+step: [Codex setup](docs/codex-setup.md).
+
+### Give it a task
+
+In Claude Code:
+
+```text
+/agentcorp:delivery-orchestrator fix duplicate webhook deliveries and prove the regression is closed
+```
+
+In Codex:
+
+```text
+Use $agentcorp:delivery-orchestrator to fix duplicate webhook deliveries and prove the regression is closed.
+```
+
+Before changing code, the orchestrator defines what done means, recommends a
+work path, and shows you the phases it intends to run. Omit the knobs and let it
+recommend them; add `mode:`, `pace:`, `effort:`, or `lang:` when you want
+explicit control.
+
+## Why AgentCorp
+
+Coding agents are fast. The hard part is knowing whether their result deserves
+to ship. A single conversation often collapses author, reviewer, and tester
+into the same context, so confident claims can pass as proof.
+
+AgentCorp separates those responsibilities and makes the handoffs inspectable:
+
+| Typical agent loop | AgentCorp |
+| --- | --- |
+| The agent writes the change and judges it | The workflow separates authors from approvers |
+| A review finding immediately becomes a fix | The workflow requires `review-researcher` to re-prove it as a possible false positive |
+| "Tests pass" is the end of the story | Claims point to a path, log, response, or screenshot you can open |
+| A null check and a migration get the same process | Mode and effort scale the organization to the risk |
+| Lessons disappear with the session | `compound` turns them into tests, repo rules, or reviewer proposals |
+
+The result is not another prompt pack. It is an organization with contracts:
+who produces each artifact, who may approve it, and what evidence must exist
+before the work moves forward.
+
+## What You Get
+
+An orchestrated task is designed to leave a navigable record. A typical delivery
+includes:
+
+```text
+teamspace/tasks/<task>/
+├── task.md                              # success criteria, route, decisions, gate history
+├── requirements/validated-requirements.md
+├── implementation/implementation-result.md
+├── review/code-review.md
+├── verification/verification-report.md
+├── acceptance/acceptance-decision.md
+└── delivery/delivery-report.md
+```
+
+AgentCorp creates only the phases the task needs. Phase artifacts carry
+structured frontmatter, and delegated handoffs are checked mechanically before
+their claims are trusted. See the [full artifact layout](docs/artifacts.md).
+
+## How It Works
+
+[![AgentCorp delivery workflow](docs/assets/delivery-workflow.png)](docs/assets/delivery-workflow.excalidraw)
+
+1. **Shape the work.** Confirm success criteria, decide what must be tested,
+   and settle the design or diagnosis before implementation.
+2. **Build and challenge it.** Implement from an approved story, run independent
+   review lanes, and verify every routed finding before a fix lands.
+3. **Prove, learn, and deliver.** Run the required verification, assemble the
+   evidence for acceptance, compound reusable lessons, and issue a delivery report.
+
+Human gates stop the flow at decisions that belong to you. Gate outcomes use a
+closed vocabulary (`approved`, `skipped`, `revised`, `blocked`) and are recorded
+rather than silently inferred.
+
+## Scale the Process to the Risk
+
+Four independent knobs tune a delivery:
+
+| Knob | Values | Controls |
+| --- | --- | --- |
+| `mode:` | `direct` \| `partial` \| `full` | who executes the phases and who reviews them |
+| `pace:` | `continuous` \| `guided` | checkpoint reporting or one-artifact-at-a-time teaching |
+| `effort:` | `low` \| `medium` \| `high` \| `max` | how much independent coverage and redundancy to convene |
+| `lang:` | any language | the language of every human-facing artifact |
+
+Low effort trades redundancy for speed, never evidence for convenience.
+The workflow requires deeper scrutiny for security, permission, public contract,
+and data-loss surfaces. See the [parameter catalog](docs/parameters.md) for the
+exact behavior of every level and skill.
+
+## Use the Skills Directly
+
+The Delivery Orchestrator drives end-to-end work, but every capability can also
+be called on its own.
+
+Claude Code:
 
 ```text
 /agentcorp:code-review-lead depth:full review this diff
 /agentcorp:parallel-researcher scope:both depth:source-verified compare workflow engines
-/agentcorp:probe output:inline map the auth module
-/agentcorp:walkthrough format:html quiz:on teach me this branch
-/agentcorp:replay session:last focus:friction output:inline find repeated stalls
+/agentcorp:probe output:inline map the auth module before we change it
 ```
 
-When a task needs a logged-in browser, AgentCorp uses an isolated profile — you
-log in manually once; it never touches your local cookies. Every task ends with
-a delivery report and an audit record that traces each decision.
+Codex:
 
-## How a Delivery Runs
+```text
+Use $agentcorp:code-review-lead to review this diff at depth:full.
+Use $agentcorp:parallel-researcher to compare workflow engines with scope:both and depth:source-verified.
+Use $agentcorp:probe to map the auth module before we change it, with output:inline.
+```
 
-The orchestrator classifies the work for the sponsor (the human this pipeline
-answers to — you), picks a paradigm (greenfield / enhancement / bugfix / simple
-addition), announces the phase sequence as a commitment, and drives it —
-stopping at human gates with a navigable summary (*where we are → what I see →
-what I recommend → your options*) instead of a bare "approve?". Between phases,
-work moves by **assignment/receipt files with YAML contracts**, mechanically
-validated: a receipt claiming an artifact that doesn't exist, an empty
-deliverable, a phase nobody recognizes — caught by `validate-handoff.py` before
-any human reads a word.
+Browse all [38 skills](docs/skills.md), from planning and implementation through
+12 specialist review lanes, verification, acceptance, research, explanation,
+browser testing, and skill evolution.
 
-Four orthogonal knobs tune the collaboration per task:
+## Built to Be Checked
 
-| Knob | Values | Decides |
-| --- | --- | --- |
-| `mode:` | `direct` \| `partial` \| `full` | you-as-reviewer / orchestrator executes, reviews delegated / every phase delegated |
-| `pace:` | `continuous` \| `guided` | keep moving, report at checkpoints / one artifact at a time, taught |
-| `effort:` | `low` \| `medium` \| `high` \| `max` | how much redundancy and optional coverage the task buys |
-| `lang:` | any | the language every human-facing artifact is written in |
+- The same 38 Agent Skill definitions serve Claude Code and Codex, backed by
+  small helper scripts for validation, replay, browser sessions, and hooks.
+- `validate-handoff.py` checks handoff envelopes for missing artifacts,
+  mismatched owners or phases, and other consistency errors.
+- Nine trap-seeded delivery scenarios model failure modes such as wrong issue
+  diagnoses, test-editing shortcuts, hidden policy constraints, and browser-only
+  defects.
+- Twenty-four routing probes guard the boundaries between similar skills, and a
+  23-expectation regression script covers validator edge cases.
 
-`effort:low` trades *redundancy* for speed — never honesty: no tier can
-fabricate evidence, approve its own work, or skip re-running the original
-failing input, and a security/permission/data-loss surface auto-upgrades its
-phases to max, out loud. Individual skills take parameters the same way:
-`/agentcorp:probe output:inline`, `/agentcorp:explain reader:newcomer`. The full catalog — every skill's parameters and what each effort tier buys — lives in [docs/parameters.md](docs/parameters.md).
-
-Be honest about the bill: a delegated multi-reviewer pipeline costs real tokens
-and wall-clock. That is exactly what `effort` prices — `low` approaches a
-single-agent session, `max` buys an independent session per lane. Spend it
-where wrongness is expensive.
-
-## The Trust Architecture
-
-Every mechanism below exists because the naive version failed somewhere real:
-
-- **No role approves its own artifact.** Author/reviewer separation holds in
-  every mode — even solo (`direct`) mode keeps the review gates and makes you
-  the reviewer, informed and explicitly willing.
-- **Review findings are hypotheses, not facts.** The most expensive failure in
-  multi-agent work is a confident-but-wrong finding taken downstream as truth.
-  `review-researcher` is the circuit breaker: it re-walks every finding
-  adversarially (null hypothesis: false positive), kills the fakes with named
-  evidence, and only confirmed, in-scope items ever reach `fix`.
-- **Claims need handles.** "Tests pass" counts only with something you can
-  open — a path, a log, a rendered screenshot. A behavior the machine can't
-  verify locally is marked `unverified` and passes no gate; verbal confirmation
-  is not evidence; raw evidence logs are verbatim and append-only.
-- **Gates speak a closed vocabulary.** Human gates resolve to
-  `approved / skipped / revised / blocked` — recorded, never silently passed. A
-  sponsor reply that doesn't address the question maps to no outcome: nothing
-  in the pipeline may invent a "default-approve convention".
-- **High-stakes changes get a second opinion from a different model family.**
-  On a security boundary, public contract, or irreversible release, the verdict
-  owner takes an independent cold-read from the *other* runtime family (Codex
-  checking Claude-family work, and vice versa) — two families rarely share one
-  blind spot.
-- **The mechanical layer is fuzz-tested.** `validate-handoff.py`'s known blind
-  spots were found by fuzzing and are pinned by a shipping regression suite
-  (`tools/test-validate-handoff.py`) so they stay closed.
-
-## It Improves Itself — With a Human Gate
-
-AgentCorp treats its own skills as a system under test:
-
-- **Capture → surface → land.** A session-end hook mines the transcript for
-  skill-improvement signals (privacy-redacted first); `skill-evolution` drafts
-  the edit, which lands only on an explicit human yes to the specific diff.
-- **`compound` (沉淀) is a phase, not a note.** Before delivery, the round's
-  lessons become assets: a fixed bug becomes a regression test, a trap becomes
-  a `CLAUDE.md` rule, a confirmed miss becomes a proposal for the reviewer that
-  missed it.
-- **`replay` replays the session itself.** A deterministic extractor parses the
-  runtime's own recordings into turns, wall-clock, token economics, and stall
-  points — every claim anchored to a transcript entry.
-- **Edits need a failing trajectory.** No wording polish: a skill change must
-  cite a concrete failed run and the gate where it broke.
-
-And the discipline is regression-tested: `scenarios/` ships the **golden set**
-used to evolve the system — nine trap-seeded delivery tasks modeled on real
-agent-failure patterns (an issue that confidently names the wrong fix, a test
-suite where the cheapest green is editing the asserts, a policy hidden in docs
-that the goal-state violates, a defect only a real browser can verify), plus 24
-routing probes and the validator fuzz suite. Any skill edit replays its
-scenario and its wired partners.
-
-## The 38 Skills
-
-| Phase | Skills |
-| --- | --- |
-| **Orchestration** | `delivery-orchestrator` |
-| **Planning & design** | `solution-architect` · `implementation-planner` · `plan-review-lead` · `test-planner` · `test-plan-reviewer` · `parallel-researcher` |
-| **Implementation** | `implementation-engineer` |
-| **Code review** | `code-review-lead` + 12 lanes: `correctness` · `security` · `performance` · `reliability` · `adversarial` · `simplicity` · `taste` · `change-hygiene` · `standards` · `comment-optimizer` · `project-steward` · `api-contract`, then `review-researcher` (the circuit breaker) · `review-fixer` |
-| **Verification** | `test-leader` · `e2e-tester` · `api-contract-tester` · `regression-tester` |
-| **Acceptance** | `acceptance-review-lead` |
-| **Support** | `probe` · `brainstorm` · `grill` · `replay` · `explain` · `walkthrough` · `authenticated-browser-session` · `precommit-setup` · `skill-evolution` · `semantic-core-translation` |
-
-One-line description of every skill: [docs/skills.md](docs/skills.md).
-
-Every phase writes a structured artifact with frontmatter — task record, audit
-manifest, handoffs, findings, evidence logs, delivery report — so the work is
-auditable and traceable. Full runtime layout: [docs/artifacts.md](docs/artifacts.md).
+The repository ships the scenarios and checks; it does not ask you to trust a
+benchmark screenshot.
 
 ## Honest Limitations
 
-The same discipline the pipeline demands, applied to itself:
+- Markdown contracts constrain model behavior and make violations visible; they
+  cannot make incorrect behavior impossible.
+- The scenario suite is maintained by this project, not an independent benchmark.
+  AgentCorp claims no SWE-bench score.
+- Independent review costs tokens and wall-clock time. Use `effort:` to spend that
+  cost where being wrong is expensive.
+- AgentCorp deliberately has no frontend role and no merge/push owner. Frontend
+  work needs an explicit waiver, and landing a branch remains under your control.
+- The validators and trajectory extractor require Python 3.9+ and use only the
+  standard library.
 
-- Markdown contracts **constrain** model behavior and make violations visible;
-  they cannot make violations impossible. The mechanical validator checks
-  envelopes and existence, not truth — truth is what the review/verify roles
-  and your gates are for.
-- The trap-scenario set is a regression guard written by the maintainers, not
-  third-party benchmark results; no SWE-bench score is claimed.
-- There is deliberately no frontend role and no merge/push owner: frontend
-  changes need an explicit sponsor waiver, and landing code on a branch stays
-  with you.
-- Requirements: Claude Code or Codex CLI with plugin/skill support; the
-  validators and the trajectory extractor are Python 3.9+ stdlib-only.
+## Documentation
 
----
+- [All 38 skills](docs/skills.md)
+- [Parameters and effort levels](docs/parameters.md)
+- [Runtime artifacts](docs/artifacts.md)
+- [Codex setup](docs/codex-setup.md)
 
-<div align="center">
-
-AgentCorp welds controllability, understandability, and verifiability into the
-structure itself — and every delivered task leaves the system a little stronger
-than it found it.
-
-</div>
+Questions and bug reports belong in [GitHub Issues](https://github.com/ylxmf2005/AgentCorp/issues).
