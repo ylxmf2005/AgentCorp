@@ -2,13 +2,11 @@
 
 # AgentCorp
 
-### 把编程 Agent 组织成一支软件交付团队。
+AgentCorp 是一套运行于 Claude Code 与 Codex 的角色化软件交付系统。它把需求、规划、实现、
+独立评审、验证和验收交给职责不同的角色，并在需要方向、取舍与风险判断时让人参与。
 
-**不同角色负责探查、规划、实现、质疑与验证；真正重要的决定回到你手里。**
-
-给 AgentCorp 一个软件任务。它会在 Claude Code 与 Codex 上编排职责明确、相互制衡的角色，
-并用人工门禁和可复用上下文串起全过程，最后留下代码、评审结论、验证证据，以及一份你能检查、
-能改道的交付记录。
+AgentCorp 不只交付最终结果，也保留结果形成的过程：任务目标、关键决定、阶段负责人、
+实际检查和未解决的问题。
 
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-plugin-d97757)](#claude-code) [![Codex](https://img.shields.io/badge/Codex-plugin-1f2328)](#codex) [![Agent Skills](https://img.shields.io/badge/Agent%20Skills-open%20standard-6366f1)](docs/skills_CN.md)
 
@@ -161,34 +159,15 @@ frontmatter；委派交接的声明在进入审计记录前先经过机械校验
 
 [![AgentCorp 交付流程](docs/assets/delivery-workflow.png)](docs/assets/delivery-workflow.excalidraw)
 
-AgentCorp 不会把你的 prompt 直接丢给一个 coding agent。Delivery Orchestrator 会按任务
-与风险选择工作路线、分配 owner，并在 `task.md` 与 `manifest.md` 中记录代码基线、
-阶段产物和人工门禁。`interaction:auto` 会在必须由人决定的位置之间继续推进已就绪、
-可逆的工作；`interaction:gate` 则会在每道人工门禁停下。
+给 AgentCorp 一个任务，Delivery Orchestrator 会按它的范围与风险选择合适的角色和工作路线。
 
-1. **和你一起把任务定义清楚。** 编排器会在实现前记录成功标准与非目标。遇到陌生领域时，
-   `probe` 会调查代码、测试、配置、历史和过往经验，再带回一份领域报告与未知项台账。
-   方向不清晰时，`brainstorm` 会提供完整的候选路径；只有你选中的方向才会成为需求。
-   已经存在的方案还可以用 `grill` 现场压测。
-2. **写代码前，先设计怎样证明它。** Test Planner 把风险写成可直接执行的 API、E2E 和回归测试手册。
-   Solution Architect 按任务需要产出故障诊断、影响分析、架构或接口契约。独立 reviewer 会在
-   工程师开始实现前，判断测试计划和 Implementation Story 是否真的已经就绪。
-3. **每个角色都拿到明确契约，也有不同的批准者。** 被委派的角色会收到一份 assignment，列明来源文件、
-   代码基线、可编辑边界与输出路径；完成后返回 receipt，AgentCorp 再根据实际落盘产物进行检查。
-   Implementation Engineer 不能批准自己的工作；Code Review Lead 只会根据实际风险召集必要的
-   专项 reviewer。
-4. **评审发现经过重新研究，才能进入修复。** 被路由处理的 finding 进入 `review/research/` 时只是一个
-   待证假设，而不是事实。Review Researcher 会独立追踪它，并记录 `confirmed`、`false-positive`、
-   `partial` 或 `needs-human`，以及它应当现在修复还是延后。Review Fixer 只会收到经过验证、
-   并已决定在本任务落地的项目。
-5. **按最初的意图证明这次交付。** Test Leader 分派 API、E2E、回归和风险专项 tester，打开它们的日志、
-   响应、截图或命令输出后，才能给出验证结论。Acceptance Review Lead 再独立把这些证据对应回
-   每条 Must Have，并报告任何尚未验证的行为或残余风险。
-
-人的参与不是最后点一下批准。在已记录的人工门禁，你可以修改需求或设计，把 finding 从 `fix-now`
-改为 `defer`，要求补充证据，或接受一项已明示的残余风险。如果你尚不具备做决定所需的理解，
-`explain` 或 `walkthrough` 会先补回缺失的上下文，再重新发起门禁。交付后，`compound` 会把值得保留的经验
-变成测试、仓库规则，或必须经人批准才能落地的组织改进提案。
+1. **写代码前先把任务定义清楚。** 遇到陌生领域时，`probe` 先做调查；方向尚未确定时，
+   `brainstorm` 给出可以选择的具体方案。然后工作流再确定成功标准、测试方式和实施方案。
+2. **把实现与判断分开。** 不同角色负责规划、实现、独立评审和评审发现复核。作者不能批准
+   自己的工作，尚未证实的评审发现也不会直接进入修复。
+3. **用证据和记录完成交付。** 任务需要的 API、E2E 或回归检查会经过验证与验收。
+   在人工门禁，你可以修改方向、要求解释或 walkthrough，或决定如何处理已明示的风险；
+   值得保留的经验可以进入 `compound`。
 
 ## 按风险调节流程
 

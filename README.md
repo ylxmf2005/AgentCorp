@@ -2,15 +2,13 @@
 
 # AgentCorp
 
-### Turn coding agents into a software delivery organization.
+AgentCorp is a role-based software delivery system for Claude Code and Codex. It
+assigns requirements, planning, implementation, independent review,
+verification, and acceptance to distinct roles, involving people when direction,
+trade-offs, or risk require human judgment.
 
-**Different roles explore, plan, build, challenge, and verify—while the decisions
-that matter stay with you.**
-
-Give AgentCorp one software task. It coordinates Claude Code and Codex around
-explicit ownership, independent judgment, human gates, and reusable context,
-then leaves code, review decisions, verification evidence, and a delivery record
-you can inspect and steer.
+AgentCorp preserves not only the final result but how it was reached: task goals,
+key decisions, phase owners, checks actually run, and unresolved issues.
 
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-plugin-d97757)](#claude-code) [![Codex](https://img.shields.io/badge/Codex-plugin-1f2328)](#codex) [![Agent Skills](https://img.shields.io/badge/Agent%20Skills-open%20standard-6366f1)](docs/skills.md)
 
@@ -169,46 +167,21 @@ handoffs are checked mechanically before their claims are trusted. See the
 
 [![AgentCorp delivery workflow](docs/assets/delivery-workflow.png)](docs/assets/delivery-workflow.excalidraw)
 
-AgentCorp does not send your prompt straight to a coder. The Delivery
-Orchestrator selects a risk-matched work path, assigns owners, and records the
-baseline, artifacts, and human gates in `task.md` and `manifest.md`.
-`interaction:auto` lets ready, reversible work continue between required
-decisions; `interaction:gate` pauses at every human gate.
+Give AgentCorp a task, and the Delivery Orchestrator selects the roles and work
+path that fit its scope and risk.
 
-1. **Shape the task with you.** The orchestrator records success criteria and
-   non-goals before implementation. On unfamiliar ground, `probe` investigates
-   code, tests, configuration, history, and prior lessons, then brings back a
-   terrain report and an unknowns ledger. When direction is unclear, `brainstorm`
-   offers complete alternatives; only the path you choose becomes a requirement.
-   An existing proposal can be pressure-tested live with `grill`.
-2. **Plan the proof before the code.** The Test Planner turns risk into executable
-   API, E2E, and regression playbooks. The Solution Architect produces the
-   diagnosis, impact analysis, architecture, or interface contract the task
-   needs. Independent reviewers decide whether the test plan and implementation
-   story are ready before an engineer builds from them.
-3. **Give every role a contract—and a separate approver.** A delegated role receives
-   an assignment naming its source files, baseline, edit boundary, and output
-   path, then returns a receipt that AgentCorp checks against the artifact on
-   disk. The Implementation Engineer cannot approve its own work; the Code
-   Review Lead convenes only the specialist lanes the actual risk calls for.
-4. **Research findings before fixing them.** A routed review finding enters
-   `review/research/` as a hypothesis, not a fact. The Review Researcher traces it
-   independently and records `confirmed`, `false-positive`, `partial`, or
-   `needs-human`, plus whether it should be fixed now or deferred. The Review
-   Fixer receives only verified items that are approved to land in this task.
-5. **Prove the delivery against the original intent.** The Test Leader assigns
-   API, E2E, regression, and risk-specific testers, then opens their logs,
-   responses, screenshots, or command output before issuing a verification
-   decision. The Acceptance Review Lead independently maps that evidence back to
-   every Must Have and reports any unverified behavior or residual risk.
-
-Human participation is not a final approval button. At recorded gates you can
-revise requirements or design, change a finding from `fix-now` to `defer`, request
-more evidence, or accept a stated residual risk. If the decision arrives without
-enough understanding, `explain` or `walkthrough` rebuilds the missing context
-before the gate is asked again. After delivery, `compound` turns useful lessons
-into tests, repository rules, or human-approved proposals for improving the
-organization itself.
+1. **Define the task before writing code.** When the territory is unfamiliar,
+   `probe` investigates it first; when the direction is open, `brainstorm` gives
+   you concrete paths to choose from. The workflow then settles the success
+   criteria, test approach, and design.
+2. **Separate implementation from judgment.** Different roles plan, build,
+   independently review, and recheck review findings. Authors do not approve
+   their own work, and an unverified finding does not go straight into a fix.
+3. **Finish with evidence and a record.** The checks the task requires—including
+   API, E2E, or regression testing when applicable—go through verification and
+   acceptance. At human gates you can revise the direction, request an explanation
+   or walkthrough, or decide how to handle stated risk; reusable lessons can be
+   routed through `compound`.
 
 ## Scale the Process to the Risk
 
