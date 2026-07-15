@@ -68,7 +68,7 @@ AgentCorp separates those responsibilities and makes the handoffs inspectable:
 | The human sees only the final answer | The sponsor shapes intent, can revise the route at recorded gates, and owns scope and residual risk |
 | A review finding immediately becomes a fix | The workflow requires `review-researcher` to re-prove it as a possible false positive |
 | "Tests pass" is the end of the story | Claims point to a path, log, response, or screenshot you can open |
-| A null check and a migration get the same process | Mode and effort scale the organization to the risk |
+| A null check and a migration get the same process | Small changes take a lighter path; higher-risk work adds independent roles, review, and verification |
 | Lessons disappear with the session | `compound` turns them into tests, repo rules, or reviewer proposals |
 
 AgentCorp is not a coding model, agent runtime, or prompt pack. It is a delivery
