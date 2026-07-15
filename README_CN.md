@@ -16,10 +16,7 @@ markdown 的 Agent Skills 形式，同时运行在 **Claude Code** 与 **Codex**
 
 [快速上手](#快速上手) · [一次交付如何运转](#一次交付如何运转) · [信任架构](#信任架构) · [技能一览](#38-项技能) · [诚实的局限](#诚实的局限)
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/pipeline-dark.svg">
-  <img src="docs/assets/pipeline-light.svg" alt="AgentCorp 交付流水线：你把任务交给编排者，它把每个阶段路由给对应角色——规划、实现、经 12 条专项车道评审并由熔断器杀掉误报、用可打开的证据验证、验收、交付——在人工门禁处停下，留下一份经机械校验的书面痕迹，并把每单任务的教训沉淀回系统。" width="100%">
-</picture>
+[![AgentCorp 交付流程](docs/assets/delivery-workflow.png)](docs/assets/delivery-workflow.excalidraw)
 
 </div>
 
