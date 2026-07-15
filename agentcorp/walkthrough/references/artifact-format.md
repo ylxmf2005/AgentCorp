@@ -9,6 +9,14 @@ SKILL.md covers the why; this covers the how. Load before writing the artifact.
 - Naming: `walkthrough/<slug>.html` under the task root, or `teamspace/walkthroughs/<YYYYMMDD>-<slug>.html` standalone. The slug names the change, not the branch.
 - **Information layering:** the main reading path is the sponsor's decision model, not a lossless source rendering. When complete source coverage matters, embed or link a clearly labeled appendix after the human narrative. The appendix preserves availability; it does not justify repeating every source section above it.
 
+## Progressive disclosure and visual attention
+
+- **First viewport:** show the artifact name, one-sentence purpose, the key unchanged/changed model, one minimal diagram, and a **Surprise Map** with 3–6 links to behavior corrections, counterintuitive outcomes, compatibility changes, or release risks. Do not spend the first viewport on implementation detail.
+- **Concept units:** pivotal concepts are closed `<details>` units by default. A summary must contain the concept name, what it is for, and a one-sentence conclusion or consequence; the reader should know whether to expand it without opening it. A dense artifact may expose many closed summary rows for scanning, but no more than 5–8 knowledge units may be default-open; after the overview, prefer all concept units closed.
+- **Expanded body:** opening a concept reveals the mechanism, example, trade-offs, failure modes, and affected behavior. Dense evidence inside it — code, SQL, DDL, full interfaces, exhaustive tables — belongs in a second nested `<details>` layer.
+- **Badges versus highlights:** a badge names the impact class; it is not the highlight. Use background text highlighting such as `<mark>` for the exact short phrase the reader must remember. Each consequential expanded concept should normally contain 1–3 such highlights in its body, not only in the summary.
+- **Highlight budget:** highlight only facts that change a decision, runtime result, compatibility expectation, or release action. Highlight a phrase or sentence, never an entire paragraph; color must not be the only carrier of meaning.
+
 ## Section contract
 
 1. **Background and stable contracts** — teach what already exists, then state the 5–8 important things that remain true after the change. Start where a newcomer needs to start, but do not retell the whole subsystem. The reader must know which public behavior, ownership boundary, workflow, or safety contract is intentionally unchanged before evaluating the delta.
@@ -40,6 +48,11 @@ Keep schema, full interfaces, complete migration conditions, module inventories,
 - The first code block appears before the reader has been taught what the surrounding system does.
 - Sections 3's ordering mirrors `git diff --stat` output rather than the idea's structure.
 - The visible page mirrors the source artifact's headings, or gives every touched field/method equal prominence.
+- More than 5–8 knowledge units are expanded or equally prominent on initial load.
+- A closed concept summary is only a noun or title and does not state its purpose and one-sentence conclusion.
+- Code is collapsed, but the full conceptual explanation remains continuously expanded.
+- Important expanded concepts contain no precise text highlight, or highlights appear only in badges/summaries.
+- Highlighting covers whole paragraphs or is so dense that the reader cannot tell what changes a decision or outcome.
 - The first viewport does not make both key unchanged and key changed behavior obvious.
 - A dense appendix exists, but the main narrative still repeats most of it instead of teaching the decision.
 - A shown hunk has no `path:line` anchor, or an anchor was estimated rather than taken from the diff.
