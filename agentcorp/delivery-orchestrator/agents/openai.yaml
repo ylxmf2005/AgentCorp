@@ -1,4 +1,4 @@
 interface:
   display_name: "Delivery Orchestrator"
   short_description: "Run AgentCorp delivery workflow"
-  default_prompt: "Use $delivery-orchestrator to perform the AgentCorp Delivery Orchestrator role. (options: mode:direct|partial|full, pace:continuous|guided, effort:low|medium|high|max (xhigh=max), lang:<language>)"
+  default_prompt: "Use $delivery-orchestrator to perform the AgentCorp Delivery Orchestrator role. (options: mode:direct|partial|full, interaction:auto|gate, effort:low|medium|high|max (xhigh=max), lang:<language>)"

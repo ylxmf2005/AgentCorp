@@ -1,4 +1,4 @@
 interface:
   display_name: "Walkthrough"
-  short_description: "Teach what stays and what meaningfully changes"
-  default_prompt: "Use $walkthrough to turn this change or technical artifact into a human explainer: lead with what stays the same and what meaningfully changes, preserve engineering detail in appendices, then quiz me. (options: format:html|md, quiz:on|off)"
+  short_description: "Teach broad changes through decisions, modules, and evidence"
+  default_prompt: "Use $walkthrough to turn this change or technical artifact into a desktop-first explainer: keep the decision spine visible, use tabs for peer modules and reference views, fold dense evidence, then quiz me. (options: format:html|md, quiz:on|off)"

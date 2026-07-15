@@ -2,220 +2,235 @@
 
 # AgentCorp
 
-### An entire software delivery org in 38 markdown files
+### Turn coding agents into a software delivery organization.
 
-An orchestrator, planners, an engineer, **12 specialist review lanes**, testers,
-and an acceptance gate — plain-markdown Agent Skills that run on both
-**Claude Code** and **Codex**. No role approves its own work.
+**Different roles explore, plan, build, challenge, and verify—while the decisions
+that matter stay with you.**
 
-[![GitHub stars](https://img.shields.io/github/stars/ylxmf2005/AgentCorp?style=flat&logo=github&color=6366f1)](https://github.com/ylxmf2005/AgentCorp/stargazers)
-[![Claude Code](https://img.shields.io/badge/Claude%20Code-plugin-d97757)](#quick-start)
-[![Codex](https://img.shields.io/badge/Codex-plugin-1f2328)](docs/codex-setup.md)
-[![Agent Skills](https://img.shields.io/badge/Agent%20Skills-open%20standard-6366f1)](#quick-start)
+Give AgentCorp one software task. It coordinates Claude Code and Codex around
+explicit ownership, independent judgment, human gates, and reusable context,
+then leaves code, review decisions, verification evidence, and a delivery record
+you can inspect and steer.
+
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-plugin-d97757)](#claude-code) [![Codex](https://img.shields.io/badge/Codex-plugin-1f2328)](#codex) [![Agent Skills](https://img.shields.io/badge/Agent%20Skills-open%20standard-6366f1)](docs/skills.md)
 
 English · [简体中文](README_CN.md)
 
-[Quick Start](#quick-start) · [How a Delivery Runs](#how-a-delivery-runs) · [Trust Architecture](#the-trust-architecture) · [Skills](#the-38-skills) · [Limitations](#honest-limitations)
-
-[![AgentCorp delivery workflow](docs/assets/delivery-workflow.png)](docs/assets/delivery-workflow.excalidraw)
+[Quick Start](#quick-start) · [Why AgentCorp](#why-agentcorp) · [How It Works](#how-it-works) · [38 Skills](docs/skills.md)
 
 </div>
 
-## Why this exists
-
-AI generates code faster every month, but the cost of verifying that code still
-lands on you. And the loop that follows is worse than the code: an agent's work
-is a black box, so you skip review; cognitive debt piles up; and eventually you
-no longer dare to hand it anything that matters.
-
-AgentCorp is a [loop-engineering](https://addyosmani.com/blog/loop-engineering/)
-system built to break that loop. Less a prompt pack than **an org chart with
-contracts** — who produces what, who is allowed to approve it, and what
-evidence has to exist before work moves:
-
-- **Controllable** — the process scales itself: a one-line change takes the
-  micro lane, a new system skips no critical phase, and repeated failure forces
-  replanning instead of a third identical retry.
-- **Understandable** — every phase leaves a structured artifact recording who
-  decided what on which evidence, explained so you can judge it without having
-  read the code.
-- **Verifiable** — no role approves its own output, tests are decided before
-  implementation, and every review finding is treated as a possible false
-  positive until independently re-proven.
-
 ## Quick Start
 
-**Claude Code:**
+### Claude Code
 
-```
+```text
 /plugin marketplace add ylxmf2005/AgentCorp
 /plugin install agentcorp@agentcorp
 ```
 
-Then run `/reload-plugins` or restart. Skills are namespaced, for example
-`/agentcorp:delivery-orchestrator`.
+Run `/reload-plugins` or restart Claude Code.
 
-**Codex:**
+### Codex
 
-```
+```text
 codex plugin marketplace add ylxmf2005/AgentCorp
+codex plugin add agentcorp@agentcorp
 ```
 
-Enable **AgentCorp** from the `/plugins` menu and restart — one skill body
-serves both runtimes (the open Agent Skills standard). Lifecycle-hook mounting
-differs on Codex: see [docs/codex-setup.md](docs/codex-setup.md).
+Start a new Codex task. You can also install **AgentCorp** from the `/plugins`
+menu after adding the marketplace. Lifecycle hooks need one additional setup
+step: [Codex setup](docs/codex-setup.md).
 
-**Then hand it a task.** The Delivery Orchestrator confirms success criteria
-with you, recommends a route, and drives the pipeline — stopping at each gate
-to report. Parameters can be combined to fit the task:
+### Give it a task
+
+Pass the work directly to the relevant skill. The Delivery Orchestrator chooses
+the workflow parameters for an end-to-end task; the Code Review Lead chooses
+the review depth from the diff and its risk:
 
 ```text
-/agentcorp:delivery-orchestrator mode:direct pace:guided effort:low fix a null check
-/agentcorp:delivery-orchestrator mode:partial pace:continuous effort:high rate-limit an API
-/agentcorp:delivery-orchestrator mode:full effort:max lang:en-US migrate webhooks
+/agentcorp:delivery-orchestrator <your prompt>
+/agentcorp:code-review-lead <your prompt>
 ```
 
-Omit a parameter when you want the orchestrator to recommend it. You can also
-call any single skill directly when you only need that one capability:
+Parameters remain available when you need explicit control; otherwise the skill
+infers them from the task, repository, and risk surface.
 
-```text
-/agentcorp:code-review-lead depth:full review this diff
-/agentcorp:parallel-researcher scope:both depth:source-verified compare workflow engines
-/agentcorp:probe output:inline map the auth module
-/agentcorp:walkthrough format:html quiz:on teach me this branch
-/agentcorp:compound session:last focus:friction output:inline find repeated stalls
-```
+## Why AgentCorp
 
-When a task needs a logged-in browser, AgentCorp uses an isolated profile — you
-log in manually once; it never touches your local cookies. Every task ends with
-a delivery report and an audit record that traces each decision.
+Coding agents are fast. The hard part is knowing whether their result deserves
+to ship. A single conversation often collapses author, reviewer, and tester
+into the same context, so confident claims can pass as proof.
 
-## How a Delivery Runs
+AgentCorp separates those responsibilities and makes the handoffs inspectable:
 
-The orchestrator classifies the work for the sponsor (the human this pipeline
-answers to — you), picks a paradigm (greenfield / enhancement / bugfix / simple
-addition), announces the phase sequence as a commitment, and drives it —
-stopping at human gates with a navigable summary (*where we are → what I see →
-what I recommend → your options*) instead of a bare "approve?". Between phases,
-work moves by **assignment/receipt files with YAML contracts**, mechanically
-validated: a receipt claiming an artifact that doesn't exist, an empty
-deliverable, a phase nobody recognizes — caught by `validate-handoff.py` before
-any human reads a word.
-
-Four orthogonal knobs tune the collaboration per task:
-
-| Knob | Values | Decides |
-| --- | --- | --- |
-| `mode:` | `direct` \| `partial` \| `full` | you-as-reviewer / orchestrator executes, reviews delegated / every phase delegated |
-| `pace:` | `continuous` \| `guided` | keep moving, report at checkpoints / one artifact at a time, taught |
-| `effort:` | `low` \| `medium` \| `high` \| `max` | how much redundancy and optional coverage the task buys |
-| `lang:` | any | the language every human-facing artifact is written in |
-
-`effort:low` trades *redundancy* for speed — never honesty: no tier can
-fabricate evidence, approve its own work, or skip re-running the original
-failing input, and a security/permission/data-loss surface auto-upgrades its
-phases to max, out loud. Individual skills take parameters the same way:
-`/agentcorp:probe output:inline`, `/agentcorp:explain reader:newcomer`. The full catalog — every skill's parameters and what each effort tier buys — lives in [docs/parameters.md](docs/parameters.md).
-
-Be honest about the bill: a delegated multi-reviewer pipeline costs real tokens
-and wall-clock. That is exactly what `effort` prices — `low` approaches a
-single-agent session, `max` buys an independent session per lane. Spend it
-where wrongness is expensive.
-
-## The Trust Architecture
-
-Every mechanism below exists because the naive version failed somewhere real:
-
-- **No role approves its own artifact.** Author/reviewer separation holds in
-  every mode — even solo (`direct`) mode keeps the review gates and makes you
-  the reviewer, informed and explicitly willing.
-- **Review findings are hypotheses, not facts.** The most expensive failure in
-  multi-agent work is a confident-but-wrong finding taken downstream as truth.
-  `review-researcher` is the circuit breaker: it re-walks every finding
-  adversarially (null hypothesis: false positive), kills the fakes with named
-  evidence, and only confirmed, in-scope items ever reach `fix`.
-- **Claims need handles.** "Tests pass" counts only with something you can
-  open — a path, a log, a rendered screenshot. A behavior the machine can't
-  verify locally is marked `unverified` and passes no gate; verbal confirmation
-  is not evidence; raw evidence logs are verbatim and append-only.
-- **Gates speak a closed vocabulary.** Human gates resolve to
-  `approved / skipped / revised / blocked` — recorded, never silently passed. A
-  sponsor reply that doesn't address the question maps to no outcome: nothing
-  in the pipeline may invent a "default-approve convention".
-- **High-stakes changes get a second opinion from a different model family.**
-  On a security boundary, public contract, or irreversible release, the verdict
-  owner takes an independent cold-read from the *other* runtime family (Codex
-  checking Claude-family work, and vice versa) — two families rarely share one
-  blind spot.
-- **The mechanical layer is fuzz-tested.** `validate-handoff.py`'s known blind
-  spots were found by fuzzing and are pinned by a shipping regression suite
-  (`tools/test-validate-handoff.py`) so they stay closed.
-
-## It Improves Itself — With a Human Gate
-
-AgentCorp treats its own skills as a system under test:
-
-- **Capture → surface → land.** A session-end hook mines the transcript for
-  skill-improvement signals (privacy-redacted first); `skill-evolution` drafts
-  the edit, which lands only on an explicit human yes to the specific diff.
-- **`compound` (沉淀) is a phase *and* a skill.** Before delivery, the round's
-  lessons become assets: a fixed bug becomes a regression test, a trap becomes
-  a `CLAUDE.md` rule, a confirmed miss becomes a proposal filed for the
-  reviewer that missed it. The same skill answers a direct 复盘: a
-  deterministic extractor parses the runtime's own recordings into turns,
-  wall-clock, token economics, and stall points — every claim anchored to a
-  transcript entry.
-- **Edits need a failing trajectory.** No wording polish: a skill change must
-  cite a concrete failed run and the gate where it broke.
-
-And the discipline is regression-tested: `scenarios/` ships the **golden set**
-used to evolve the system — nine trap-seeded delivery tasks modeled on real
-agent-failure patterns (an issue that confidently names the wrong fix, a test
-suite where the cheapest green is editing the asserts, a policy hidden in docs
-that the goal-state violates, a defect only a real browser can verify), plus 26
-routing probes and the validator fuzz suite. Any skill edit replays its
-scenario and its wired partners.
-
-## The 38 Skills
-
-| Phase | Skills |
+| Typical agent loop | AgentCorp |
 | --- | --- |
-| **Orchestration** | `delivery-orchestrator` |
-| **Planning & design** | `solution-architect` · `implementation-planner` · `plan-review-lead` · `test-planner` · `test-plan-reviewer` · `parallel-researcher` |
-| **Implementation** | `implementation-engineer` |
-| **Code review** | `code-review-lead` + 12 lanes: `correctness` · `security` · `performance` · `reliability` · `adversarial` · `simplicity` · `taste` · `change-hygiene` · `standards` · `comment-optimizer` · `project-steward` · `api-contract`, then `review-researcher` (the circuit breaker) · `review-fixer` |
-| **Verification** | `test-leader` · `e2e-tester` · `api-contract-tester` · `regression-tester` |
-| **Acceptance** | `acceptance-review-lead` |
-| **Support** | `probe` · `brainstorm` · `grill` · `compound` · `explain` · `walkthrough` · `authenticated-browser-session` · `precommit-setup` · `skill-evolution` · `semantic-core-translation` |
+| The agent writes the change and judges it | The workflow separates authors from approvers |
+| The human sees only the final answer | The sponsor shapes intent, can revise the route at recorded gates, and owns scope and residual risk |
+| A review finding immediately becomes a fix | The workflow requires `review-researcher` to re-prove it as a possible false positive |
+| "Tests pass" is the end of the story | Claims point to a path, log, response, or screenshot you can open |
+| A null check and a migration get the same process | Mode and effort scale the organization to the risk |
+| Lessons disappear with the session | `compound` turns them into tests, repo rules, or reviewer proposals |
 
-One-line description of every skill: [docs/skills.md](docs/skills.md).
+AgentCorp is not a coding model, agent runtime, or prompt pack. It is a delivery
+organization with contracts: who produces each artifact, who may approve it,
+and what evidence must exist before the work moves forward.
 
-Every phase writes a structured artifact with frontmatter — task record, audit
-manifest, handoffs, findings, evidence logs, delivery report — so the work is
-auditable and traceable. Full runtime layout: [docs/artifacts.md](docs/artifacts.md).
+## What You Get
 
-## Honest Limitations
+An orchestrated task is designed to leave a navigable record. The full layout
+keeps cross-task knowledge beside each task's decisions and evidence:
 
-The same discipline the pipeline demands, applied to itself:
+```text
+teamspace/
+├── testing-context.md                   # shared runtime and test facts
+├── compound/                            # reusable lessons from prior tasks
+│   └── <lesson>.md
+├── knowledge/                           # reusable research snapshots
+│   └── <technology>/INDEX.md
+├── probes/                              # standalone territory reports
+│   └── <date>-<topic>.md
+├── walkthroughs/                        # standalone teaching artifacts
+│   └── <change>.html
+└── tasks/<task>/
+    ├── task.md                          # success criteria, route, decisions, gates
+    ├── manifest.md                      # phase, owner, quality gate, artifact, receipt
+    ├── probe/
+    │   └── 00-probe.md                  # unknowns and corrected assumptions
+    ├── handoffs/                        # delegated assignments and receipts
+    │   ├── <phase>.md
+    │   └── <phase>-receipt.md
+    ├── requirements/
+    │   └── validated-requirements.md
+    ├── design/
+    │   ├── architecture.md
+    │   ├── impact-analysis.md
+    │   ├── diagnosis.md
+    │   └── interface-contract.md
+    ├── test/
+    │   ├── test-plan.md
+    │   ├── api-test-plan.md
+    │   ├── e2e-test-plan.md
+    │   ├── regression-test-plan.md
+    │   ├── test-plan-review.md
+    │   └── exploration/
+    │       ├── charters.md
+    │       ├── frontier.md
+    │       └── journal.md
+    ├── implementation/
+    │   ├── implementation-story.md
+    │   └── implementation-result.md
+    ├── review/
+    │   ├── plan-review.md
+    │   ├── plan-review-findings/
+    │   ├── code-review.md
+    │   ├── specialist-findings/
+    │   │   └── <reviewer>.md
+    │   ├── research/
+    │   │   ├── 00-index.md              # every finding is rechecked
+    │   │   ├── 001-confirmed-....md
+    │   │   └── 002-false-positive-....md
+    │   ├── fix-records/
+    │   │   └── <file-group>.md
+    │   └── fix-result.md
+    ├── research/<topic>/                # hands-on research packages
+    │   ├── 00-report.md
+    │   ├── env/
+    │   ├── sources/
+    │   └── experiments/
+    ├── explain/                         # persisted decision explanations
+    │   └── <topic>/
+    │       ├── 00-index.md
+    │       └── 001-context.md
+    ├── walkthrough/
+    │   └── <change>.html                # background, intuition, story, quiz
+    ├── verification/
+    │   ├── assignments/
+    │   │   └── <tester>.md
+    │   ├── test-results/
+    │   │   └── <tester>.md
+    │   └── verification-report.md
+    ├── acceptance/
+    │   ├── acceptance-package.md
+    │   └── acceptance-decision.md
+    ├── compound/
+    │   └── compound-result.md
+    └── delivery/
+        └── delivery-report.md
+```
 
-- Markdown contracts **constrain** model behavior and make violations visible;
-  they cannot make violations impossible. The mechanical validator checks
-  envelopes and existence, not truth — truth is what the review/verify roles
-  and your gates are for.
-- The trap-scenario set is a regression guard written by the maintainers, not
-  third-party benchmark results; no SWE-bench score is claimed.
-- There is deliberately no frontend role and no merge/push owner: frontend
-  changes need an explicit sponsor waiver, and landing code on a branch stays
-  with you.
-- Requirements: Claude Code or Codex CLI with plugin/skill support; the
-  validators and the trajectory extractor are Python 3.9+ stdlib-only.
+Not every task creates every optional file, but every phase it does run has an
+accountable home. Phase artifacts carry structured frontmatter, and delegated
+handoffs are checked mechanically before their claims are trusted. See the
+[full artifact layout](docs/artifacts.md).
 
----
+## How It Works
 
-<div align="center">
+[![AgentCorp delivery workflow](docs/assets/delivery-workflow.png)](docs/assets/delivery-workflow.excalidraw)
 
-AgentCorp welds controllability, understandability, and verifiability into the
-structure itself — and every delivered task leaves the system a little stronger
-than it found it.
+AgentCorp does not send your prompt straight to a coder. The Delivery
+Orchestrator selects a risk-matched work path, assigns owners, and records the
+baseline, artifacts, and human gates in `task.md` and `manifest.md`.
+`interaction:auto` lets ready, reversible work continue between required
+decisions; `interaction:gate` pauses at every human gate.
 
-</div>
+1. **Shape the task with you.** The orchestrator records success criteria and
+   non-goals before implementation. On unfamiliar ground, `probe` investigates
+   code, tests, configuration, history, and prior lessons, then brings back a
+   terrain report and an unknowns ledger. When direction is unclear, `brainstorm`
+   offers complete alternatives; only the path you choose becomes a requirement.
+   An existing proposal can be pressure-tested live with `grill`.
+2. **Plan the proof before the code.** The Test Planner turns risk into executable
+   API, E2E, and regression playbooks. The Solution Architect produces the
+   diagnosis, impact analysis, architecture, or interface contract the task
+   needs. Independent reviewers decide whether the test plan and implementation
+   story are ready before an engineer builds from them.
+3. **Give every role a contract—and a separate approver.** A delegated role receives
+   an assignment naming its source files, baseline, edit boundary, and output
+   path, then returns a receipt that AgentCorp checks against the artifact on
+   disk. The Implementation Engineer cannot approve its own work; the Code
+   Review Lead convenes only the specialist lanes the actual risk calls for.
+4. **Research findings before fixing them.** A routed review finding enters
+   `review/research/` as a hypothesis, not a fact. The Review Researcher traces it
+   independently and records `confirmed`, `false-positive`, `partial`, or
+   `needs-human`, plus whether it should be fixed now or deferred. The Review
+   Fixer receives only verified items that are approved to land in this task.
+5. **Prove the delivery against the original intent.** The Test Leader assigns
+   API, E2E, regression, and risk-specific testers, then opens their logs,
+   responses, screenshots, or command output before issuing a verification
+   decision. The Acceptance Review Lead independently maps that evidence back to
+   every Must Have and reports any unverified behavior or residual risk.
+
+Human participation is not a final approval button. At recorded gates you can
+revise requirements or design, change a finding from `fix-now` to `defer`, request
+more evidence, or accept a stated residual risk. If the decision arrives without
+enough understanding, `explain` or `walkthrough` rebuilds the missing context
+before the gate is asked again. After delivery, `compound` turns useful lessons
+into tests, repository rules, or human-approved proposals for improving the
+organization itself.
+
+## Scale the Process to the Risk
+
+Four independent knobs tune a delivery:
+
+| Knob | Values | Controls |
+| --- | --- | --- |
+| `mode:` | `direct` \| `partial` \| `full` | who executes the phases and who reviews them |
+| `interaction:` | `auto` \| `gate` | skip optional sponsor pauses or stop at every human gate |
+| `effort:` | `low` \| `medium` \| `high` \| `max` | how much independent coverage and redundancy to convene |
+| `lang:` | any language | the language of every human-facing artifact |
+
+Low effort trades redundancy for speed, never evidence for convenience.
+The workflow requires deeper scrutiny for security, permission, public contract,
+and data-loss surfaces. See the [parameter catalog](docs/parameters.md) for the
+exact behavior of every level and skill.
+
+## Documentation
+
+- [All 38 skills](docs/skills.md)
+- [Parameters and effort levels](docs/parameters.md)
+- [Runtime artifacts](docs/artifacts.md)
+- [Codex setup](docs/codex-setup.md)
+
+Questions and bug reports belong in [GitHub Issues](https://github.com/ylxmf2005/AgentCorp/issues).

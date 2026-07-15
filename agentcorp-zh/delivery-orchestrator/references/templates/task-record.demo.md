@@ -5,7 +5,7 @@ author_agent: delivery-orchestrator
 status: active
 current_phase: validate-requirements
 workflow_mode: partial-delegation
-interaction_pace: continuous
+interaction_mode: auto
 effort: high
 output_language: zh-CN
 source_ref: origin/main
@@ -43,9 +43,9 @@ merge_base: 0123abcdef0123abcdef0123abcdef0123abcd
 
 - partial-delegation（从以下选项中选一：direct | partial-delegation | full-delegation）
 
-## 交互 Pace
+## 交互策略
 
-- continuous（从以下选项中选一：continuous | guided）
+- auto（从以下选项中选一：auto | gate）
 
 ## Effort
 

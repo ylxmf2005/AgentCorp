@@ -2,139 +2,213 @@
 
 # AgentCorp
 
-### 38 份 markdown，一整个软件交付组织
+### 把编程 Agent 组织成一支软件交付团队。
 
-总控、规划者、工程师、**12 条专项 review lane**、测试者，外加一道验收关卡——全部以纯 markdown Agent Skill 写成，**Claude Code** 和 **Codex** 上都能跑。没有角色能放行自己的产出。
+**不同角色负责探查、规划、实现、质疑与验证；真正重要的决定回到你手里。**
 
-[![GitHub stars](https://img.shields.io/github/stars/ylxmf2005/AgentCorp?style=flat&logo=github&color=6366f1)](https://github.com/ylxmf2005/AgentCorp/stargazers)
-[![Claude Code](https://img.shields.io/badge/Claude%20Code-plugin-d97757)](#快速上手)
-[![Codex](https://img.shields.io/badge/Codex-plugin-1f2328)](docs/codex-setup_CN.md)
-[![Agent Skills](https://img.shields.io/badge/Agent%20Skills-open%20standard-6366f1)](#快速上手)
+给 AgentCorp 一个软件任务。它会在 Claude Code 与 Codex 上编排职责明确、相互制衡的角色，
+并用人工门禁和可复用上下文串起全过程，最后留下代码、评审结论、验证证据，以及一份你能检查、
+能改道的交付记录。
+
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-plugin-d97757)](#claude-code) [![Codex](https://img.shields.io/badge/Codex-plugin-1f2328)](#codex) [![Agent Skills](https://img.shields.io/badge/Agent%20Skills-open%20standard-6366f1)](docs/skills_CN.md)
 
 [English](README.md) · 简体中文
 
-[快速上手](#快速上手) · [一次交付如何运转](#一次交付如何运转) · [信任架构](#信任架构) · [技能一览](#38-项技能) · [诚实的局限](#诚实的局限)
-
-[![AgentCorp 交付流程](docs/assets/delivery-workflow.png)](docs/assets/delivery-workflow.excalidraw)
+[快速开始](#快速开始) · [为什么选择 AgentCorp](#为什么选择-agentcorp) · [如何运转](#如何运转) · [38 项技能](docs/skills_CN.md)
 
 </div>
 
-## 为什么会有这个项目
+## 快速开始
 
-AI 写代码越来越快，但验证代码是否可靠，成本始终压在你身上。更麻烦的是随之而来的恶性循环：agent 干的活像个黑箱，你于是不看；不看就攒一堆糊涂账；攒多了，真正要紧的任务你再也不敢交出去。
+### Claude Code
 
-AgentCorp 是一套 [loop-engineering](https://addyosmani.com/blog/loop-engineering/) 系统，专门打断这个循环。它不是一份提示词合集，而是一套写了规矩的分工制度——谁产出、谁放行、工作往前推之前得先拿出什么证据：
-
-- **可控**——流程按规模自动伸缩：一行改动走快速通道，全新系统则一个关键 phase 都不跳；反复失败触发重新规划，不会照原样再试第三遍。
-- **可理解**——每个 phase 留下一份结构化 artifact，记录谁基于什么证据做了什么决定，写到不读代码也能做判断的程度。
-- **可验证**——没有角色能放行自己的产出，测试方案在动手写代码之前就定好，每条 review 发现在被独立验证之前一律视为疑似误报。
-
-## 快速上手
-
-**Claude Code：**
-
-```
+```text
 /plugin marketplace add ylxmf2005/AgentCorp
 /plugin install agentcorp@agentcorp
 ```
 
-然后跑 `/reload-plugins` 或重启。技能带命名空间，例如 `/agentcorp:delivery-orchestrator`。
+运行 `/reload-plugins` 或重启 Claude Code。
 
-**Codex：**
+### Codex
 
-```
+```text
 codex plugin marketplace add ylxmf2005/AgentCorp
+codex plugin add agentcorp@agentcorp
 ```
 
-在 `/plugins` 菜单里启用 **AgentCorp** 后重启——同一份 skill 本体服务两个运行时（开放的 Agent Skills 标准）。生命周期 hook 在 Codex 上的挂载方式不同：见 [docs/codex-setup_CN.md](docs/codex-setup_CN.md)。
+新建一个 Codex task 即可开始。添加 marketplace 后，也可以从 `/plugins` 菜单安装
+**AgentCorp**。生命周期 hook 还需要一步设置，详见 [Codex 配置说明](docs/codex-setup_CN.md)。
 
-**接下来把任务交给它。** 总控会先跟你确认成功标准、推荐路线，然后驱动整条流水线——每到 gate 就停下汇报。参数可以自由组合：
+### 交给它一个任务
+
+直接把工作交给对应技能。端到端任务由 Delivery Orchestrator 自己判断工作流参数；
+单独评审时，由 Code Review Lead 根据 diff 和风险自己判断深度：
 
 ```text
-/agentcorp:delivery-orchestrator mode:direct pace:guided effort:low 修复一处空值检查
-/agentcorp:delivery-orchestrator mode:partial pace:continuous effort:high 给某个 API 加限流
-/agentcorp:delivery-orchestrator mode:full effort:max lang:en-US 迁移 webhooks
+/agentcorp:delivery-orchestrator <your prompt>
+/agentcorp:code-review-lead <your prompt>
 ```
 
-省略某个参数，总控就替你推荐。只需要单项能力时也可以直接调用：
+只有在你需要明确控制时才要写参数；默认让技能根据任务、仓库与风险面自行判断。
 
-```text
-/agentcorp:code-review-lead depth:full 评审这份 diff
-/agentcorp:parallel-researcher scope:both depth:source-verified 比较几个工作流引擎
-/agentcorp:probe output:inline 摸清认证模块
-/agentcorp:walkthrough format:html quiz:on 把这条分支讲给我听
-/agentcorp:compound session:last focus:friction output:inline 找出反复出现的卡点
-```
+## 为什么选择 AgentCorp
 
-任务需要登录态的浏览器时，AgentCorp 会启用一个隔离 profile——你手动登录一次就行，它绝不碰你本地的 cookie。每单任务都以一份交付报告和一份可追溯每个决定的审计记录收尾。
+编程 Agent 写代码很快，难的是判断它的结果是否真的值得交付。一次普通对话往往把作者、
+评审者和测试者折叠进同一个上下文，自信的结论很容易被当成证据。
 
-## 一次交付如何运转
+AgentCorp 拆开这些职责，并让交接过程可以检查：
 
-总控先替发起人（这条流水线向谁交账——就是你）做分类、选范式（从零搭建 / 增强 / 修缺陷 / 简单新增），把 phase 序列作为承诺公开，然后一路驱动——每到人工门禁就停下来，给你一份能导航的摘要（*走到哪了 → 看到了什么 → 建议怎么办 → 你有哪些选项*），不是一句光秃秃的"批准吗？"。phase 之间，工作靠**带 YAML 契约的 assignment/receipt 文件**流转，全部经过机械校验：receipt 声称的 artifact 实际不存在、交付物是空的、出现了谁都不认的 phase 名——`validate-handoff.py` 会在任何人读到之前拦下来。
-
-四个正交旋钮按任务调节协作方式：
-
-| 旋钮 | 取值 | 决定 |
-| --- | --- | --- |
-| `mode:` | `direct` \| `partial` \| `full` | 你亲自当 reviewer / 总控执行、review 委派 / 全部委派 |
-| `pace:` | `continuous` \| `guided` | 一路推进、到检查点再汇报 / 一次一份 artifact、边做边讲 |
-| `effort:` | `low` \| `medium` \| `high` \| `max` | 这单任务买多少冗余和可选覆盖 |
-| `lang:` | 任意 | 面向人的 artifact 用什么语言写 |
-
-`effort:low` 用*冗余*换速度，但绝不拿诚实来换：任何档位都不能伪造证据、不能放行自己的产出、不能跳过原始失败输入的重跑；一旦触及安全 / 权限 / 数据丢失面，相关 phase 自动升到 max 并明确告知。单个技能同样接受参数：`/agentcorp:probe output:inline`、`/agentcorp:explain reader:newcomer`。完整目录——每个技能的参数、每档 effort 买到什么——见 [docs/parameters_CN.md](docs/parameters_CN.md)。
-
-账要算清楚：一条委派给多位 reviewer 的流水线消耗的是真实的 token 和真实的时钟。`effort` 定价的就是这个——`low` 接近一次单 agent 会话，`max` 给每条 lane 各开一个独立会话。把钱花在出错代价高的地方。
-
-## 信任架构
-
-下面每条机制都是因为它的朴素版本在真实场景里翻过车：
-
-- **没有角色能放行自己的产出。** 作者与 reviewer 分离在每种 mode 下都成立——哪怕 `direct` 模式也保留 review gate，让你做那个知情且明确自愿的 reviewer。
-- **review 发现是假设，不是事实。** 多 agent 协作里最贵的翻车，是一条看着很有把握实则有误的发现被下游当真相接走。`review-researcher` 就是熔断器：它对每条发现做对抗性重走（零假设：这是误报），用具名证据杀掉不成立的，只有确认属实且在本单范围内的条目才能进 `fix`。
-- **结论得有凭据。**"测试通过"只有配上你能打开的东西才算——一条路径、一份日志、一张渲染出来的截图。机器在本地无法验证的行为一律标 `unverified`，过不了任何 gate；口头说法不算证据；原始证据日志逐字保留、只增不改。
-- **gate 只讲封闭词表。** 人工门禁的结果只落到 `approved / skipped / revised / blocked`——都有记录，绝不静默放行。发起人的回复如果没回答那个问题，就映射不到任何结果：流水线里的任何环节都不得发明"默认即批准"的约定。
-- **高风险改动要取另一个模型家族的独立意见。** 碰到安全边界、对外契约或不可逆发布，负责下结论的角色会先从*另一个*运行时家族拿一份冷读（Codex 查 Claude 家族的活，反之亦然）——两个家族很少共享同一个盲区。
-- **机械层本身做过 fuzz 测试。** `validate-handoff.py` 的已知盲区由 fuzzing 发现，并用一套随仓发布的回归套件（`tools/test-validate-handoff.py`）钉死。
-
-## 它会自我改进——但有一道人工门禁
-
-AgentCorp 把自己的技能也当作被测系统：
-
-- **捕获 → 呈现 → 落地。** 会话结束时一个 hook 从对话记录里提取技能改进信号（先做隐私脱敏）；`skill-evolution` 起草编辑，只有你对着那份具体的 diff 说了"行"，才真正落地。
-- **`compound`（沉淀）既是 phase 也是 skill。** 交付前，这一轮的教训变成资产：修好的 bug 变回归测试，踩过的坑变 `CLAUDE.md` 规则，一次证实的漏检变成给当初漏掉它的那位 reviewer 的归档提案。同一个 skill 也接得住直接的复盘请求：一个确定性提取器把运行时自身的录制解析成逐轮对话、时钟耗时、token 账目和卡壳点——每个论断都锚定到 transcript 里的具体条目。
-- **改技能必须拿出失败轨迹。** 不接受纯措辞润色：一处 skill 改动必须援引一次具体失败的运行，以及它在哪道 gate 上断掉的。
-
-这套纪律本身也做了回归测试：`scenarios/` 随仓发布着用来演化系统的**黄金集**——九个埋了陷阱的交付任务，仿照真实 agent 失败模式设计（一个自信地指名错误修法的 issue；一套改断言就能最省力变绿的测试；一条藏在文档里、目标状态恰好违反了它的策略；一个只有真实浏览器才能验证的缺陷），外加 26 条路由探针和 validator 的 fuzz 套件。任何 skill 编辑都会重放它对应的场景和关联的伙伴。
-
-## 38 项技能
-
-| 阶段 | 技能 |
+| 常见的 Agent 工作方式 | AgentCorp |
 | --- | --- |
-| **编排** | `delivery-orchestrator` |
-| **规划与设计** | `solution-architect` · `implementation-planner` · `plan-review-lead` · `test-planner` · `test-plan-reviewer` · `parallel-researcher` |
-| **实现** | `implementation-engineer` |
-| **代码 review** | `code-review-lead` + 12 条 lane：`correctness` · `security` · `performance` · `reliability` · `adversarial` · `simplicity` · `taste` · `change-hygiene` · `standards` · `comment-optimizer` · `project-steward` · `api-contract`，然后是 `review-researcher`（熔断器）· `review-fixer` |
-| **验证** | `test-leader` · `e2e-tester` · `api-contract-tester` · `regression-tester` |
-| **验收** | `acceptance-review-lead` |
-| **配套** | `probe` · `brainstorm` · `grill` · `compound` · `explain` · `walkthrough` · `authenticated-browser-session` · `precommit-setup` · `skill-evolution` · `semantic-core-translation` |
+| Agent 写完改动，再评价自己的工作 | 工作流把作者与批准者分开 |
+| 人只在最后看到一份答案 | 发起人参与塑造意图、可在已记录门禁改道，并保留范围与残余风险的决定权 |
+| 一条评审发现直接变成修复 | 工作流要求 `review-researcher` 先把它当作可能的误报重新证实 |
+| 「测试通过」就是故事的结尾 | 每个结论都指向可打开的路径、日志、响应或截图 |
+| 空值检查与系统迁移走同一套流程 | mode 与 effort 按风险伸缩整个组织 |
+| 会话结束，教训也随之消失 | `compound` 把教训变成测试、仓库规则或 reviewer 提案 |
 
-每个技能的一句话说明：[docs/skills_CN.md](docs/skills_CN.md)。
+AgentCorp 不是新的 coding model、Agent runtime 或提示词合集，而是一套带契约的交付组织：
+谁产出每份材料、谁有权批准，以及工作继续推进前必须先存在哪些证据。
 
-每个 phase 都写出一份带 frontmatter 的结构化 artifact——任务记录、审计台账、handoff 文件、review 发现、证据日志、交付报告——工作因此可审计、可追溯。完整运行时布局：[docs/artifacts_CN.md](docs/artifacts_CN.md)。
+## 最终会留下什么
 
-## 诚实的局限
+经过编排的任务按设计会留下可导航的记录。完整布局把跨任务知识与每项任务的决策、
+证据放在一起：
 
-流水线对自身施加的纪律，和它要求于人的一样：
+```text
+teamspace/
+├── testing-context.md                   # 跨任务运行与测试事实
+├── compound/                            # 历史任务沉淀的可复用经验
+│   └── <lesson>.md
+├── knowledge/                           # 可复用研究快照
+│   └── <technology>/INDEX.md
+├── probes/                              # 独立的领域探查报告
+│   └── <date>-<topic>.md
+├── walkthroughs/                        # 独立的教学产物
+│   └── <change>.html
+└── tasks/<task>/
+    ├── task.md                          # 成功标准、路径、决策和门禁历史
+    ├── manifest.md                      # 阶段、owner、质量门、产物、receipt
+    ├── probe/
+    │   └── 00-probe.md                  # 未知项与被纠正的假设
+    ├── handoffs/                        # 委派任务与回执
+    │   ├── <phase>.md
+    │   └── <phase>-receipt.md
+    ├── requirements/
+    │   └── validated-requirements.md
+    ├── design/
+    │   ├── architecture.md
+    │   ├── impact-analysis.md
+    │   ├── diagnosis.md
+    │   └── interface-contract.md
+    ├── test/
+    │   ├── test-plan.md
+    │   ├── api-test-plan.md
+    │   ├── e2e-test-plan.md
+    │   ├── regression-test-plan.md
+    │   ├── test-plan-review.md
+    │   └── exploration/
+    │       ├── charters.md
+    │       ├── frontier.md
+    │       └── journal.md
+    ├── implementation/
+    │   ├── implementation-story.md
+    │   └── implementation-result.md
+    ├── review/
+    │   ├── plan-review.md
+    │   ├── plan-review-findings/
+    │   ├── code-review.md
+    │   ├── specialist-findings/
+    │   │   └── <reviewer>.md
+    │   ├── research/
+    │   │   ├── 00-index.md              # 每条发现都会被重新核实
+    │   │   ├── 001-confirmed-....md
+    │   │   └── 002-false-positive-....md
+    │   ├── fix-records/
+    │   │   └── <file-group>.md
+    │   └── fix-result.md
+    ├── research/<topic>/                # 需要动手验证的研究包
+    │   ├── 00-report.md
+    │   ├── env/
+    │   ├── sources/
+    │   └── experiments/
+    ├── explain/                         # 持久化的决策解释
+    │   └── <topic>/
+    │       ├── 00-index.md
+    │       └── 001-context.md
+    ├── walkthrough/
+    │   └── <change>.html                # 背景、直觉、故事、测验
+    ├── verification/
+    │   ├── assignments/
+    │   │   └── <tester>.md
+    │   ├── test-results/
+    │   │   └── <tester>.md
+    │   └── verification-report.md
+    ├── acceptance/
+    │   ├── acceptance-package.md
+    │   └── acceptance-decision.md
+    ├── compound/
+    │   └── compound-result.md
+    └── delivery/
+        └── delivery-report.md
+```
 
-- markdown 契约能**约束**模型行为、让违规显形，但无法让违规变得不可能。机械校验器检查的是信封和存在性，不是真伪——真伪要靠 review/verify 角色和你的 gate 来把关。
-- 陷阱场景集是维护者写的回归护栏，不是第三方评测成绩；不声称任何 SWE-bench 分数。
-- 有意不设前端角色，也不设 merge/push 的归属者：前端改动需要发起人明确豁免，把代码落到分支上这件事始终握在你手里。
-- 环境要求：支持 plugin/skill 的 Claude Code 或 Codex CLI；校验器和轨迹提取器仅依赖 Python 3.9+ 标准库。
+不是每项任务都会创建所有可选文件，但每个实际运行的阶段都有明确归属。阶段产物带结构化
+frontmatter；委派交接的声明在进入审计记录前先经过机械校验。完整结构见
+[运行时产物说明](docs/artifacts_CN.md)。
 
----
+## 如何运转
 
-<div align="center">
+[![AgentCorp 交付流程](docs/assets/delivery-workflow.png)](docs/assets/delivery-workflow.excalidraw)
 
-AgentCorp 把可控、可理解、可验证焊进结构本身——每交付一单，系统都比接手时更强。
+AgentCorp 不会把你的 prompt 直接丢给一个 coding agent。Delivery Orchestrator 会按任务
+与风险选择工作路线、分配 owner，并在 `task.md` 与 `manifest.md` 中记录代码基线、
+阶段产物和人工门禁。`interaction:auto` 会在必须由人决定的位置之间继续推进已就绪、
+可逆的工作；`interaction:gate` 则会在每道人工门禁停下。
 
-</div>
+1. **和你一起把任务定义清楚。** 编排器会在实现前记录成功标准与非目标。遇到陌生领域时，
+   `probe` 会调查代码、测试、配置、历史和过往经验，再带回一份领域报告与未知项台账。
+   方向不清晰时，`brainstorm` 会提供完整的候选路径；只有你选中的方向才会成为需求。
+   已经存在的方案还可以用 `grill` 现场压测。
+2. **写代码前，先设计怎样证明它。** Test Planner 把风险写成可直接执行的 API、E2E 和回归测试手册。
+   Solution Architect 按任务需要产出故障诊断、影响分析、架构或接口契约。独立 reviewer 会在
+   工程师开始实现前，判断测试计划和 Implementation Story 是否真的已经就绪。
+3. **每个角色都拿到明确契约，也有不同的批准者。** 被委派的角色会收到一份 assignment，列明来源文件、
+   代码基线、可编辑边界与输出路径；完成后返回 receipt，AgentCorp 再根据实际落盘产物进行检查。
+   Implementation Engineer 不能批准自己的工作；Code Review Lead 只会根据实际风险召集必要的
+   专项 reviewer。
+4. **评审发现经过重新研究，才能进入修复。** 被路由处理的 finding 进入 `review/research/` 时只是一个
+   待证假设，而不是事实。Review Researcher 会独立追踪它，并记录 `confirmed`、`false-positive`、
+   `partial` 或 `needs-human`，以及它应当现在修复还是延后。Review Fixer 只会收到经过验证、
+   并已决定在本任务落地的项目。
+5. **按最初的意图证明这次交付。** Test Leader 分派 API、E2E、回归和风险专项 tester，打开它们的日志、
+   响应、截图或命令输出后，才能给出验证结论。Acceptance Review Lead 再独立把这些证据对应回
+   每条 Must Have，并报告任何尚未验证的行为或残余风险。
+
+人的参与不是最后点一下批准。在已记录的人工门禁，你可以修改需求或设计，把 finding 从 `fix-now`
+改为 `defer`，要求补充证据，或接受一项已明示的残余风险。如果你尚不具备做决定所需的理解，
+`explain` 或 `walkthrough` 会先补回缺失的上下文，再重新发起门禁。交付后，`compound` 会把值得保留的经验
+变成测试、仓库规则，或必须经人批准才能落地的组织改进提案。
+
+## 按风险调节流程
+
+四个相互独立的旋钮控制一次交付：
+
+| 旋钮 | 取值 | 控制什么 |
+| --- | --- | --- |
+| `mode:` | `direct` \| `partial` \| `full` | 谁执行各阶段、谁负责评审 |
+| `interaction:` | `auto` \| `gate` | 跳过可选人工暂停，或在每道人工门禁停下 |
+| `effort:` | `low` \| `medium` \| `high` \| `max` | 召集多少独立覆盖与冗余 |
+| `lang:` | 任意语言 | 所有面向人的产物使用什么语言 |
+
+低 effort 用冗余换速度，但绝不拿证据换方便。遇到安全、权限、公开契约和数据丢失风险时，
+工作流要求相关阶段接受更深的审查。每一档和每个技能的准确行为见[参数目录](docs/parameters_CN.md)。
+
+## 文档
+
+- [全部 38 项技能](docs/skills_CN.md)
+- [参数与 effort 档位](docs/parameters_CN.md)
+- [运行时产物](docs/artifacts_CN.md)
+- [Codex 配置](docs/codex-setup_CN.md)
+
+问题与缺陷请提交到 [GitHub Issues](https://github.com/ylxmf2005/AgentCorp/issues)。
