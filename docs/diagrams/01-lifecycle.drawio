@@ -3,7 +3,7 @@
     <mxCell id="0"/>
     <mxCell id="1" parent="0"/>
     <mxCell id="title" value="AgentCorp — Delivery lifecycle" style="text;html=1;align=left;verticalAlign=middle;fontSize=16;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="40" y="12" width="500" height="26" as="geometry"/></mxCell>
-    <mxCell id="intake" value="Intake&#10;classify · paradigm · execution" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" vertex="1" parent="1"><mxGeometry x="40" y="64" width="170" height="54" as="geometry"/></mxCell>
+    <mxCell id="intake" value="Intake&#10;classify · paradigm · mode" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" vertex="1" parent="1"><mxGeometry x="40" y="64" width="170" height="54" as="geometry"/></mxCell>
     <mxCell id="req" value="validate-requirements" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;" vertex="1" parent="1"><mxGeometry x="255" y="64" width="170" height="54" as="geometry"/></mxCell>
     <mxCell id="tp" value="test-plan" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;" vertex="1" parent="1"><mxGeometry x="470" y="64" width="170" height="54" as="geometry"/></mxCell>
     <mxCell id="tpr" value="test-plan-review" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;" vertex="1" parent="1"><mxGeometry x="685" y="64" width="170" height="54" as="geometry"/></mxCell>
