@@ -1,0 +1,44 @@
+{
+  "name": "longrein",
+  "version": "0.1.0",
+  "description": "Longrein — engineering skills for strong models: the model runs free on a long rein while the human keeps direction, values and consequences. Ships a CLI that installs the skills into Claude Code and Codex and maintains their always-on instruction blocks.",
+  "type": "module",
+  "bin": {
+    "longrein": "cli/dist/index.js"
+  },
+  "files": [
+    "cli/dist",
+    "skills",
+    "global",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "node cli/build.mjs",
+    "prepare": "npm run build",
+    "typecheck": "tsc -p cli/tsconfig.json --noEmit"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "agent-skills",
+    "claude-code",
+    "codex",
+    "skills",
+    "cli"
+  ],
+  "author": "efgli",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^12.1.0",
+    "ink": "^5.0.1",
+    "picocolors": "^1.1.0",
+    "react": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "@types/react": "^18.3.3",
+    "esbuild": "^0.23.0",
+    "typescript": "^5.5.0"
+  }
+}

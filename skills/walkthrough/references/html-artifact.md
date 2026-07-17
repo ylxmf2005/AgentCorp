@@ -20,7 +20,7 @@ Skill 自带 Mermaid 11.15.0 和一个很小的 Walkthrough 运行时：
 在 HTML 的 `</body>` 前放置：
 
 ```html
-<!-- AGENTCORP_WALKTHROUGH_RUNTIME -->
+<!-- LONGREIN_WALKTHROUGH_RUNTIME -->
 ```
 
 然后运行：

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Inline the AgentCorp Walkthrough Mermaid runtime into an HTML file."""
+"""Inline the Longrein Walkthrough Mermaid runtime into an HTML file."""
 
 from __future__ import annotations
 
@@ -7,8 +7,12 @@ import argparse
 from pathlib import Path
 
 
-MARKER = "<!-- AGENTCORP_WALKTHROUGH_RUNTIME -->"
-LEGACY_MARKER = "<!-- SFSF_WALKTHROUGH_RUNTIME -->"
+MARKER = "<!-- LONGREIN_WALKTHROUGH_RUNTIME -->"
+LEGACY_MARKERS = (
+    "<!-- GEMBA_WALKTHROUGH_RUNTIME -->",
+    "<!-- AGENTCORP_WALKTHROUGH_RUNTIME -->",
+    "<!-- SFSF_WALKTHROUGH_RUNTIME -->",
+)
 
 
 def script_safe(text: str) -> str:
@@ -26,7 +30,7 @@ def main() -> None:
     skill_root = Path(__file__).resolve().parent.parent
     assets = skill_root / "assets"
     source = args.input.read_text(encoding="utf-8")
-    marker_count = source.count(MARKER) + source.count(LEGACY_MARKER)
+    marker_count = source.count(MARKER) + sum(source.count(m) for m in LEGACY_MARKERS)
     if marker_count != 1:
         raise SystemExit(
             f"expected exactly one {MARKER!r} (or legacy marker), found {marker_count}"
@@ -36,12 +40,14 @@ def main() -> None:
     mermaid = script_safe((assets / "mermaid.min.js").read_text(encoding="utf-8"))
     runtime = script_safe((assets / "walkthrough-runtime.js").read_text(encoding="utf-8"))
     bundle = (
-        f'<style data-agentcorp-walkthrough-runtime>\n{css}\n</style>\n'
-        f'<script data-agentcorp-mermaid>\n{mermaid}\n</script>\n'
-        f'<script data-agentcorp-walkthrough-runtime>\n{runtime}\n</script>'
+        f'<style data-longrein-walkthrough-runtime>\n{css}\n</style>\n'
+        f'<script data-longrein-mermaid>\n{mermaid}\n</script>\n'
+        f'<script data-longrein-walkthrough-runtime>\n{runtime}\n</script>'
     )
 
-    rendered = source.replace(MARKER, bundle).replace(LEGACY_MARKER, bundle)
+    rendered = source.replace(MARKER, bundle)
+    for legacy in LEGACY_MARKERS:
+        rendered = rendered.replace(legacy, bundle)
     output = args.output or args.input
     output.parent.mkdir(parents=True, exist_ok=True)
     if output.resolve() == args.input.resolve():

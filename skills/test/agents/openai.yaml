@@ -1,0 +1,4 @@
+interface:
+  display_name: "Test"
+  short_description: "从风险到终态执行测试，产出可重放证据报告"
+  default_prompt: "使用 $test 从真实风险形成 TestPlan，在实际可观察环境中执行，并产出完整、可重放的 Test Report。"

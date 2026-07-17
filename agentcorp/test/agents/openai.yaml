@@ -1,4 +1,0 @@
-interface:
-  display_name: "Test"
-  short_description: "制定并执行完整测试，产出可重放的证据报告"
-  default_prompt: "Use $test to create the TestPlan, execute it on the real system, and produce a complete Test Report."
