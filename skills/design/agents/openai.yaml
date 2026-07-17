@@ -1,4 +1,4 @@
 interface:
   display_name: "Design"
   short_description: "用真实反馈形成可修订的系统设计与实现路线"
-  default_prompt: "Use $design to inspect the real system, resolve structural uncertainty, and produce an evidence-backed architecture and implementation route."
+  default_prompt: "使用 $design 调查真实系统，完成根因诊断，或形成有证据的架构与实现路线。"

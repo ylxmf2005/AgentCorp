@@ -1,4 +1,4 @@
 interface:
   display_name: "Review"
-  short_description: "完整冷读变化，验证问题并给出分级裁决"
-  default_prompt: "Use $review to inspect the complete target, verify findings through concrete paths, separate priority from evidence and resolution, and return one verdict."
+  short_description: "依据任务范围与运行包络分簇冷读，并独立验真每条发现"
+  default_prompt: "使用 $review 按当前 Task Context 分簇冷读目标，证伪候选 finding，并给出按类型组织的审查裁决。"

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Prompt"
+  short_description: "用真实反馈校准共同语言"
+  default_prompt: "使用 $prompt 调查真实任务与结果，判断应该改善表达还是转入其他能力。"

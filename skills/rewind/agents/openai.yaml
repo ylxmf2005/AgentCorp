@@ -1,0 +1,4 @@
+interface:
+  display_name: "Rewind"
+  short_description: "识别失真时间线，保留可靠资产并回到可信状态"
+  default_prompt: "使用 $rewind 判断当前时间线是否仍可信，并给出保留资产后的恢复路线。"

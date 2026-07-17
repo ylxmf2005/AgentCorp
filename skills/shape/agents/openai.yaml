@@ -1,0 +1,4 @@
+interface:
+  display_name: "Shape"
+  short_description: "接触真实项目，让方向取得承诺资格"
+  default_prompt: "使用 $shape 调查真实对象，形成或修订值得承诺的方向与共享 Task Context。"
