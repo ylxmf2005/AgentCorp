@@ -1,10 +1,11 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { globalRoot } from './paths.js';
+import { globalRoot, userContextFile } from './paths.js';
 
 export interface Block {
   owner: string;
   content: string;
+  editHint: string;
 }
 
 const beginMarker = (owner: string) => `<!-- >>> LONGREIN BLOCK: ${owner} >>> -->`;
@@ -17,24 +18,39 @@ const ANY_BLOCK_RE =
 const LEGACY_BLOCK_RE =
   /<!-- >>> GEMBA BLOCK: (.+?) >>> -->\n[\s\S]*?<!-- <<< GEMBA BLOCK: \1 <<< -->\n?/g;
 
-/** Always-injected instruction blocks shipped in <package>/global/*.md. */
+/** Package-owned global blocks plus the optional user-owned context file. */
 export function listBlocks(): Block[] {
   const root = globalRoot();
-  if (!fs.existsSync(root)) return [];
-  return fs
-    .readdirSync(root)
-    .filter((f) => f.endsWith('.md'))
-    .sort()
-    .map((f) => ({
-      owner: path.basename(f, '.md'),
-      content: fs.readFileSync(path.join(root, f), 'utf8').trim(),
-    }));
+  const blocks = fs.existsSync(root)
+    ? fs
+        .readdirSync(root)
+        .filter((f) => f.endsWith('.md'))
+        .sort()
+        .map((f) => ({
+          owner: path.basename(f, '.md'),
+          content: fs.readFileSync(path.join(root, f), 'utf8').trim(),
+          editHint: `Managed by the longrein CLI. Edit global/${f} in the longrein repo, not here.`,
+        }))
+    : [];
+
+  const contextPath = userContextFile();
+  if (fs.existsSync(contextPath)) {
+    const content = fs.readFileSync(contextPath, 'utf8').trim();
+    if (content) {
+      blocks.push({
+        owner: 'user-context',
+        content,
+        editHint: `User-owned context. Edit ${contextPath}; longrein only injects it.`,
+      });
+    }
+  }
+  return blocks;
 }
 
 function renderBlock(block: Block): string {
   return [
     beginMarker(block.owner),
-    '<!-- Managed by the longrein CLI. Edit global/' + block.owner + '.md in the longrein repo, not here. -->',
+    `<!-- ${block.editHint} -->`,
     '',
     block.content,
     '',

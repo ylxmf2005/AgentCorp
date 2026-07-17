@@ -28,6 +28,7 @@ export function packageVersion(): string {
 
 export const skillsRoot = (): string => path.join(packageRoot(), 'skills');
 export const globalRoot = (): string => path.join(packageRoot(), 'global');
+export const userContextFile = (): string => path.join(os.homedir(), '.longrein', 'user-context.md');
 
 export type TargetId = 'claude' | 'codex';
 
