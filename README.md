@@ -1,98 +1,158 @@
+<div align="center">
+
 # Longrein
 
-**长缰（long-reining）：驯导者不再骑在马背上，而是站在地面，用一副长缰让马自己完成动作。**
+**给 Sol、Fable 这类强模型更长的缰绳，把方向、边界与裁决留在人手里。**
 
-强模型已经不需要被教怎么做事。Longrein 关心的是另一件事：模型放开跑的时候，缰绳仍然在人手里——盲区被主动暴露，方案供人反应，结论带着可检查的证据交回，方向、价值和后果始终由人承担。协作的产出不只是代码和文档，还有一个判断力比开始时更强的人。
+新一代模型已经能够长程调查、实现和验证。Longrein 不用固定流程遥控它们，
+而是提供 10 个按需组合的工程 Skills 与 2 个常驻指令块，让模型自主选择路径，
+让人在证据改变方向、范围或后果时作出判断。
 
-为此它同时约束循环的两侧：模型先接触真实情况再下结论，实现追到根因，完成声明必须经得起独立评审、真实测试和证据检查；人则始终被带回能够观察、质疑和作出下一次判断的位置。
+[安装](#安装) · [开始一项任务](#开始一项任务) · [10-个-skills](#10-个-skills) · [CLI](#cli)
 
-## 组成
-
-**常驻注入（`global/`）**——随每次会话生效的底层态度，由 CLI 作为托管块写入 `~/.claude/CLAUDE.md` 与 `~/.codex/AGENTS.md`：
-
-| 块 | 作用 |
-|---|---|
-| `soul` | 贯穿一切工作的工程态度：像明天还要为它值班的人。 |
-| `job` | 定义 Agent 的长期工程职责和工作习惯。 |
-
-**按需 Skills（`skills/`）**——由模型根据任务触发，或用 `/name`（Claude Code）、`$name`（Codex）显式调用：
-
-| Skill | 作用 |
-|---|---|
-| `task` | 用户显式调用后开始或接回具体任务，建立 `task.md` 并自适应展开工作。 |
-| `shape` | 先让领地说话，再让方向取得承诺资格。 |
-| `prompt` | 用户手动调用后，从真实任务中提炼简单、可复用的更好提示词。 |
-| `rewind` | 当前时间线被错误前提污染时，保留可靠资产并回到可信位置。 |
-| `design` | 查明故障根因，或形成可修订的架构、契约、影响分析和实现路线。 |
-| `dev` | 实现功能、修复缺陷和落实已确认问题，交付最小诚实改动。 |
-| `review` | 独立冷读需求、设计、代码和交付物，以因果证据确认问题。 |
-| `test` | 制定 TestPlan、执行真实测试并交付可重放的 Test Report。 |
-| `walkthrough` | 把人带回能够理解对象、检查证据并继续作出判断的位置。 |
-| `evolution` | 让这轮代价进入正确作用域，并真正改变下一轮。 |
-
-Skills 按工作需要自然组合，不为形式完整而全部触发：简单请求保持简单，只有真实风险、未知和证据要求才增加相应能力。
+</div>
 
 ## 安装
 
+需要 Node.js 18 或更高版本：
+
 ```bash
 npm install -g longrein
-longrein install        # 交互选择；-y 全装
+longrein install -y
 ```
 
-从源码：
+`longrein install -y` 会把全部 Skills 安装到 Claude Code 与 Codex，并同步 `soul`、`job`
+两个常驻块。运行 `longrein` 可以检查每项内容是否已经安装：
 
-```bash
-git clone <repo> && cd longrein
-npm install && npm link
-longrein install
+```text
+longrein v0.1.0
+
+  skill        Claude Code       Codex
+  design       ✓ v0.1.0          ✓ v0.1.0
+  ...
+
+  always-on blocks
+  Claude Code  job ✓  soul ✓
+  Codex        job ✓  soul ✓
 ```
 
-开发这套 Skills 本身时用链接模式，编辑即生效：
+只安装到一个宿主时使用 `--claude` 或 `--codex`。从源码开发 Longrein 时使用
+`longrein install --link -y`，修改会直接生效。
 
-```bash
-longrein install --link -y
+## 开始一项任务
+
+`task` 只在你明确调用时启动。它先让 `shape` 接触真实项目，再建立能够跨 Session 恢复的
+Task Context；不会因为任务复杂、其他 Skill 需要产物，或仓库里碰巧存在 `task.md` 就自行启动。
+
+| Claude Code | Codex |
+| --- | --- |
+| `/task 修复结算接口偶发重复扣款，先查清原因再改` | `$task 修复结算接口偶发重复扣款，先查清原因再改` |
+
+第一次形成可信任务边界时，你会看到 Active Task 的绝对路径，以及本次承诺的 Goal、Scope、
+Non-goals 和 Completion Evidence。任务状态保存在唯一的 `task.md` 中：
+
+```text
+Active Task: /absolute/path/to/studio/tasks/20260720-fix-duplicate-charge/task.md
+
+Goal                 最终要实现什么结果
+Scope                这次具体负责什么
+Non-goals            这次明确不做什么
+Completion Evidence  看到哪些证据才算完成
+Must Preserve        哪些现有行为不能破坏
 ```
 
-链接模式下只有新增/删除 Skill 目录需要重跑一次；也可以配一个文件监听（macOS launchd / Linux systemd path unit），在 `skills/` 与 `global/` 变化时自动执行它。
+后续 Session 用 task id 或 `task.md` 的绝对路径恢复；没有明确路径时，`task` 会列出候选让你选择，
+不会按目录、修改时间或相似名称猜测。
+
+## 它改变什么
+
+| 常见失效方式 | Longrein 的做法 |
+| --- | --- |
+| 根据用户描述直接猜系统现状 | `shape` 先接触代码、运行结果和真实约束，再形成方向 |
+| 任务承诺散落在对话里 | 显式 `$task` 把边界、refs、完成证据和当前状态放在唯一 `task.md` |
+| 实现者用自己的结论证明完成 | `review` 独立冷读，`test` 亲自执行并留下可重放证据 |
+| 新证据出现后仍沿旧路线补丁 | `rewind` 回到最后可信状态，保留仍然可靠的资产 |
+| 会话结束，代价没有改变下一轮 | `evolution` 只把可重放经验放进最窄、正确的长期作用域 |
+| 人只在最后接收结果 | `walkthrough` 把背景、证据和取舍讲到人能够继续判断 |
+
+Skills 按当前工作真正缺少的能力组合。简单请求保持简单；只有真实未知、风险和证据要求才增加
+调查、设计、独立评审或完整测试。
+
+## 10 个 Skills
+
+| Skill | 什么时候使用 |
+| --- | --- |
+| [`task`](skills/task/SKILL.md) | 显式开始、恢复或查看一项持久任务 |
+| [`shape`](skills/shape/SKILL.md) | 方向、任务边界或承重前提还不可靠 |
+| [`design`](skills/design/SKILL.md) | 需要根因、架构、契约、影响分析或实现路线 |
+| [`dev`](skills/dev/SKILL.md) | 方向明确后实现功能、修复缺陷或执行重构 |
+| [`review`](skills/review/SKILL.md) | 独立检查需求、设计、计划、代码或交付物 |
+| [`test`](skills/test/SKILL.md) | 制定 TestPlan、执行真实测试并交付 Test Report |
+| [`walkthrough`](skills/walkthrough/SKILL.md) | 让没有读过对象的人真正理解并能够继续判断 |
+| [`rewind`](skills/rewind/SKILL.md) | 错误前提已经污染当前时间线，需要恢复可信状态 |
+| [`prompt`](skills/prompt/SKILL.md) | 仅在显式调用时，从真实任务中提炼更好的提示词 |
+| [`evolution`](skills/evolution/SKILL.md) | 非平凡工作收尾时判断哪些经验值得改变未来行为 |
+
+Claude Code 使用 `/name` 显式调用，Codex 使用 `$name`。除 `task`、`prompt` 等明确要求手动调用的
+Skill 外，宿主也可以根据各 Skill 的 `description` 在适用时自动选择。
+
+## 常驻块
+
+Longrein 还维护两段随每次会话生效的底层约束：
+
+| 块 | 作用 | Claude Code | Codex |
+| --- | --- | --- | --- |
+| [`soul`](global/soul.md) | 面对现实、证据、范围和复杂度的工程态度 | `~/.claude/CLAUDE.md` | `~/.codex/AGENTS.md` |
+| [`job`](global/job.md) | Agent 一贯承担的工作与协作习惯 | `~/.claude/CLAUDE.md` | `~/.codex/AGENTS.md` |
+
+任务事实不进入常驻块。具体任务的承诺和状态只属于它自己的 `task.md`；设计、实现、评审与测试
+细节只进入对应产物，避免多份摘要互相漂移。
 
 ## CLI
 
 ```text
-longrein                    状态面板：每个 skill 在两端的安装状态 + 托管块状态
-longrein install [skill…]   安装（默认 copy；--link 链接到当前 checkout；--force 接管同名目录）
-longrein uninstall --all    移除全部 skill 与托管块（也可指定单个 skill）
-longrein update             刷新过期副本、清理断链并重新同步托管块
-longrein list               纯文本列出全部 skill（可脚本化）
-longrein doctor [--fix]     体检：残留链接、过期副本、托管块漂移、标记损坏
+longrein                    显示每个 Skill 和常驻块的安装状态
+longrein install [skill…]   安装；默认复制，--link 链接当前 checkout
+longrein update             刷新过期副本、清理断链、重新同步常驻块
+longrein uninstall --all    移除 Longrein 管理的全部内容
+longrein list               以纯文本列出 Skills，可用于脚本
+longrein doctor [--fix]     检查旧安装残留、过期副本、断链和损坏标记
 ```
 
-所有命令支持 `--claude` / `--codex` 只作用于一端。CLI 只认自己创建的东西——指向本包的符号链接、带 `.longrein.json` 戳记的副本、`LONGREIN BLOCK` 标记内的内容；标记外的用户内容和其他来源的 skill 一律不碰。
+所有管理命令支持 `--claude` / `--codex`。Longrein 只修改自己创建的符号链接、带
+`.longrein.json` 标记的副本，以及 `LONGREIN BLOCK` 标记之间的内容；不会改写标记外的用户配置，
+也不会接管其他来源的同名 Skill，除非明确传入 `--force`。
 
-个人语言、背景和协作偏好属于用户自己的 Agent 配置；Longrein 只同步本仓库提供的常驻块。
+## 它不是什么
 
-## 仓库结构
+Longrein 不是 coding model、Agent runtime 或固定阶段的交付编排器。它不会让所有任务走同一套
+流程，也不会把当前任务自动注入全局配置。它提供的是一组边界清楚、按需组合的工程能力，以及
+让这些能力在 Claude Code 与 Codex 中保持一致的安装工具。
 
-```text
-longrein/
-├── skills/                 # 按需 Skills（每个含 SKILL.md，可带 references/scripts/assets）
-├── global/                 # 常驻注入块（soul.md、job.md）
-├── cli/                    # longrein CLI（Node + Ink + TypeScript）
-├── references/             # 仓库级研究材料，不随 Skill 调用加载
-└── studio/                 # 研究、探针与任务产物
+## 从源码使用
+
+```bash
+git clone https://github.com/ylxmf2005/LongRein.git
+cd LongRein
+npm install
+npm run typecheck
+npm run build
+npm link
+longrein install --link -y
 ```
 
-新增 Skill 只需创建 `skills/<name>/SKILL.md`；新增常驻块只需创建 `global/<owner>.md`。
-
-## 修改与验证
-
-Skill 是跨用户、跨项目的长期能力。当前任务事实留在任务或项目中；用户个人偏好留在用户资料中；只有能够跨任务重放的行为问题才进入通用 Skill。
-
-`job` 只描述 Agent 一贯承担的工作，不保存任何具体任务状态。用户显式调用 `task` 后，由 `task` Skill 在当前 Session 选择新建或恢复的 `task.md`；新 Task 先通过与规模相称的 Shape 调查真实对象，再形成可信 Context。跨 Session 时，用户用 task id 或绝对路径恢复，也可以让 `task` 列出持久任务候选后再选择。
-
-文字变化本身不等于能力改善。会改变触发、判断、动作、权限或产物语义的修改应使用相同任务做前后对照，并检查正确性、完整性、用户介入、意外动作、成本和长上下文副作用；断链、格式、历史状态与 UI 元数据使用相称的静态验证。具体要求见 `skills/evolution/`。
-
-CLI 修改后运行：
+修改 CLI 后运行：
 
 ```bash
 npm run typecheck && npm run build && longrein doctor
 ```
+
+Skill 的行为变化不能只靠文字看起来更合理：使用真实任务做前后对照，检查触发、正确性、
+用户介入、意外动作、成本和长上下文副作用。相应方法在
+[`evolution`](skills/evolution/SKILL.md) 中维护。
+
+问题与建议请提交到 [GitHub Issues](https://github.com/ylxmf2005/LongRein/issues)。
+
+## License
+
+MIT License
