@@ -22,8 +22,13 @@
       button.className = "walkthrough-diagram__fullscreen";
       button.dataset.enterLabel = container.dataset.fullscreenLabel || defaults.enter;
       button.dataset.exitLabel = container.dataset.exitFullscreenLabel || defaults.exit;
-      button.textContent = button.dataset.enterLabel;
       button.setAttribute("aria-label", button.dataset.enterLabel);
+      button.setAttribute("aria-pressed", "false");
+      button.title = button.dataset.enterLabel;
+      const icon = document.createElement("span");
+      icon.className = "walkthrough-diagram__fullscreen-icon";
+      icon.setAttribute("aria-hidden", "true");
+      button.appendChild(icon);
       if (!container.requestFullscreen) button.hidden = true;
       container.insertBefore(button, container.firstChild);
     }
@@ -52,8 +57,9 @@
       const button = container.querySelector(".walkthrough-diagram__fullscreen");
       const active = document.fullscreenElement === container;
       const label = active ? button.dataset.exitLabel : button.dataset.enterLabel;
-      button.textContent = label;
       button.setAttribute("aria-label", label);
+      button.setAttribute("aria-pressed", String(active));
+      button.title = label;
     });
   });
 

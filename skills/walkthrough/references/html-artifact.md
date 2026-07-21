@@ -4,6 +4,8 @@ HTML 适合承载连续讲解、按需展开、图表和理解检查。它应当
 
 页面的信息结构沿用 [comprehension-structure.md](comprehension-structure.md)。本文件只规定选择 HTML 后的离线运行和嵌入边界。
 
+最终 HTML 的语义骨架和运行时占位遵循 [Walkthrough HTML demo](templates/walkthrough-html.demo.md)。该 Demo 不规定视觉风格；本文件不维护第二份产物模板。
+
 ## Mermaid 与全屏底座
 
 Skill 自带 Mermaid 11.15.0 和一个很小的 Walkthrough 运行时：
@@ -13,13 +15,7 @@ Skill 自带 Mermaid 11.15.0 和一个很小的 Walkthrough 运行时：
 - `assets/walkthrough-runtime.css`：只提供全屏和按钮所需的基础样式，可由页面覆盖；
 - `scripts/embed_html_runtime.py`：把这些资源内联进 HTML。
 
-在 HTML 的 `</body>` 前放置：
-
-```html
-<!-- LONGREIN_WALKTHROUGH_RUNTIME -->
-```
-
-然后运行：
+保留 [Walkthrough HTML demo](templates/walkthrough-html.demo.md) 中 `</body>` 前的运行时占位，然后运行：
 
 ```bash
 python3 scripts/embed_html_runtime.py walkthrough.html
@@ -34,7 +30,7 @@ flowchart LR
 </pre>
 ```
 
-运行时会自动创建图容器和带文字的全屏按钮；按钮支持键盘操作，浏览器原生 `Escape` 退出全屏。页面可以通过 CSS 变量调整功能样式，也可以在运行时加载前设置 `window.WALKTHROUGH_MERMAID_CONFIG` 覆盖 Mermaid 配置。
+运行时会自动创建图容器和半透明的全屏图标按钮；按钮保留本地化的无障碍标签，支持键盘操作，浏览器原生 `Escape` 退出全屏。页面可以通过 CSS 变量调整功能样式，也可以在运行时加载前设置 `window.WALKTHROUGH_MERMAID_CONFIG` 覆盖 Mermaid 配置。
 
 图用于减少理解成本。图太大时拆成相邻的几张图，不靠缩小字号维持“只有一张图”的形式完整。
 
