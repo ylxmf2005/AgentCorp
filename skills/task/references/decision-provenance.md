@@ -12,7 +12,7 @@ YAML 字段或表格值不能自然加前缀时，在行尾注释或 Evidence / 
 
 没有 Active Task 时不伪造持久编号；在用户可见回复中把已经确认的内容明确列为“用户决定”。用户以后显式启动 Task 时，由 `shape` 把仍然有效的决定写入该 Task 的 `UD-*`。
 
-Agent 可以用事实和专业判断挑战 `UD-*`，但不能静默改写。新的用户表达与现有 `UD-*` 冲突时，先指出冲突和影响，询问是否明确替换；确认后创建新的 `UD-*`，先修订受影响的专业产物，再通过 `longrein task context --decision UD-###` 更新承诺，并在事件摘要中写清 `supersedes UD-*`。Runtime 增加 `scope_revision`，旧决定继续在 [Task Timeline](task-timeline.md) 中可追溯。
+Agent 可以用事实和专业判断挑战 `UD-*`，但不能静默改写。新的用户表达与现有 `UD-*` 冲突时，先指出冲突和影响，询问是否明确替换；确认后创建新的 `UD-*`，先修订受影响的专业产物，再通过带 `decision: UD-###` 的 `longrein_task_context` 更新承诺，并在事件摘要中写清 `supersedes UD-*`。Runtime 增加 `scope_revision`，旧决定继续在 [Task Timeline](task-timeline.md) 中可追溯。
 
 ## `AD-###`：Agent 决定
 

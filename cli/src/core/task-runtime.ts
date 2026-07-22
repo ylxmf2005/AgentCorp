@@ -3,7 +3,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 
-export const TASK_SCHEMA_VERSION = 1;
+export const TASK_SCHEMA_VERSION = 2;
+export const TASK_SUMMARY_SCHEMA_VERSION = 1;
 
 export const TASK_STATUSES = [
   'shaping',
@@ -44,6 +45,7 @@ export interface TaskFinding {
 
 export interface TaskArtifact {
   id: string;
+  artifactType: string;
   path: string;
   status: ArtifactStatus;
   establishes: string;
@@ -68,7 +70,9 @@ export interface TaskEvent {
     | 'artifact_published'
     | 'artifact_updated'
     | 'verification_recorded'
-    | 'task_completed';
+    | 'task_completed'
+    | 'task_abandoned'
+    | 'task_superseded';
   summary: string;
   details?: string;
   evidence: string[];
@@ -78,6 +82,7 @@ export interface TaskEvent {
 
 export interface TaskState {
   schemaVersion: number;
+  taskUid: string;
   taskId: string;
   originalRequest: string;
   status: TaskStatus;
@@ -126,10 +131,32 @@ export interface TaskState {
   updatedAt: string;
 }
 
+export interface TaskSummaryProjection {
+  summarySchemaVersion: number;
+  stateSchemaVersion: number;
+  taskUid: string;
+  taskId: string;
+  status: TaskStatus;
+  goalHeadline: string | null;
+  workspace: string;
+  repository: string | null;
+  refs: TaskState['refs'];
+  contextRevision: number;
+  scopeRevision: number;
+  currentWork: TaskState['currentWork'];
+  completion: Record<CompletionStatus | 'total', number>;
+  artifacts: Record<ArtifactStatus | 'total', number>;
+  activeFindings: number;
+  latestEvent: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface TaskPaths {
   workspace: string;
   runtimeDir: string;
   stateFile: string;
+  summaryFile: string;
   taskFile: string;
   timelineFile: string;
   lockFile: string;
@@ -220,6 +247,12 @@ function assertArtifactStatus(value: string): asserts value is ArtifactStatus {
   }
 }
 
+function assertArtifactType(value: string): void {
+  if (!/^[a-z][a-z0-9.-]*$/.test(value)) {
+    throw new Error(`invalid artifact type "${value}"; use a stable lowercase name such as shape.design or review.report`);
+  }
+}
+
 function assertTaskOpen(state: TaskState, action: string): void {
   if (['complete', 'abandoned', 'superseded'].includes(state.status)) {
     throw new Error(`cannot ${action} on terminal task (${state.status})`);
@@ -230,7 +263,10 @@ export function taskPaths(input: string): TaskPaths {
   const resolved = path.resolve(input);
   let workspace = resolved;
   if (path.basename(resolved) === 'task.md') workspace = path.dirname(resolved);
-  if (path.basename(resolved) === 'state.json' && path.basename(path.dirname(resolved)) === '.runtime') {
+  if (
+    ['state.json', 'summary.json'].includes(path.basename(resolved)) &&
+    path.basename(path.dirname(resolved)) === '.runtime'
+  ) {
     workspace = path.dirname(path.dirname(resolved));
   }
   const runtimeDir = path.join(workspace, '.runtime');
@@ -238,6 +274,7 @@ export function taskPaths(input: string): TaskPaths {
     workspace,
     runtimeDir,
     stateFile: path.join(runtimeDir, 'state.json'),
+    summaryFile: path.join(runtimeDir, 'summary.json'),
     taskFile: path.join(workspace, 'task.md'),
     timelineFile: path.join(workspace, 'timeline.md'),
     lockFile: path.join(runtimeDir, 'task.lock'),
@@ -327,7 +364,7 @@ function sameRepositorySnapshot(a: RepositorySnapshot | null, b: RepositorySnaps
   return a.head === b.head && a.worktreeFingerprint === b.worktreeFingerprint;
 }
 
-function resolveArtifactPath(paths: TaskPaths, artifactPath: string): string {
+export function resolveArtifactPath(paths: TaskPaths, artifactPath: string): string {
   return path.isAbsolute(artifactPath) ? artifactPath : path.resolve(paths.workspace, artifactPath);
 }
 
@@ -371,6 +408,53 @@ function appendEvent(
   return event;
 }
 
+export function taskSummaryProjection(state: TaskState): TaskSummaryProjection {
+  const completion: TaskSummaryProjection['completion'] = {
+    total: state.commitments.completionEvidence.length,
+    pending: 0,
+    passed: 0,
+    failed: 0,
+    blocked: 0,
+  };
+  for (const item of state.commitments.completionEvidence) completion[item.status] += 1;
+
+  const artifacts: TaskSummaryProjection['artifacts'] = {
+    total: state.artifacts.length,
+    planned: 0,
+    active: 0,
+    ready: 0,
+    verified: 0,
+    stale: 0,
+    superseded: 0,
+  };
+  for (const artifact of state.artifacts) artifacts[artifact.status] += 1;
+
+  return {
+    summarySchemaVersion: TASK_SUMMARY_SCHEMA_VERSION,
+    stateSchemaVersion: TASK_SCHEMA_VERSION,
+    taskUid: state.taskUid,
+    taskId: state.taskId,
+    status: state.status,
+    goalHeadline: state.commitments.goal.at(0) ?? null,
+    workspace: state.workspace,
+    repository: state.repository,
+    refs: state.refs,
+    contextRevision: state.contextRevision,
+    scopeRevision: state.scopeRevision,
+    currentWork: state.currentWork,
+    completion,
+    artifacts,
+    activeFindings: state.findings.filter((item) => item.status === 'active').length,
+    latestEvent: state.latestEvent,
+    createdAt: state.createdAt,
+    updatedAt: state.updatedAt,
+  };
+}
+
+export function renderTaskSummaryJson(state: TaskState): string {
+  return JSON.stringify(taskSummaryProjection(state), null, 2) + '\n';
+}
+
 export function renderTaskMarkdown(state: TaskState): string {
   const evidence = state.commitments.completionEvidence.length
     ? state.commitments.completionEvidence
@@ -393,19 +477,20 @@ export function renderTaskMarkdown(state: TaskState): string {
     : '- none';
 
   const artifactRows = [
-    '| Artifact | Status | What it establishes | Next consumer |',
-    '| --- | --- | --- | --- |',
-    '| `task.md` | active | 当前任务承诺、状态和产物入口 | all |',
-    '| `timeline.md` | active | 工作单元与语义变化的任务历史 | all |',
+    '| Artifact | Type | Status | What it establishes | Next consumer |',
+    '| --- | --- | --- | --- | --- |',
+    '| `task.md` | task.context | active | 当前任务承诺、状态和产物入口 | all |',
+    '| `timeline.md` | task.timeline | active | 工作单元与语义变化的任务历史 | all |',
     ...state.artifacts.map(
       (artifact) =>
-        `| \`${escapeTable(artifact.path)}\` | ${artifact.status} | ${escapeTable(artifact.establishes)} | ${escapeTable(artifact.nextConsumer)} |`,
+        `| \`${escapeTable(artifact.path)}\` | ${artifact.artifactType} | ${artifact.status} | ${escapeTable(artifact.establishes)} | ${escapeTable(artifact.nextConsumer)} |`,
     ),
   ].join('\n');
 
   return `---
 artifact_type: TaskContext
 schema_version: ${TASK_SCHEMA_VERSION}
+task_uid: ${yamlScalar(state.taskUid)}
 task_id: ${yamlScalar(state.taskId)}
 status: ${state.status}
 context_revision: ${state.contextRevision}
@@ -498,10 +583,17 @@ function validateStateShape(value: unknown): TaskState {
   if (state.schemaVersion !== TASK_SCHEMA_VERSION) {
     throw new Error(`unsupported task state schema ${String(state.schemaVersion)}; expected ${TASK_SCHEMA_VERSION}`);
   }
-  if (!state.taskId || !state.workspace || !Array.isArray(state.events)) {
+  if (!state.taskUid || !state.taskId || !state.workspace || !Array.isArray(state.events)) {
     throw new Error('task state is missing required fields');
   }
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(state.taskUid)) {
+    throw new Error(`invalid task uid: ${state.taskUid}`);
+  }
   assertStatus(state.status);
+  for (const artifact of state.artifacts) {
+    assertArtifactStatus(artifact.status);
+    assertArtifactType(artifact.artifactType);
+  }
   return state;
 }
 
@@ -517,11 +609,35 @@ export function loadTaskState(input: string): TaskState {
   return state;
 }
 
+export function loadTaskSummary(input: string): TaskSummaryProjection {
+  const paths = taskPaths(input);
+  if (!fs.existsSync(paths.summaryFile)) throw new Error(`task summary not found: ${paths.summaryFile}`);
+  const value = JSON.parse(fs.readFileSync(paths.summaryFile, 'utf8')) as TaskSummaryProjection;
+  if (
+    !value ||
+    value.summarySchemaVersion !== TASK_SUMMARY_SCHEMA_VERSION ||
+    value.stateSchemaVersion !== TASK_SCHEMA_VERSION ||
+    !value.taskUid ||
+    !value.taskId ||
+    !value.workspace
+  ) {
+    throw new Error(`invalid task summary: ${paths.summaryFile}`);
+  }
+  return value;
+}
+
 function saveStateAndViews(paths: TaskPaths, state: TaskState): void {
   state.updatedAt = nowIso();
   atomicWrite(paths.stateFile, JSON.stringify(state, null, 2) + '\n');
-  atomicWrite(paths.taskFile, renderTaskMarkdown(state));
-  atomicWrite(paths.timelineFile, renderTimelineMarkdown(state));
+  try {
+    atomicWrite(paths.summaryFile, renderTaskSummaryJson(state));
+    atomicWrite(paths.taskFile, renderTaskMarkdown(state));
+    atomicWrite(paths.timelineFile, renderTimelineMarkdown(state));
+  } catch (error) {
+    throw new Error(
+      `Task state was saved at ${paths.stateFile}, but generated views could not be refreshed: ${error instanceof Error ? error.message : String(error)}. Run longrein task doctor ${paths.workspace} --fix after resolving the filesystem error.`,
+    );
+  }
 }
 
 function mutateTask(input: string, mutation: (state: TaskState, paths: TaskPaths) => void): TaskState {
@@ -548,7 +664,9 @@ export function createTask(input: {
   actor?: string;
 }): TaskState {
   const paths = taskPaths(input.directory);
-  const existingCoreFiles = [paths.stateFile, paths.taskFile, paths.timelineFile].filter((file) => fs.existsSync(file));
+  const existingCoreFiles = [paths.stateFile, paths.summaryFile, paths.taskFile, paths.timelineFile].filter((file) =>
+    fs.existsSync(file),
+  );
   if (existingCoreFiles.length) {
     throw new Error(`refusing to overwrite existing Task files: ${existingCoreFiles.join(', ')}`);
   }
@@ -563,6 +681,7 @@ export function createTask(input: {
     }
     const state: TaskState = {
       schemaVersion: TASK_SCHEMA_VERSION,
+      taskUid: crypto.randomUUID(),
       taskId: input.taskId,
       originalRequest: input.request,
       status: 'shaping',
@@ -806,6 +925,7 @@ export function recordTaskFinding(
 export function upsertTaskArtifact(
   input: string,
   options: {
+    artifactType: string;
     artifactPath: string;
     status: string;
     establishes: string;
@@ -815,6 +935,7 @@ export function upsertTaskArtifact(
   },
 ): TaskState {
   assertArtifactStatus(options.status);
+  assertArtifactType(options.artifactType);
   return mutateTask(input, (state, paths) => {
     assertTaskOpen(state, 'publish an artifact');
     const storedPath = storedArtifactPath(paths, options.artifactPath);
@@ -824,6 +945,7 @@ export function upsertTaskArtifact(
       state.counters.artifact += 1;
       artifact = {
         id: formatSequence('ART', state.counters.artifact, 3),
+        artifactType: options.artifactType,
         path: storedPath,
         status: options.status as ArtifactStatus,
         establishes: options.establishes,
@@ -833,6 +955,7 @@ export function upsertTaskArtifact(
       };
       state.artifacts.push(artifact);
     }
+    artifact.artifactType = options.artifactType;
     artifact.status = options.status as ArtifactStatus;
     artifact.establishes = options.establishes;
     artifact.nextConsumer = options.nextConsumer;
@@ -871,9 +994,10 @@ export function setTaskCompletionEvidence(
   });
 }
 
-function currentViewFinding(paths: TaskPaths, state: TaskState, file: 'task' | 'timeline'): DoctorFinding | null {
-  const target = file === 'task' ? paths.taskFile : paths.timelineFile;
-  const expected = file === 'task' ? renderTaskMarkdown(state) : renderTimelineMarkdown(state);
+function currentViewFinding(paths: TaskPaths, state: TaskState, file: 'task' | 'timeline' | 'summary'): DoctorFinding | null {
+  const target = file === 'task' ? paths.taskFile : file === 'timeline' ? paths.timelineFile : paths.summaryFile;
+  const expected =
+    file === 'task' ? renderTaskMarkdown(state) : file === 'timeline' ? renderTimelineMarkdown(state) : renderTaskSummaryJson(state);
   if (!fs.existsSync(target)) {
     return { severity: 'warn', code: `${file}-missing`, message: `${path.basename(target)} is missing`, fixable: true };
   }
@@ -900,8 +1024,10 @@ export function inspectTaskHealth(input: string): DoctorFinding[] {
   }
   const taskView = currentViewFinding(paths, state, 'task');
   const timelineView = currentViewFinding(paths, state, 'timeline');
+  const summaryView = currentViewFinding(paths, state, 'summary');
   if (taskView) findings.push(taskView);
   if (timelineView) findings.push(timelineView);
+  if (summaryView) findings.push(summaryView);
 
   if (state.events.at(-1)?.id !== state.latestEvent) {
     findings.push({ severity: 'error', code: 'event-pointer', message: 'latest_event does not match the final Timeline event' });
@@ -970,6 +1096,7 @@ export function fixTaskViews(input: string): DoctorFinding[] {
     const state = loadTaskState(paths.workspace);
     atomicWrite(paths.taskFile, renderTaskMarkdown(state));
     atomicWrite(paths.timelineFile, renderTimelineMarkdown(state));
+    atomicWrite(paths.summaryFile, renderTaskSummaryJson(state));
   } finally {
     release();
   }
@@ -1021,9 +1148,47 @@ export function completeTask(
   }
 }
 
+export function abandonTask(
+  input: string,
+  options: { summary: string; actor?: string; evidence?: string[] },
+): TaskState {
+  return mutateTask(input, (state) => {
+    assertTaskOpen(state, 'abandon');
+    if (state.currentWork.active) throw new Error(`cannot abandon with active work unit ${state.currentWork.active.id}`);
+    state.status = 'abandoned';
+    state.currentWork = { now: 'none', next: 'none', waitingOn: 'none', active: null };
+    appendEvent(state, {
+      actor: normalizeActor(options.actor),
+      kind: 'task_abandoned',
+      summary: options.summary,
+      evidence: options.evidence,
+    });
+  });
+}
+
+export function supersedeTask(
+  input: string,
+  options: { summary: string; supersededBy: string; actor?: string; evidence?: string[] },
+): TaskState {
+  return mutateTask(input, (state) => {
+    assertTaskOpen(state, 'supersede');
+    if (state.currentWork.active) throw new Error(`cannot supersede with active work unit ${state.currentWork.active.id}`);
+    state.status = 'superseded';
+    state.currentWork = { now: 'none', next: 'none', waitingOn: 'none', active: null };
+    appendEvent(state, {
+      actor: normalizeActor(options.actor),
+      kind: 'task_superseded',
+      summary: options.summary,
+      details: `Superseded by ${options.supersededBy}.`,
+      evidence: options.evidence,
+    });
+  });
+}
+
 export function taskSummary(state: TaskState): string {
   return [
     `${state.taskId}  ${state.status}`,
+    `UID: ${state.taskUid}`,
     `Task: ${path.join(state.workspace, 'task.md')}`,
     `Now: ${state.currentWork.now}`,
     `Next: ${state.currentWork.next}`,

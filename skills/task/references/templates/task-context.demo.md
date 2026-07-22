@@ -1,11 +1,12 @@
 # Task Context 生成视图示例
 
-`task.md` 由 Task Runtime 从 `.runtime/state.json` 生成。下面只用于理解固定章节和信息分工，不能复制后手工维护；字段或状态变化必须通过 `longrein task` 命令完成。
+`task.md` 由 Task Runtime 从 `.runtime/state.json` 生成。下面只用于理解固定章节和信息分工，不能复制后手工维护；Agent 的字段或状态变化必须通过 Longrein MCP 完成。
 
 ```markdown
 ---
 artifact_type: TaskContext
-schema_version: 1
+schema_version: 2
+task_uid: "9fbe36b4-1f6f-45aa-b36e-3eb806f35968"
 task_id: "20260721-example-task"
 status: ready
 context_revision: 3
@@ -69,18 +70,18 @@ updated_at: "2026-07-21T08:00:00.000Z"
 
 ## Artifact Map
 
-| Artifact | Status | What it establishes | Next consumer |
-| --- | --- | --- | --- |
-| `task.md` | active | 当前任务承诺、状态和产物入口 | all |
-| `timeline.md` | active | 工作单元与语义变化的任务历史 | all |
-| `plan.md` | active | 全部 Phase、Owner、依赖、当前状态、结果和证据 | shape, dev, review, test |
-| `shape/requirements.md` | ready | 可追溯的详细需求、行为边界和可观察结果 | shape, dev, review, test |
-| `shape/design.md` | ready | 当前与目标系统模型、契约和关键专业决定 | shape, dev, review |
-| `dev/report.md` | ready | 已交付行为、变化传播、源产物修订、阶段审查和聚焦验证 | review, test, owner |
+| Artifact | Type | Status | What it establishes | Next consumer |
+| --- | --- | --- | --- | --- |
+| `task.md` | task.context | active | 当前任务承诺、状态和产物入口 | all |
+| `timeline.md` | task.timeline | active | 工作单元与语义变化的任务历史 | all |
+| `plan.md` | shape.plan | active | 全部 Phase、Owner、依赖、当前状态、结果和证据 | shape, dev, review, test |
+| `shape/requirements.md` | shape.requirements | ready | 可追溯的详细需求、行为边界和可观察结果 | shape, dev, review, test |
+| `shape/design.md` | shape.design | ready | 当前与目标系统模型、契约和关键专业决定 | shape, dev, review |
+| `dev/report.md` | dev.report | ready | 已交付行为、变化传播、源产物修订、阶段审查和聚焦验证 | review, test, owner |
 
 ## Timeline
 
 完整任务历史见 [`timeline.md`](timeline.md)。最新事件：EVT-0007。
 ```
 
-新 Task 在 `status: shaping` 时，Goal、Scope 或完成条件可以显示为 `unresolved`。用户决定使用 `UD-###`；Completion Evidence 的稳定编号由 Runtime 分配为 `CE-###`；Confirmed Findings 和 Artifact Map 也由相应 Task Command 生成，不直接编辑表格。
+新 Task 在 `status: shaping` 时，Goal、Scope 或完成条件可以显示为 `unresolved`。用户决定使用 `UD-###`；Completion Evidence 的稳定编号由 Runtime 分配为 `CE-###`；Confirmed Findings 和 Artifact Map 也由相应 MCP 操作生成，不直接编辑表格。

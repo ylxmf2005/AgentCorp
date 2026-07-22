@@ -13,7 +13,7 @@ HTTP 200、命令退出零、源码看起来正确、页面显示完成，都只
 
 ## 先锁定被测对象
 
-当前 Session 已宣布 Active Task 时，先读它的 `task.md`、Git 意图、Task Operating Envelope 和 Artifact Map；要把本轮验证纳入持久状态时，在执行测试前用 `longrein task work start` 建立工作单元。Task Command 失败时不直接编辑 Runtime 核心文件。开始前再核验实际被测对象：repo、worktree、inspected revision、未提交差异、构建物或镜像，以及运行中的代码究竟来自哪里。对象无法确认且会改变结论时，只暂停依赖它的用例；不要在错误分支、旧进程或共享生产数据上制造精确但无效的证据。
+当前 Session 已宣布 Active Task 时，先通过 Longrein MCP 读取当前 Task、Git 意图、Task Operating Envelope 和 Artifact Map；要把本轮验证纳入持久状态时，在执行测试前用 `longrein_work_start` 建立工作单元。Runtime 调用失败时公开阻塞，不改用 shell 或直接编辑核心文件。开始前再核验实际被测对象：repo、worktree、inspected revision、未提交差异、构建物或镜像，以及运行中的代码究竟来自哪里。对象无法确认且会改变结论时，只暂停依赖它的用例；不要在错误分支、旧进程或共享生产数据上制造精确但无效的证据。
 
 读取项目规则、已有测试入口、历史 TestPlan/Test Report 和稳定的环境说明。缺少能执行测试的入口、页面、数据约定或回读方式时，主动调查真实系统并补齐本轮需要的信息；只保存已确认事实，不为规划方便编造环境。
 
@@ -86,4 +86,4 @@ Test Report 的总体状态使用 `passed | failed | partial | blocked`：全部
 
 一次性 harness、临时 fixture、截图和本地重放脚本默认属于证据，不自动进入产品提交。仓库级回归测试若用于永久保护已承诺行为，则属于实现资产，不能仅因它在本轮验证中创建就自动删除；是否新增或提交仍服从用户授权和项目规则。凭据只安全引用，不写入报告。
 
-完成时，关键风险都有直接证据，所有计划用例都有状态，失败和未执行范围可以重放，清理与环境交接已经说明。存在 Active Task 时，先写完 TestPlan、Test Report 和证据，再用 `longrein task artifact` 登记产物，用 `task evidence` 更新每项 Completion Evidence；测试推翻任务事实或既有产物时，先修订真正拥有结论的产物，再用 `task finding` 或相应 `task artifact` 登记。最后用 `task work finish --status verifying` 记录结果，阻塞时使用 `task work block`。Runtime 更新 Current Work、Artifact Map 与 [Task Timeline](../task/references/task-timeline.md)，Test 不直接编辑核心状态文件。没有 Active Task 时在对话中交付，或只写用户指定的路径。最后把 TestPlan、Test Report 和关键证据路径告诉用户。
+完成时，关键风险都有直接证据，所有计划用例都有状态，失败和未执行范围可以重放，清理与环境交接已经说明。存在 Active Task 时，先写完 TestPlan、Test Report 和证据，再用 `longrein_checkpoint` 登记产物、更新每项 Completion Evidence，并在同一语义检查点中 finish 为 `verifying`；测试推翻任务事实或既有产物时，先修订真正拥有结论的产物，再登记 finding 或对应 artifact，阻塞时使用 block。部分失败后先重新读取 Task，不盲目重放。Runtime 更新 Current Work、Artifact Map 与 [Task Timeline](../task/references/task-timeline.md)，Test 不直接编辑核心状态文件。没有 Active Task 时在对话中交付，或只写用户指定的路径。最后把 TestPlan、Test Report 和关键证据路径告诉用户。

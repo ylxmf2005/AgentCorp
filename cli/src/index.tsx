@@ -1,12 +1,20 @@
 import { Command } from 'commander';
 import pc from 'picocolors';
-import { packageVersion, targets, Target, TargetFilter } from './core/paths.js';
+import { targets, Target, TargetFilter } from './core/paths.js';
 import { listSkills, Skill } from './core/skills.js';
 import { inspect, installSkill, pruneBrokenOwnLinks, uninstallSkill, SkillState } from './core/installer.js';
 import { blockStatus, listBlocks, removeBlocks, upsertBlocks } from './core/blocks.js';
 import { runDoctor } from './core/doctor.js';
-import { registerTaskCommands } from './task-command.js';
-import { pickSkills } from './ui/Picker.js';
+import { LONGREIN_VERSION } from './version.js';
+import {
+  claudeMcpStatus,
+  codexMcpStatus,
+  installClaudeMcp,
+  installCodexMcp,
+  uninstallClaudeMcp,
+  uninstallCodexMcp,
+  CodexMcpStatus,
+} from './core/codex-mcp.js';
 
 const program = new Command();
 
@@ -64,12 +72,27 @@ function syncBlocks(active: Target[], quiet = false): void {
   }
 }
 
+function hasCodex(active: Target[]): boolean {
+  return active.some((target) => target.id === 'codex');
+}
+
+function hasClaude(active: Target[]): boolean {
+  return active.some((target) => target.id === 'claude');
+}
+
+function mcpStateLabel(status: CodexMcpStatus): string {
+  if (status.state === 'managed') return pc.green('✓ managed');
+  if (status.state === 'missing') return pc.dim('· missing');
+  if (status.state === 'foreign') return pc.yellow('! foreign');
+  return pc.red('! unavailable');
+}
+
 function printStatus(opts: CommonOpts): void {
   const active = activeTargets(opts);
   const skills = listSkills();
   const blocks = listBlocks();
 
-  console.log(pc.bold(`\nlongrein v${packageVersion()}`));
+  console.log(pc.bold(`\nlongrein v${LONGREIN_VERSION}`));
   console.log(pc.dim(`source: ${skills[0] ? skills[0].dir.replace(/\/skills\/.*$/, '') : '(no skills found)'}\n`));
 
   const nameWidth = Math.max(...skills.map((s) => s.name.length), 5) + 2;
@@ -100,13 +123,23 @@ function printStatus(opts: CommonOpts): void {
     console.log(`  ${target.label.padEnd(nameWidth)}${parts.join('  ')}${orphanNote}`);
     console.log(pc.dim(`  ${''.padEnd(nameWidth)}${target.instructionFile}`));
   }
+  if (hasCodex(active)) {
+    const mcp = codexMcpStatus();
+    console.log(pc.bold('\n  Codex MCP'));
+    console.log(`  ${mcpStateLabel(mcp)}  ${pc.dim(mcp.detail)}`);
+  }
+  if (hasClaude(active)) {
+    const mcp = claudeMcpStatus();
+    console.log(pc.bold('\n  Claude Code MCP'));
+    console.log(`  ${mcpStateLabel(mcp)}  ${pc.dim(mcp.detail)}`);
+  }
   console.log();
 }
 
 program
   .name('longrein')
   .description('Install and maintain the longrein engineering skills for Claude Code and Codex.')
-  .version(packageVersion());
+  .version(LONGREIN_VERSION);
 
 program
   .command('install [skills...]')
@@ -122,6 +155,7 @@ program
     let skills = resolveSkills(names);
 
     if (names.length === 0 && !opts.yes && process.stdout.isTTY && process.stdin.isTTY) {
+      const { pickSkills } = await import('./ui/Picker.js');
       const picked = await pickSkills(skills, opts.link ? 'link mode' : 'copy mode');
       if (picked === null) {
         console.log(pc.dim('cancelled'));
@@ -152,6 +186,18 @@ program
     if (opts.blocks !== false) {
       console.log(pc.bold('\n  always-on blocks'));
       syncBlocks(active);
+    }
+    if (hasCodex(active)) {
+      console.log(pc.bold('\n  Codex MCP'));
+      const mcp = installCodexMcp();
+      console.log(`  ${mcpStateLabel(mcp)}  ${pc.dim(mcp.detail)}`);
+      if (mcp.state !== 'managed') problems++;
+    }
+    if (hasClaude(active)) {
+      console.log(pc.bold('\n  Claude Code MCP'));
+      const mcp = installClaudeMcp();
+      console.log(`  ${mcpStateLabel(mcp)}  ${pc.dim(mcp.detail)}`);
+      if (mcp.state !== 'managed') problems++;
     }
     console.log();
     if (problems > 0) {
@@ -190,6 +236,16 @@ program
         );
       }
     }
+    if (opts.all && hasCodex(active)) {
+      console.log(pc.bold('\n  Codex MCP'));
+      const mcp = uninstallCodexMcp();
+      console.log(`  ${mcpStateLabel(mcp)}  ${pc.dim(mcp.detail)}`);
+    }
+    if (opts.all && hasClaude(active)) {
+      console.log(pc.bold('\n  Claude Code MCP'));
+      const mcp = uninstallClaudeMcp();
+      console.log(`  ${mcpStateLabel(mcp)}  ${pc.dim(mcp.detail)}`);
+    }
     console.log();
   });
 
@@ -221,6 +277,18 @@ program
     }
     console.log(pc.bold('\n  always-on blocks'));
     syncBlocks(active);
+    if (hasCodex(active)) {
+      console.log(pc.bold('\n  Codex MCP'));
+      const mcp = installCodexMcp();
+      console.log(`  ${mcpStateLabel(mcp)}  ${pc.dim(mcp.detail)}`);
+      if (mcp.state !== 'managed') process.exitCode = 1;
+    }
+    if (hasClaude(active)) {
+      console.log(pc.bold('\n  Claude Code MCP'));
+      const mcp = installClaudeMcp();
+      console.log(`  ${mcpStateLabel(mcp)}  ${pc.dim(mcp.detail)}`);
+      if (mcp.state !== 'managed') process.exitCode = 1;
+    }
     console.log();
   });
 
@@ -271,11 +339,13 @@ program
     if (findings.some((f) => f.severity === 'error')) process.exitCode = 1;
   });
 
-registerTaskCommands(program);
+program.command('task').description('create, register, inspect and update persistent Longrein Tasks');
+program.command('dashboard').description('open the local Longrein Task Dashboard');
+program.command('mcp').description('run or manage the Longrein stdio MCP server for Codex and Claude Code');
 
 // bare `longrein` → status dashboard
 if (process.argv.length <= 2) {
   printStatus({});
 } else {
-  program.parse();
+  await program.parseAsync();
 }

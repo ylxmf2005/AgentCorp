@@ -50,7 +50,7 @@ description: 在 Shape 已经形成候选方向，或用户带着现有计划、
 - 哪些 `UD candidate` 应交给 `shape` 写入 Task Context，以及它们是否替换现有 `UD-*`；
 - 哪些变化必须回到 `shape` 修订方向或 Task Context。
 
-Grill 默认只交付对话和这份结论，不另建平行状态文件。已有 Active Task 时，`UD candidate`、范围或承诺变化仍由 `shape` 在用户同意后通过 `longrein task context --decision` 写入 Runtime；Grill 不分配正式 `UD-*`，不直接编辑 `task.md`，也不能自行增加 `scope_revision`。用户确认达到共同理解前，不依据被拷问的对象开始实现。
+Grill 默认只交付对话和这份结论，不另建平行状态文件。已有 Active Task 时，`UD candidate`、范围或承诺变化仍由 `shape` 在用户同意后通过带 `decision` 的 `longrein_task_context` 写入 Runtime；Grill 不分配正式 `UD-*`，不直接编辑 `task.md`，也不能自行增加 `scope_revision`。用户确认达到共同理解前，不依据被拷问的对象开始实现。
 
 ## 边界
 

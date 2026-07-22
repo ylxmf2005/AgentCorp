@@ -1,6 +1,6 @@
 # Task Timeline 生成视图 Demo
 
-`timeline.md` 由 Task Runtime 从 `.runtime/state.json` 生成。下面用于理解固定事件形状和信息分工，不能复制后手工维护；事件必须通过 `longrein task` 命令产生。
+`timeline.md` 由 Task Runtime 从 `.runtime/state.json` 生成。下面用于理解固定事件形状和信息分工，不能复制后手工维护；Agent 的事件必须通过 Longrein MCP 产生。
 
 ```markdown
 # Task Timeline: 20260721-example-task

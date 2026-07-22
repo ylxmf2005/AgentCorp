@@ -29,6 +29,13 @@ export function packageVersion(): string {
 export const skillsRoot = (): string => path.join(packageRoot(), 'skills');
 export const globalRoot = (): string => path.join(packageRoot(), 'global');
 
+export function longreinHome(): string {
+  const configured = process.env.LONGREIN_HOME?.trim();
+  return path.resolve(configured || path.join(os.homedir(), '.longrein'));
+}
+
+export const taskRegistryRoot = (): string => path.join(longreinHome(), 'registry', 'tasks');
+
 export type TargetId = 'claude' | 'codex';
 
 export interface Target {

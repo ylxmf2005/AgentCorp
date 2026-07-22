@@ -26,7 +26,7 @@ Active Task：`<task.md 的绝对路径>`
 - Task：`<task.md 的绝对路径>`
 ```
 
-只有 Runtime 已建立可信 Context 且 `task doctor` 没有发现状态漂移时使用。方向仍在形成时，不把候选 Goal 或 Scope 写成已建立。
+只有 Runtime 已建立可信 Context 且 `longrein_task_read doctor` 没有发现状态漂移时使用。方向仍在形成时，不把候选 Goal 或 Scope 写成已建立。
 
 ## Fact Change
 
