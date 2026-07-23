@@ -1,4 +1,0 @@
-interface:
-  display_name: "Shape"
-  short_description: "从真实项目形成并持续维护需求、系统设计、契约与共享计划"
-  default_prompt: "使用 $shape 调查真实对象，与我共同形成可追溯需求和系统设计，并让当前模型能随实现反馈继续修订。"

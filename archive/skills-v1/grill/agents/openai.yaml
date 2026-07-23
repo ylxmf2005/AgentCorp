@@ -1,4 +1,0 @@
-interface:
-  display_name: "Grill"
-  short_description: "按决策树前沿分轮拷问已有方向，暴露隐含决定与关键薄弱假设"
-  default_prompt: "使用 $grill 分轮压力测试这个方向，在行动前找出隐含决定与薄弱假设。"

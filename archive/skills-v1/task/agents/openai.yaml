@@ -1,7 +1,0 @@
-interface:
-  display_name: "Task"
-  short_description: "开始或接回一项具体任务，展开工作并维护权威任务产物"
-  default_prompt: "使用 $task 开始这项任务，创建 Runtime Task 并确定下一步工作。"
-
-policy:
-  allow_implicit_invocation: false

@@ -1,4 +1,0 @@
-interface:
-  display_name: "Dev"
-  short_description: "在实现中持续同步当前模型，并把每个 Phase 交付成可审查代码"
-  default_prompt: "使用 $dev 按当前需求和设计实现变化，在实现反馈中同步 Shape 产物，完成 Phase 聚焦验证并交给轻量 Review。"

@@ -1,4 +1,0 @@
-interface:
-  display_name: "Review"
-  short_description: "轻量审查 Phase，并综合核对代码、决定、文档与任务状态"
-  default_prompt: "使用 $review 审查当前 Phase 或完整交付，独立核对代码、决定授权、专业产物与 Task Runtime 状态并给出可路由 finding。"

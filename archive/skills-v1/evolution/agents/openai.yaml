@@ -1,4 +1,0 @@
-interface:
-  display_name: "Evolution"
-  short_description: "判断这轮经验是否值得改变未来行为"
-  default_prompt: "使用 $evolution 从真实轨迹判断是否存在可复用经验；有则放到最窄作用域，无则不制造产物。"
